@@ -260,17 +260,33 @@ async def delete_category(category_id: str, admin: User = Depends(get_current_ad
 # ===== PRODUCT ROUTES =====
 
 @api_router.get("/products", response_model=List[Product])
-async def get_products(category: Optional[str] = None, featured: Optional[bool] = None):
+async def get_products(
+    category: Optional[str] = None, 
+    featured: Optional[bool] = None,
+    skip: int = 0,
+    limit: int = 100
+):
     query = {}
     if category:
         query["category"] = category
     if featured is not None:
         query["featured"] = featured
     
-    products = await db.products.find(query, {"_id": 0}).to_list(1000)
+    products = await db.products.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
     for prod in products:
         parse_from_mongo(prod)
     return [Product(**prod) for prod in products]
+
+@api_router.get("/products/count")
+async def get_products_count(category: Optional[str] = None, featured: Optional[bool] = None):
+    query = {}
+    if category:
+        query["category"] = category
+    if featured is not None:
+        query["featured"] = featured
+    
+    count = await db.products.count_documents(query)
+    return {"count": count}
 
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
