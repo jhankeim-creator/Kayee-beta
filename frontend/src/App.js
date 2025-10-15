@@ -148,6 +148,7 @@ function App() {
             <Route path="/admin/*" element={<AdminDashboard />} />
           </Routes>
         </BrowserRouter>
+        <WhatsAppButton />
         <Toaster position="top-right" richColors />
       </div>
     </CartContext.Provider>
@@ -155,5 +156,3 @@ function App() {
 }
 
 export default App;
-
-const React = require('react');
