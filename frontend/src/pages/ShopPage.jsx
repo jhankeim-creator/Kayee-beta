@@ -11,23 +11,54 @@ const ShopPage = () => {
   const { API, addToCart } = useContext(CartContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const productsPerPage = 20;
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadProducts();
+    setPage(1);
+    loadProducts(1);
   }, [category]);
 
-  const loadProducts = async () => {
+  useEffect(() => {
+    if (page > 1) {
+      loadProducts(page);
+    }
+  }, [page]);
+
+  const loadProducts = async (currentPage) => {
     setLoading(true);
     try {
-      const url = category ? `${API}/products?category=${category}` : `${API}/products`;
-      const response = await axios.get(url);
-      setProducts(response.data);
+      const skip = (currentPage - 1) * productsPerPage;
+      const params = new URLSearchParams({
+        skip: skip.toString(),
+        limit: productsPerPage.toString()
+      });
+      
+      if (category) {
+        params.append('category', category);
+      }
+      
+      const [productsRes, countRes] = await Promise.all([
+        axios.get(`${API}/products?${params.toString()}`),
+        axios.get(`${API}/products/count${category ? `?category=${category}` : ''}`)
+      ]);
+      
+      setProducts(productsRes.data);
+      setTotalProducts(countRes.data.count);
     } catch (error) {
       console.error('Failed to load products:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const getTitle = () => {
