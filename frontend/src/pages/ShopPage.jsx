@@ -141,6 +141,60 @@ const ShopPage = () => {
               ))}
             </div>
           )}
+
+          {/* Pagination */}
+          {totalProducts > productsPerPage && (
+            <div className="mt-12 flex justify-center items-center gap-2">
+              <Button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
+                variant="outline"
+                data-testid="prev-page"
+              >
+                Previous
+              </Button>
+              
+              <div className="flex gap-2">
+                {[...Array(Math.min(5, totalPages))].map((_, idx) => {
+                  let pageNumber;
+                  if (totalPages <= 5) {
+                    pageNumber = idx + 1;
+                  } else if (page <= 3) {
+                    pageNumber = idx + 1;
+                  } else if (page >= totalPages - 2) {
+                    pageNumber = totalPages - 4 + idx;
+                  } else {
+                    pageNumber = page - 2 + idx;
+                  }
+
+                  return (
+                    <Button
+                      key={pageNumber}
+                      onClick={() => handlePageChange(pageNumber)}
+                      variant={page === pageNumber ? "default" : "outline"}
+                      className={page === pageNumber ? "bg-[#d4af37] hover:bg-[#b8941f] text-white" : ""}
+                      data-testid={`page-${pageNumber}`}
+                    >
+                      {pageNumber}
+                    </Button>
+                  );
+                })}
+              </div>
+
+              <Button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === totalPages}
+                variant="outline"
+                data-testid="next-page"
+              >
+                Next
+              </Button>
+              
+              <span className="ml-4 text-gray-600">
+                Page {page} of {totalPages} ({totalProducts} products)
+              </span>
+            </div>
+          )}
         </div>
       </div>
       <Footer />
