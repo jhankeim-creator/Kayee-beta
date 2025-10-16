@@ -78,6 +78,7 @@ const CheckoutPage = () => {
 
   const paymentMethods = [
     { id: 'stripe', name: 'Credit Card (Stripe)', icon: CreditCard, description: 'Pay with credit/debit card' },
+    { id: 'coinpal', name: 'CoinPal.io', icon: Coins, description: 'Pay with crypto via CoinPal.io' },
     { id: 'binance', name: 'Binance Pay', icon: Coins, description: 'Pay with crypto via Binance' },
     { id: 'plisio', name: 'Plisio', icon: Wallet, description: 'Multi-crypto payment' },
     { id: 'manual', name: 'Manual Payment', icon: DollarSign, description: 'Bank transfer or manual crypto' }
