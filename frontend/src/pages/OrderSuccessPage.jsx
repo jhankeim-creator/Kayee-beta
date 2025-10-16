@@ -86,15 +86,36 @@ const OrderSuccessPage = () => {
                 {/* Payment Instructions */}
                 {order.payment_method !== 'stripe' && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <h3 className="font-semibold mb-2">Payment Instructions</h3>
+                    <h3 className="font-semibold mb-2">Instructions de paiement</h3>
+                    {order.payment_method === 'coinpal' && order.coinpal_payment_url && (
+                      <div className="text-sm space-y-3">
+                        <p>Complétez votre paiement crypto via CoinPal.io :</p>
+                        {order.coinpal_qr_code && (
+                          <div className="flex justify-center">
+                            <img src={order.coinpal_qr_code} alt="QR Code" className="w-48 h-48" />
+                          </div>
+                        )}
+                        <a
+                          href={order.coinpal_payment_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block w-full text-center bg-[#d4af37] hover:bg-[#b8941f] text-white font-semibold py-3 px-6 rounded"
+                        >
+                          Payer avec CoinPal.io
+                        </a>
+                        <p className="text-xs text-gray-600">
+                          Vous serez redirigé vers CoinPal.io pour effectuer votre paiement en toute sécurité.
+                        </p>
+                      </div>
+                    )}
                     {order.payment_method === 'binance' && (
                       <p className="text-sm">
-                        Please complete your payment via Binance Pay. Payment link will be sent to your email.
+                        Veuillez compléter votre paiement via Binance Pay. Le lien de paiement sera envoyé à votre email.
                       </p>
                     )}
                     {order.payment_method === 'plisio' && (
                       <p className="text-sm">
-                        Please complete your crypto payment via Plisio. Payment instructions have been sent to your email.
+                        Veuillez compléter votre paiement crypto via Plisio. Les instructions ont été envoyées à votre email.
                       </p>
                     )}
                     {order.payment_method === 'manual' && (
