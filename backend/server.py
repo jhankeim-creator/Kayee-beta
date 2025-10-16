@@ -334,6 +334,33 @@ async def create_order(order_data: OrderCreate):
     )
     order_doc = prepare_for_mongo(order.model_dump())
     await db.orders.insert_one(order_doc)
+    
+    # Si le paiement est CoinPal, créer une demande de paiement
+    if order_data.payment_method == 'coinpal':
+        payment_result = await coinpal_service.create_payment(
+            order_id=order.id,
+            amount=order.total,
+            description=f"Order {order_number}",
+            customer_email=order.user_email
+        )
+        
+        # Sauvegarder les infos de paiement dans la commande
+        if payment_result.get('success'):
+            await db.orders.update_one(
+                {"id": order.id},
+                {"$set": {
+                    "coinpal_payment_id": payment_result.get('payment_id'),
+                    "coinpal_payment_url": payment_result.get('payment_url'),
+                    "coinpal_qr_code": payment_result.get('qr_code')
+                }}
+            )
+    
+    # Envoyer email de confirmation
+    try:
+        await email_service.send_order_confirmation(order.model_dump())
+    except Exception as e:
+        logger.error(f"Failed to send order confirmation email: {str(e)}")
+    
     return order
 
 @api_router.get("/orders", response_model=List[Order])
