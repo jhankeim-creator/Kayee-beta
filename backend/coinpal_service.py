@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class CoinPalService:
     """
     Service pour intégrer CoinPal.io pour les paiements crypto
-    Documentation: https://coinpal.io/api-docs
+    Documentation: https://docs.coinpal.io/
     """
     
     def __init__(self):
