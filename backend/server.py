@@ -398,6 +398,14 @@ async def update_order_status(
     payment_status: Optional[str] = None,
     admin: User = Depends(get_current_admin)
 ):
+    # Récupérer l'ancienne commande
+    old_order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if not old_order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    old_status = old_order.get("status")
+    old_payment_status = old_order.get("payment_status")
+    
     update_data = {"status": status}
     if payment_status:
         update_data["payment_status"] = payment_status
@@ -406,8 +414,25 @@ async def update_order_status(
         {"id": order_id},
         {"$set": update_data}
     )
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Récupérer la commande mise à jour
+    updated_order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    order_obj = Order(**parse_from_mongo(updated_order))
+    
+    # Envoyer notifications email
+    try:
+        # Si le statut a changé
+        if status != old_status:
+            await email_service.send_order_status_update(
+                order_obj.model_dump(),
+                old_status
+            )
+        
+        # Si le paiement est confirmé
+        if payment_status == "confirmed" and old_payment_status != "confirmed":
+            await email_service.send_payment_confirmation(order_obj.model_dump())
+    except Exception as e:
+        logger.error(f"Failed to send notification email: {str(e)}")
     
     return {"message": "Order updated successfully"}
 
