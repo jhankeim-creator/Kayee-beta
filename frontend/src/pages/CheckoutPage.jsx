@@ -77,11 +77,12 @@ const CheckoutPage = () => {
   };
 
   const paymentMethods = [
-    { id: 'stripe', name: 'Credit Card (Stripe)', icon: CreditCard, description: 'Pay with credit/debit card' },
-    { id: 'coinpal', name: 'CoinPal.io', icon: Coins, description: 'Pay with crypto via CoinPal.io' },
-    { id: 'binance', name: 'Binance Pay', icon: Coins, description: 'Pay with crypto via Binance' },
-    { id: 'plisio', name: 'Plisio', icon: Wallet, description: 'Multi-crypto payment' },
-    { id: 'manual', name: 'Manual Payment', icon: DollarSign, description: 'Bank transfer or manual crypto' }
+    { id: 'stripe', name: 'Carte Bancaire (Stripe)', icon: CreditCard, description: 'Paiement par carte bancaire' },
+    { id: 'paypal', name: 'PayPal', icon: DollarSign, description: 'Paiement sécurisé via PayPal' },
+    { id: 'coinpal', name: 'CoinPal.io', icon: Coins, description: 'Crypto: BTC, ETH, USDT et plus' },
+    { id: 'binance', name: 'Binance Pay', icon: Coins, description: '0% frais - Paiement crypto instantané' },
+    { id: 'plisio', name: 'Plisio', icon: Wallet, description: '100+ cryptomonnaies acceptées' },
+    { id: 'manual', name: 'Paiement Manuel', icon: DollarSign, description: 'Virement bancaire ou crypto manuel' }
   ];
 
   return (
