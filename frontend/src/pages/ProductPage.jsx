@@ -2,8 +2,9 @@ import { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CartContext } from '../App';
 import { Button } from '../components/ui/button';
-import { Minus, Plus, ShoppingCart } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, Star } from 'lucide-react';
 import Footer from '../components/Footer';
+import ReviewSystem from '../components/ReviewSystem';
 import axios from 'axios';
 import { toast } from 'sonner';
 
