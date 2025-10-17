@@ -158,7 +158,7 @@ async def create_review(review: ReviewCreate):
     # Update product rating
     await update_product_rating(review.product_id)
     
-    return review_data
+    return parse_from_mongo(review_data)
 
 @complete_router.get("/reviews/product/{product_id}")
 async def get_product_reviews(product_id: str):
