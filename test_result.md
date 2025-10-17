@@ -150,8 +150,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Plisio Payment Integration"
-  stuck_tasks: []
+    - "E-commerce Flow with Plisio Integration"
+  stuck_tasks:
+    - "E-commerce Flow with Plisio Integration"
   test_all: false
   test_priority: "high_first"
 
