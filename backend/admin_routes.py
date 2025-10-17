@@ -350,6 +350,15 @@ async def update_customer(customer_id: str, updates: CustomerUpdate):
     return Customer(**customer)
 
 
+@admin_router.delete("/customers/{customer_id}")
+async def delete_customer(customer_id: str):
+    """Delete a customer"""
+    result = await db.customers.delete_one({"id": customer_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    return {"message": "Customer deleted"}
+
+
 @admin_router.get("/customers/{customer_id}/orders")
 async def get_customer_orders(customer_id: str):
     """Get all orders for a customer"""
