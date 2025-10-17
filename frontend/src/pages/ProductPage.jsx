@@ -180,6 +180,15 @@ const ProductPage = () => {
             </div>
           </div>
         </div>
+        
+        {/* Reviews Section */}
+        <div className="container mx-auto px-4 py-12">
+          <ReviewSystem
+            productId={id}
+            reviews={reviews}
+            onReviewSubmitted={loadReviews}
+          />
+        </div>
       </div>
       <Footer />
     </div>
