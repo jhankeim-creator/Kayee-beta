@@ -16,6 +16,7 @@ const CheckoutPage = () => {
   const { cart, cartTotal, clearCart, API } = useContext(CartContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,10 +30,10 @@ const CheckoutPage = () => {
   });
 
   useEffect(() => {
-    if (cart.length === 0) {
+    if (cart.length === 0 && !orderPlaced) {
       navigate('/cart');
     }
-  }, [cart, navigate]);
+  }, [cart, navigate, orderPlaced]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
