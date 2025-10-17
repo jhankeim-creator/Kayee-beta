@@ -621,14 +621,16 @@ async def coinpal_webhook(request: Request):
         logger.error(f"Webhook error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
 
-# Import payment and oauth routes
+# Import payment, oauth and admin routes
 from payment_routes import payment_router
 from oauth_routes import oauth_router
+from admin_routes import admin_router
 
 # Include routers in the main app
 app.include_router(api_router)
 app.include_router(payment_router, prefix="/api")
 app.include_router(oauth_router, prefix="/api")
+app.include_router(admin_router, prefix="/api")
 
 app.add_middleware(
     CORSMiddleware,
