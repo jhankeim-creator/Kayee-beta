@@ -383,10 +383,16 @@ async def create_product(product_data: ProductCreate, admin: User = Depends(get_
     return product
 
 @api_router.put("/products/{product_id}", response_model=Product)
-async def update_product(product_id: str, product_data: ProductCreate, admin: User = Depends(get_current_admin)):
+async def update_product(product_id: str, product_data: ProductUpdate, admin: User = Depends(get_current_admin)):
+    update_data = {k: v for k, v in product_data.model_dump().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc)
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No updates provided")
+    
     result = await db.products.update_one(
         {"id": product_id},
-        {"$set": product_data.model_dump()}
+        {"$set": prepare_for_mongo(update_data)}
     )
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Product not found")
