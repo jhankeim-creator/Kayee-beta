@@ -249,8 +249,14 @@ const AdminProductAdd = () => {
                 <p className="text-[#d4af37] font-semibold">Drop files here...</p>
               ) : (
                 <div>
-                  <p className="text-gray-600 mb-2">Drag & drop images/videos or click to browse</p>
-                  <p className="text-sm text-gray-400">Supports: JPG, PNG, GIF, WebP, MP4, MOV</p>
+                  <p className="text-gray-600 mb-2 font-semibold">Drag & drop images/videos here</p>
+                  <p className="text-sm text-gray-500 mb-3">or</p>
+                  <Button type="button" variant="outline" className="mb-2">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Browse Files from Computer
+                  </Button>
+                  <p className="text-xs text-gray-400 mt-2">Supports: JPG, PNG, GIF, WebP, MP4, MOV</p>
+                  <p className="text-xs text-gray-400">Max file size: 10MB per file</p>
                 </div>
               )}
             </div>
