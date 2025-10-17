@@ -7,14 +7,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import AdminProducts from '../components/AdminProducts';
 import AdminOrders from '../components/AdminOrders';
 import AdminCategories from '../components/AdminCategories';
+import AdminDashboardStats from '../components/admin/AdminDashboard';
+import AdminCoupons from '../components/admin/AdminCoupons';
+import AdminCustomers from '../components/admin/AdminCustomers';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Package, ShoppingCart, Users, DollarSign, Home } from 'lucide-react';
+import { Package, ShoppingCart, Users, DollarSign, Home, LayoutDashboard, Tag, UserCircle, FolderTree, Settings } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { user, token, API } = useContext(CartContext);
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,21 +29,7 @@ const AdminDashboard = () => {
       navigate('/');
       return;
     }
-    loadStats();
   }, [user, token]);
-
-  const loadStats = async () => {
-    try {
-      const response = await axios.get(`${API}/admin/stats`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setStats(response.data);
-    } catch (error) {
-      console.error('Failed to load stats:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (!user || user.role !== 'admin') {
     return <Navigate to="/admin/login" />;
@@ -71,64 +58,57 @@ const AdminDashboard = () => {
             </Button>
           </div>
 
-          {/* Stats Cards */}
-          {stats && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-600">Total Products</CardTitle>
-                  <Package className="h-5 w-5 text-[#d4af37]" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold" data-testid="stat-products">{stats.total_products}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-600">Total Orders</CardTitle>
-                  <ShoppingCart className="h-5 w-5 text-[#d4af37]" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold" data-testid="stat-orders">{stats.total_orders}</div>
-                  <p className="text-xs text-gray-600 mt-1">{stats.pending_orders} pending</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-600">Total Customers</CardTitle>
-                  <Users className="h-5 w-5 text-[#d4af37]" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold" data-testid="stat-users">{stats.total_users}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-600">Total Revenue</CardTitle>
-                  <DollarSign className="h-5 w-5 text-[#d4af37]" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold" data-testid="stat-revenue">${stats.total_revenue.toFixed(2)}</div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
           {/* Management Tabs */}
           <Card>
             <CardContent className="p-6">
-              <Tabs defaultValue="products">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="products" data-testid="tab-products">Products</TabsTrigger>
-                  <TabsTrigger value="orders" data-testid="tab-orders">Orders</TabsTrigger>
-                  <TabsTrigger value="categories" data-testid="tab-categories">Categories</TabsTrigger>
+              <Tabs defaultValue="dashboard">
+                <TabsList className="mb-6 flex flex-wrap gap-2">
+                  <TabsTrigger value="dashboard" data-testid="tab-dashboard" className="flex items-center gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </TabsTrigger>
+                  <TabsTrigger value="products" data-testid="tab-products" className="flex items-center gap-2">
+                    <Package className="h-4 w-4" />
+                    Products
+                  </TabsTrigger>
+                  <TabsTrigger value="orders" data-testid="tab-orders" className="flex items-center gap-2">
+                    <ShoppingCart className="h-4 w-4" />
+                    Orders
+                  </TabsTrigger>
+                  <TabsTrigger value="customers" data-testid="tab-customers" className="flex items-center gap-2">
+                    <UserCircle className="h-4 w-4" />
+                    Customers
+                  </TabsTrigger>
+                  <TabsTrigger value="coupons" data-testid="tab-coupons" className="flex items-center gap-2">
+                    <Tag className="h-4 w-4" />
+                    Coupons
+                  </TabsTrigger>
+                  <TabsTrigger value="categories" data-testid="tab-categories" className="flex items-center gap-2">
+                    <FolderTree className="h-4 w-4" />
+                    Categories
+                  </TabsTrigger>
                 </TabsList>
+                
+                <TabsContent value="dashboard">
+                  <AdminDashboardStats />
+                </TabsContent>
+                
                 <TabsContent value="products">
                   <AdminProducts />
                 </TabsContent>
+                
                 <TabsContent value="orders">
                   <AdminOrders />
                 </TabsContent>
+                
+                <TabsContent value="customers">
+                  <AdminCustomers />
+                </TabsContent>
+                
+                <TabsContent value="coupons">
+                  <AdminCoupons />
+                </TabsContent>
+                
                 <TabsContent value="categories">
                   <AdminCategories />
                 </TabsContent>
