@@ -88,41 +88,57 @@ const ShopPage = () => {
               <p className="text-gray-600 text-lg">No products found in this category.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {products.map((product) => (
                 <Card
                   key={product.id}
-                  className="group cursor-pointer border-none shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  className="group cursor-pointer border-none shadow-md hover:shadow-2xl transition-all duration-300"
                   onClick={() => navigate(`/product/${product.id}`)}
                   data-testid={`product-card-${product.id}`}
                 >
-                  <div className="relative overflow-hidden">
+                  <div className="relative overflow-hidden aspect-square">
                     <img
                       src={product.images[0]}
                       alt={product.name}
-                      className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    {product.featured && (
-                      <div className="absolute top-4 right-4 bg-[#d4af37] text-white px-3 py-1 text-sm font-semibold">
-                        Featured
-                      </div>
-                    )}
-                    {product.stock <= 5 && product.stock > 0 && (
-                      <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 text-sm font-semibold">
-                        Only {product.stock} left
+                    {/* Multiple Badges */}
+                    <div className="absolute top-3 left-3 flex flex-col gap-2">
+                      {product.on_sale && (
+                        <span className="bg-red-600 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                          SALE
+                        </span>
+                      )}
+                      {product.is_new && (
+                        <span className="bg-green-600 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                          NEW
+                        </span>
+                      )}
+                      {product.best_seller && (
+                        <span className="bg-[#d4af37] text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                          BEST SELLER
+                        </span>
+                      )}
+                      {product.stock <= 5 && product.stock > 0 && !product.on_sale && !product.is_new && !product.best_seller && (
+                        <span className="bg-orange-600 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                          Only {product.stock} left
+                        </span>
+                      )}
+                    </div>
+                    {product.featured && !product.on_sale && !product.is_new && !product.best_seller && (
+                      <div className="absolute top-3 right-3 bg-purple-600 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                        FEATURED
                       </div>
                     )}
                     {product.stock === 0 && (
-                      <div className="absolute top-4 left-4 bg-gray-800 text-white px-3 py-1 text-sm font-semibold">
-                        Out of Stock
+                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                        <span className="bg-gray-800 text-white px-4 py-2 text-sm font-bold rounded">
+                          Out of Stock
+                        </span>
                       </div>
                     )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-lg mb-2 line-clamp-1">{product.name}</h3>
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-[#d4af37]">${product.price.toFixed(2)}</span>
+                    {/* Quick Add Button on Hover */}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <Button
                         size="sm"
                         onClick={(e) => {
@@ -130,11 +146,24 @@ const ShopPage = () => {
                           addToCart(product);
                         }}
                         disabled={product.stock === 0}
-                        className="bg-black hover:bg-gray-800 text-white"
+                        className="bg-white text-black hover:bg-[#d4af37] hover:text-white font-semibold px-6"
                         data-testid={`add-to-cart-${product.id}`}
                       >
-                        {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                        {product.stock === 0 ? 'Out of Stock' : 'Quick Add'}
                       </Button>
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-base mb-2 line-clamp-2 min-h-[3rem]">{product.name}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      {product.on_sale && product.compare_at_price ? (
+                        <>
+                          <span className="text-xl font-bold text-red-600">${product.price.toFixed(2)}</span>
+                          <span className="text-sm text-gray-500 line-through">${product.compare_at_price.toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="text-xl font-bold text-[#d4af37]">${product.price.toFixed(2)}</span>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
