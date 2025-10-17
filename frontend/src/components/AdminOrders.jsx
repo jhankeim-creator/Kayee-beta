@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Eye } from 'lucide-react';
+import { Eye, Trash2, Edit } from 'lucide-react';
 
 const AdminOrders = () => {
   const { API, token } = useContext(CartContext);
@@ -45,6 +45,21 @@ const AdminOrders = () => {
     } catch (error) {
       console.error('Failed to update order:', error);
       toast.error('Failed to update order');
+    }
+  };
+
+  const deleteOrder = async (orderId) => {
+    if (!window.confirm('Delete this order permanently?')) return;
+    
+    try {
+      await axios.delete(`${API}/orders/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Order deleted successfully');
+      loadOrders();
+    } catch (error) {
+      console.error('Failed to delete order:', error);
+      toast.error('Failed to delete order');
     }
   };
 
