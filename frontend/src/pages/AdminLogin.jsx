@@ -155,6 +155,17 @@ const AdminLogin = () => {
               </form>
             </TabsContent>
           </Tabs>
+
+          {/* Social Authentication */}
+          <div className="mt-6">
+            <SocialAuth
+              onSuccess={(user) => {
+                toast.success(`Connecté en tant que ${user.name}`);
+                // Simuler une connexion réussie en mode démo
+                navigate('/');
+              }}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>
