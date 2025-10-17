@@ -148,6 +148,8 @@ function App() {
             <Route path="/track-order" element={<TrackOrderPage />} />
             <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/faq" element={<FAQPage />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/*" element={<AdminDashboard />} />
           </Routes>
