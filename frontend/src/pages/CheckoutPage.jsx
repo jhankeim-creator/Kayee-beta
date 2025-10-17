@@ -67,6 +67,7 @@ const CheckoutPage = () => {
       };
 
       const response = await axios.post(`${API}/orders`, orderData);
+      setOrderPlaced(true);
       clearCart();
       toast.success('Order placed successfully!');
       navigate(`/order-success/${response.data.id}`);
