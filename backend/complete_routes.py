@@ -4,6 +4,7 @@ Complete API routes for full e-commerce functionality
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from typing import List, Optional
 from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import BaseModel
 import os
 from datetime import datetime, timezone
 import uuid
