@@ -31,39 +31,36 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden mt-20">
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1613909671501-f9678ffc1d33?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzV8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBmYXNoaW9ufGVufDB8fHx8MTc2MDQ4NzY4OXww&ixlib=rb-4.1.0&q=85)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className="absolute inset-0 bg-black/40"></div>
-        </div>
-
-        <div className="relative z-10 text-center text-white px-4">
-          <h1
-            className="text-5xl md:text-7xl font-bold mb-6"
-            style={{ fontFamily: 'Playfair Display' }}
-            data-testid="hero-title"
-          >
-            Elegance Redefined
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto font-light">
-            Discover luxury fashion and exquisite jewelry that speaks to your style
-          </p>
-          <Button
-            onClick={() => navigate('/shop')}
-            size="lg"
-            className="bg-[#d4af37] hover:bg-[#b8941f] text-white px-8 py-6 text-lg rounded-none"
-            data-testid="shop-now-button"
-          >
-            Shop Now <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+    <div className="min-h-screen bg-white">
+      {/* Hero Section with Background Image */}
+      <section
+        className="relative h-[600px] bg-cover bg-center"
+        style={{
+          backgroundImage: 'url(/hero-bg.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div className="relative h-full flex items-center justify-center text-center px-4">
+          <div className="max-w-4xl">
+            <h1
+              className="text-5xl md:text-7xl font-bold text-white mb-6"
+              style={{ fontFamily: 'Playfair Display' }}
+            >
+              Luxury Replica Watches
+            </h1>
+            <p className="text-xl md:text-2xl text-white mb-8">
+              Highest Quality 1:1 Superclone Watches
+            </p>
+            <Button
+              onClick={() => navigate('/shop')}
+              size="lg"
+              className="bg-[#d4af37] hover:bg-[#b8941f] text-white text-lg px-8 py-6"
+            >
+              Shop Now
+            </Button>
+          </div>
         </div>
       </section>
 
