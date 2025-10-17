@@ -342,25 +342,92 @@ async def create_order(order_data: OrderCreate):
     order_doc = prepare_for_mongo(order.model_dump())
     await db.orders.insert_one(order_doc)
     
-    # Si le paiement est CoinPal, créer une demande de paiement
-    if order_data.payment_method == 'coinpal':
-        payment_result = await coinpal_service.create_payment(
-            order_id=order.id,
-            amount=order.total,
-            description=f"Order {order_number}",
-            customer_email=order.user_email
-        )
+    # Créer le paiement selon la méthode choisie
+    payment_info = {}
+    
+    try:
+        if order_data.payment_method == 'stripe':
+            payment_result = await stripe_service.create_payment_link(
+                order_id=order.id,
+                amount=order.total,
+                currency="USD",
+                description=f"Order {order_number}",
+                customer_email=order.user_email
+            )
+            if payment_result.get('success'):
+                payment_info = {
+                    "stripe_payment_id": payment_result.get('payment_id'),
+                    "stripe_payment_url": payment_result.get('payment_url')
+                }
         
-        # Sauvegarder les infos de paiement dans la commande
-        if payment_result.get('success'):
-            await db.orders.update_one(
-                {"id": order.id},
-                {"$set": {
+        elif order_data.payment_method == 'paypal':
+            payment_result = await paypal_service.create_order(
+                order_id=order.id,
+                amount=order.total,
+                currency="USD",
+                description=f"Order {order_number}"
+            )
+            if payment_result.get('success'):
+                payment_info = {
+                    "paypal_order_id": payment_result.get('order_id'),
+                    "paypal_approval_url": payment_result.get('approval_url')
+                }
+        
+        elif order_data.payment_method == 'coinpal':
+            payment_result = await coinpal_service.create_payment(
+                order_id=order.id,
+                amount=order.total,
+                currency="USD",
+                description=f"Order {order_number}",
+                customer_email=order.user_email
+            )
+            if payment_result.get('success'):
+                payment_info = {
                     "coinpal_payment_id": payment_result.get('payment_id'),
                     "coinpal_payment_url": payment_result.get('payment_url'),
                     "coinpal_qr_code": payment_result.get('qr_code')
-                }}
+                }
+        
+        elif order_data.payment_method == 'plisio':
+            payment_result = await plisio_service.create_invoice(
+                order_number=order.id,
+                amount=order.total,
+                source_currency="USD",
+                description=f"Order {order_number}",
+                email=order.user_email
             )
+            if payment_result.get('success'):
+                payment_info = {
+                    "plisio_invoice_id": payment_result.get('invoice_id'),
+                    "plisio_invoice_url": payment_result.get('invoice_url'),
+                    "plisio_qr_code": payment_result.get('qr_code'),
+                    "plisio_wallet_hash": payment_result.get('wallet_hash')
+                }
+        
+        elif order_data.payment_method == 'binance':
+            payment_result = await binance_service.create_order(
+                merchant_order_no=order.id,
+                total_amount=order.total,
+                currency="USDT",
+                description=f"Order {order_number}",
+                buyer_email=order.user_email
+            )
+            if payment_result.get('success'):
+                payment_info = {
+                    "binance_order_id": payment_result.get('order_id'),
+                    "binance_checkout_url": payment_result.get('checkout_url'),
+                    "binance_qr_code": payment_result.get('qr_code')
+                }
+        
+        # Mettre à jour la commande avec les infos de paiement
+        if payment_info:
+            await db.orders.update_one(
+                {"id": order.id},
+                {"$set": payment_info}
+            )
+    
+    except Exception as e:
+        logger.error(f"Failed to create payment for order {order.id}: {str(e)}")
     
     # Envoyer email de confirmation
     try:
