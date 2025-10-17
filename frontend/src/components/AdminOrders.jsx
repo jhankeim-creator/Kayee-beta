@@ -149,15 +149,24 @@ const AdminOrders = () => {
 
               <div className="flex justify-between items-center pt-4 border-t">
                 <p className="text-sm text-gray-600">{order.items.length} item(s)</p>
-                <Button
-                  onClick={() => viewOrder(order)}
-                  variant="outline"
-                  size="sm"
-                  data-testid={`view-order-${order.id}`}
-                >
-                  <Eye className="mr-2 h-4 w-4" />
-                  View Details
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => viewOrder(order)}
+                    variant="outline"
+                    size="sm"
+                    data-testid={`view-order-${order.id}`}
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    View
+                  </Button>
+                  <Button
+                    onClick={() => deleteOrder(order.id)}
+                    variant="destructive"
+                    size="sm"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           ))
