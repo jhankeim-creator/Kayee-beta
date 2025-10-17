@@ -159,3 +159,5 @@ test_plan:
 agent_communication:
     - agent: "testing"
       message: "Plisio payment flow testing completed successfully. All backend APIs are working correctly. The system is using production Plisio API with real invoice creation. Order creation, field validation, and retrieval all functioning as expected. No issues found."
+    - agent: "testing"
+      message: "Frontend testing completed. HomePage 2-column display ✅ WORKING. E-commerce flow with Plisio ⚠️ MOSTLY WORKING but has checkout navigation issue. The Plisio integration itself is perfect - real invoices are created, green payment button works, valid URLs generated. Issue: CheckoutPage has React state management error causing redirect to cart instead of order success page after form submission. Backend order creation works fine. Need to fix CheckoutPage component navigation logic."
