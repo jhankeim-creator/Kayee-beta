@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Suite for Plisio Payment Flow
-Tests the complete Plisio payment integration
+Backend API Testing Suite for Ecwid-style Admin API Endpoints
+Tests the complete admin dashboard functionality
 """
 
 import requests
@@ -22,7 +22,7 @@ def get_backend_url():
         print(f"❌ Error reading frontend .env: {e}")
         return None
 
-class PlisioPaymentTester:
+class AdminAPITester:
     def __init__(self):
         self.backend_url = get_backend_url()
         if not self.backend_url:
