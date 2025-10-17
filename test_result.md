@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the complete Plisio payment flow including order creation, Plisio field validation, and order retrieval"
+user_problem_statement: "Test the new Ecwid-style Admin API endpoints including dashboard stats, coupons, customers, store settings, and advanced filtering"
 
 backend:
   - task: "Plisio Payment Integration"
@@ -116,6 +116,78 @@ backend:
         - working: true
           agent: "testing"
           comment: "✅ Complete Plisio payment flow tested successfully. All 5 tests passed: 1) Backend health check ✅ 2) Plisio mode detection (Production mode with real API key) ✅ 3) Order creation with Plisio payment method - returns required fields (plisio_invoice_id, plisio_invoice_url) ✅ 4) URL format validation for production Plisio URLs ✅ 5) Order retrieval by ID with Plisio fields intact ✅. Test order created: ac2cebe7-5715-43da-8cc4-ace55183f772 with invoice ID: 68f1bb48e38f58cb92044bc5. Plisio service is working in production mode with real API integration."
+
+  - task: "Admin Dashboard Stats API"
+    implemented: true
+    working: true
+    file: "admin_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ Dashboard stats API working perfectly. GET /api/admin/dashboard/stats returns all required fields: today_sales ($12,620.62), today_orders (19), week_sales ($13,820.59), total_customers (5), low_stock_products (167), sales_chart (7 entries), recent_orders (10), top_products (5). All aggregated statistics are calculated correctly with proper date filtering."
+
+  - task: "Admin Coupons Management API"
+    implemented: true
+    working: true
+    file: "admin_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ Coupons API fully functional. GET /api/admin/coupons returns 4 coupons (WELCOME10, SUMMER20, FREESHIP, VIP50) with correct data structure. POST /api/admin/coupons/validate working perfectly - tested with WELCOME10 code and $100 cart total, returned valid=true with $10.00 discount amount. Coupon validation logic handles percentage and fixed discounts correctly."
+
+  - task: "Admin Customers CRM API"
+    implemented: true
+    working: true
+    file: "admin_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ Customers API working correctly. GET /api/admin/customers returns 5 customers with complete profiles including order history. Customer data includes id, email, name, total_orders, total_spent, customer_group (VIP classification), and order tracking. Sample customer shows 15 orders totaling $10,775.01 with VIP status."
+
+  - task: "Store Settings Configuration API"
+    implemented: true
+    working: true
+    file: "admin_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ Store settings API functioning properly. GET /api/admin/settings returns complete store configuration with 18 total fields including store_name (LuxeBoutique), currency (USD), tax_rate (0.0), low_stock_threshold (5), email_notifications, and free_shipping_threshold. All 6 expected core fields present."
+
+  - task: "Advanced Product Filtering API"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ Advanced product filtering working perfectly. All 4 filter tests passed: 1) on_sale=true (100 products) ✅ 2) is_new=true (100 products) ✅ 3) best_seller=true (100 products) ✅ 4) sort_by=price&sort_order=asc (sorted correctly, lowest price $50.45) ✅. Product badges (on_sale, is_new, best_seller) are properly implemented and filtering works as expected."
+
+  - task: "Advanced Order Filtering API"
+    implemented: true
+    working: true
+    file: "admin_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ Order filtering API working correctly. GET /api/admin/orders/filters supports advanced filtering: 1) status=pending returns 22 orders ✅ 2) payment_method=plisio returns 18 orders ✅. Response structure includes orders array, total count, and pagination info. All filter parameters working as expected."
 
 frontend:
   - task: "HomePage Product Display (2 Columns)"
