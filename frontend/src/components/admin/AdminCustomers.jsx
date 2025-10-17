@@ -184,6 +184,7 @@ const AdminCustomers = () => {
                   <th className="text-left p-3 font-semibold">Orders</th>
                   <th className="text-left p-3 font-semibold">Total Spent</th>
                   <th className="text-left p-3 font-semibold">Last Order</th>
+                  <th className="text-left p-3 font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -223,6 +224,15 @@ const AdminCustomers = () => {
                           ? new Date(customer.last_order_date).toLocaleDateString()
                           : '-'}
                       </p>
+                    </td>
+                    <td className="p-3">
+                      <Button
+                        onClick={() => deleteCustomer(customer.id)}
+                        variant="ghost"
+                        size="sm"
+                      >
+                        <Trash2 className="h-4 w-4 text-red-600" />
+                      </Button>
                     </td>
                   </tr>
                 ))}
