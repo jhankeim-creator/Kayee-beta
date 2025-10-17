@@ -23,6 +23,17 @@ db = client[os.environ['DB_NAME']]
 UPLOAD_DIR = Path("/app/backend/uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
+# ==================== HELPER FUNCTIONS ====================
+
+def parse_from_mongo(item: dict) -> dict:
+    """Convert ISO strings back to datetime objects and remove _id"""
+    if '_id' in item:
+        del item['_id']
+    for key, value in item.items():
+        if key in ['created_at'] and isinstance(value, str):
+            item[key] = datetime.fromisoformat(value)
+    return item
+
 # ==================== MODELS ====================
 
 class ReviewCreate(BaseModel):
