@@ -2,6 +2,12 @@ import os
 import requests
 import logging
 from typing import Dict, Optional
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load environment variables
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +21,7 @@ class PlisioService:
         self.api_key = os.environ.get('PLISIO_API_KEY', 'your_plisio_api_key')
         self.base_url = "https://plisio.net/api/v1"
         self.is_demo = self.api_key == 'your_plisio_api_key'
+        logger.info(f"Plisio initialized - Demo mode: {self.is_demo}, Key: {self.api_key[:20]}...")
     
     async def create_invoice(
         self,
