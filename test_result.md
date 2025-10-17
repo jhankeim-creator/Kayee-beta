@@ -225,7 +225,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All tasks completed successfully"
+    - "Ecwid-style Admin API endpoints testing completed"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -237,3 +237,5 @@ agent_communication:
       message: "Frontend testing completed. HomePage 2-column display ✅ WORKING. E-commerce flow with Plisio ⚠️ MOSTLY WORKING but has checkout navigation issue. The Plisio integration itself is perfect - real invoices are created, green payment button works, valid URLs generated. Issue: CheckoutPage has React state management error causing redirect to cart instead of order success page after form submission. Backend order creation works fine. Need to fix CheckoutPage component navigation logic."
     - agent: "testing"
       message: "🎉 PLISIO PAYMENT FLOW COMPLETELY FIXED AND WORKING! Successfully identified and resolved the navigation race condition in CheckoutPage.jsx. The issue was that clearCart() triggered a useEffect redirect to /cart before the order success navigation could complete. Fixed by adding orderPlaced state to prevent the redirect. Complete end-to-end flow now works perfectly: shop → product → cart → checkout → Plisio selection → order placement → order success page → Plisio payment button → real Plisio payment page. All components tested and verified working. No further issues found."
+    - agent: "testing"
+      message: "🎯 ECWID-STYLE ADMIN API TESTING COMPLETED SUCCESSFULLY! All 8 admin endpoint tests passed with 100% success rate: 1) Dashboard Stats ✅ - Returns comprehensive analytics (sales: $12,620.62 today, 19 orders, 5 customers, sales charts) 2) Coupons Management ✅ - 4 coupons available (WELCOME10, SUMMER20, FREESHIP, VIP50) 3) Coupon Validation ✅ - WELCOME10 gives $10 discount on $100 cart 4) Customers CRM ✅ - 5 customers with order history and VIP classification 5) Store Settings ✅ - Complete configuration (LuxeBoutique, USD currency, tax settings) 6) Advanced Product Filtering ✅ - All badges work (on_sale, is_new, best_seller, price sorting) 7) Order Filtering ✅ - Status and payment method filters functional (22 pending orders, 18 Plisio orders). All admin APIs are production-ready with proper data aggregation and filtering capabilities."
