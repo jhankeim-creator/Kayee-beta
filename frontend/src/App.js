@@ -145,6 +145,7 @@ function App() {
             <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
             <Route path="/track-order" element={<TrackOrderPage />} />
             <Route path="/my-orders" element={<MyOrders />} />
+            <Route path="/faq" element={<FAQPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/*" element={<AdminDashboard />} />
           </Routes>
