@@ -109,7 +109,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
+      {/* Featured Products - 3 columns grid Ecwid-style */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -122,42 +122,76 @@ const HomePage = () => {
             <p className="text-gray-600 text-lg">Handpicked items just for you</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
               <Card
                 key={product.id}
-                className="group cursor-pointer border-none shadow-lg hover:shadow-xl transition-shadow duration-300"
+                className="group cursor-pointer border-none shadow-md hover:shadow-2xl transition-all duration-300"
                 onClick={() => navigate(`/product/${product.id}`)}
                 data-testid={`featured-product-${product.id}`}
               >
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden aspect-square">
                   <img
                     src={product.images[0]}
                     alt={product.name}
-                    className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  {product.featured && (
-                    <div className="absolute top-4 right-4 bg-[#d4af37] text-white px-3 py-1 text-sm font-semibold">
-                      Featured
+                  {/* Multiple Badges */}
+                  <div className="absolute top-3 left-3 flex flex-col gap-2">
+                    {product.on_sale && (
+                      <span className="bg-red-600 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                        SALE
+                      </span>
+                    )}
+                    {product.is_new && (
+                      <span className="bg-green-600 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                        NEW
+                      </span>
+                    )}
+                    {product.best_seller && (
+                      <span className="bg-[#d4af37] text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                        BEST SELLER
+                      </span>
+                    )}
+                  </div>
+                  {product.featured && !product.on_sale && !product.is_new && !product.best_seller && (
+                    <div className="absolute top-3 right-3 bg-purple-600 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                      FEATURED
                     </div>
                   )}
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-lg mb-2 line-clamp-1">{product.name}</h3>
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-[#d4af37]">${product.price.toFixed(2)}</span>
+                  {/* Quick Add Button on Hover */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <Button
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
                         addToCart(product);
                       }}
-                      className="bg-black hover:bg-gray-800 text-white"
+                      className="bg-white text-black hover:bg-[#d4af37] hover:text-white font-semibold px-6"
                     >
-                      Add to Cart
+                      Quick Add
                     </Button>
                   </div>
+                </div>
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-base mb-2 line-clamp-2 min-h-[3rem]">{product.name}</h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    {product.on_sale && product.compare_at_price ? (
+                      <>
+                        <span className="text-xl font-bold text-red-600">${product.price.toFixed(2)}</span>
+                        <span className="text-sm text-gray-500 line-through">${product.compare_at_price.toFixed(2)}</span>
+                      </>
+                    ) : (
+                      <span className="text-xl font-bold text-[#d4af37]">${product.price.toFixed(2)}</span>
+                    )}
+                  </div>
+                  {product.rating > 0 && (
+                    <div className="flex items-center gap-1 text-xs text-gray-600">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span>{product.rating.toFixed(1)}</span>
+                      {product.reviews_count > 0 && <span>({product.reviews_count})</span>}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
