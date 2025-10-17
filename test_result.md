@@ -190,7 +190,7 @@ backend:
           comment: "✅ Order filtering API working correctly. GET /api/admin/orders/filters supports advanced filtering: 1) status=pending returns 22 orders ✅ 2) payment_method=plisio returns 18 orders ✅. Response structure includes orders array, total count, and pagination info. All filter parameters working as expected."
 
 frontend:
-  - task: "HomePage Product Display (2 Columns)"
+  - task: "HomePage Ecwid-Style Design (3-4 Columns with Badges)"
     implemented: true
     working: true
     file: "src/pages/HomePage.jsx"
@@ -200,7 +200,19 @@ frontend:
     status_history:
         - working: true
           agent: "testing"
-          comment: "✅ HomePage 2-column product display verified successfully. Featured Collection section displays 4 products in grid-cols-2 layout as expected. Desktop responsive design working correctly."
+          comment: "✅ HomePage Ecwid-style design fully implemented and working perfectly! Features: 3-4 column responsive grid (md:grid-cols-3 lg:grid-cols-4), displays 12 products, complete badge system with SALE (3 red badges), NEW (12 green badges), BEST SELLER (gold badges), hover effects with Quick Add button appearing on product hover, red sale pricing with strikethrough original prices, image zoom on hover. All Ecwid-style features working as requested."
+        
+  - task: "Shop Page Badge System"
+    implemented: false
+    working: "NA"
+    file: "src/pages/ShopPage.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "⚠️ Shop page currently uses 2-column layout without the badge system that's implemented on homepage. Shop page displays 20 products but lacks SALE, NEW, BEST SELLER badges. The ShopPage.jsx implementation is different from HomePage.jsx and doesn't include the Ecwid-style badge system. This needs to be implemented to match the homepage design."
 
   - task: "E-commerce Flow with Plisio Integration"
     implemented: true
