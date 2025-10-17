@@ -167,6 +167,23 @@ const OrderSuccessPage = () => {
                     )}
 
                     {/* Binance Pay */}
+                    {/* Message pour les paiements qui n'ont pas été créés */}
+                    {!order.stripe_payment_url && !order.paypal_approval_url && !order.coinpal_payment_url && 
+                     !order.plisio_invoice_url && !order.binance_checkout_url && order.payment_method !== 'manual' && (
+                      <div className="text-sm space-y-3">
+                        <p className="font-semibold">🎮 Mode Démo Activé</p>
+                        <p>Les paiements sont en mode démonstration. Pour activer les paiements réels :</p>
+                        <ul className="list-disc ml-5 space-y-1">
+                          <li>Configurez vos clés API dans <code className="bg-gray-200 px-1">/app/backend/.env</code></li>
+                          <li>Redémarrez le backend</li>
+                          <li>Les liens de paiement seront générés automatiquement</li>
+                        </ul>
+                        <p className="text-xs text-gray-600 mt-2">
+                          Consultez <strong>/app/INTEGRATION_GUIDE.md</strong> pour plus d'informations
+                        </p>
+                      </div>
+                    )}
+
                     {order.payment_method === 'binance' && order.binance_checkout_url && (
                       <div className="text-sm space-y-3">
                         <p>Payez avec Binance Pay (0% de frais) :</p>
