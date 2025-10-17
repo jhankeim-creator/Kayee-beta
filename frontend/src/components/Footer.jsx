@@ -25,22 +25,27 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/shop" className="text-gray-400 hover:text-[#d4af37]">
-                  Shop All
-                </Link>
-              </li>
-              <li>
-                <Link to="/shop/fashion" className="text-gray-400 hover:text-[#d4af37]">
-                  Fashion
-                </Link>
-              </li>
-              <li>
-                <Link to="/shop/jewelry" className="text-gray-400 hover:text-[#d4af37]">
-                  Jewelry
+                  Shop
                 </Link>
               </li>
               <li>
                 <Link to="/track-order" className="text-gray-400 hover:text-[#d4af37]">
                   Track Order
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-gray-400 hover:text-[#d4af37]">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link to="/refund-policy" className="text-gray-400 hover:text-[#d4af37]">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className="text-gray-400 hover:text-[#d4af37]">
+                  FAQ
                 </Link>
               </li>
             </ul>
