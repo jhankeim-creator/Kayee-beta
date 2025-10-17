@@ -118,7 +118,29 @@ backend:
           comment: "✅ Complete Plisio payment flow tested successfully. All 5 tests passed: 1) Backend health check ✅ 2) Plisio mode detection (Production mode with real API key) ✅ 3) Order creation with Plisio payment method - returns required fields (plisio_invoice_id, plisio_invoice_url) ✅ 4) URL format validation for production Plisio URLs ✅ 5) Order retrieval by ID with Plisio fields intact ✅. Test order created: ac2cebe7-5715-43da-8cc4-ace55183f772 with invoice ID: 68f1bb48e38f58cb92044bc5. Plisio service is working in production mode with real API integration."
 
 frontend:
-  # No frontend testing performed as per instructions
+  - task: "HomePage Product Display (2 Columns)"
+    implemented: true
+    working: true
+    file: "src/pages/HomePage.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ HomePage 2-column product display verified successfully. Featured Collection section displays 4 products in grid-cols-2 layout as expected. Desktop responsive design working correctly."
+
+  - task: "E-commerce Flow with Plisio Integration"
+    implemented: true
+    working: false
+    file: "src/pages/CheckoutPage.jsx, src/pages/OrderSuccessPage.jsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "⚠️ E-commerce flow mostly functional but has checkout navigation issue. WORKING: Product selection ✅, Add to cart ✅, Cart page ✅, Checkout form ✅, Plisio payment selection ✅, Order creation ✅ (backend creates order successfully), Order Success page ✅ (when accessed directly), Plisio button ✅ (green button with valid URL: https://plisio.net/invoice/68f1bb48e38f58cb92044bc5). ISSUE: Checkout form submission redirects to cart page instead of order success page. React error: 'Cannot update component while rendering different component' suggests state management issue in CheckoutPage. Backend Plisio integration is fully functional."
 
 metadata:
   created_by: "testing_agent"
