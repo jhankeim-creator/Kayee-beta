@@ -27,7 +27,7 @@ class PlisioService:
         self,
         order_number: str,
         amount: float,
-        currency: str = "USD",
+        currency: str = "BTC",  # Crypto to receive (BTC, ETH, LTC, etc.)
         source_currency: str = "USD",
         description: str = "",
         email: str = "",
