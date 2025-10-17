@@ -153,9 +153,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "E-commerce Flow with Plisio Integration"
-  stuck_tasks:
-    - "E-commerce Flow with Plisio Integration"
+    - "All tasks completed successfully"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
