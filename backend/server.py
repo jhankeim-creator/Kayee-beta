@@ -122,6 +122,22 @@ class Order(BaseModel):
     phone: str
     notes: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    
+    # Payment gateway specific fields
+    stripe_payment_id: Optional[str] = None
+    stripe_payment_url: Optional[str] = None
+    paypal_order_id: Optional[str] = None
+    paypal_approval_url: Optional[str] = None
+    coinpal_payment_id: Optional[str] = None
+    coinpal_payment_url: Optional[str] = None
+    coinpal_qr_code: Optional[str] = None
+    plisio_invoice_id: Optional[str] = None
+    plisio_invoice_url: Optional[str] = None
+    plisio_qr_code: Optional[str] = None
+    plisio_wallet_hash: Optional[str] = None
+    binance_order_id: Optional[str] = None
+    binance_checkout_url: Optional[str] = None
+    binance_qr_code: Optional[str] = None
 
 class OrderCreate(BaseModel):
     user_email: str
