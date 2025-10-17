@@ -12,6 +12,7 @@ const ProductPage = () => {
   const { id } = useParams();
   const { API, addToCart } = useContext(CartContext);
   const [product, setProduct] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -19,6 +20,7 @@ const ProductPage = () => {
 
   useEffect(() => {
     loadProduct();
+    loadReviews();
   }, [id]);
 
   const loadProduct = async () => {
@@ -31,6 +33,15 @@ const ProductPage = () => {
       navigate('/shop');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadReviews = async () => {
+    try {
+      const response = await axios.get(`${API}/v2/reviews/product/${id}`);
+      setReviews(response.data);
+    } catch (error) {
+      console.error('Failed to load reviews:', error);
     }
   };
 
