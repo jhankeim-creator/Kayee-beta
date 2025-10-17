@@ -84,9 +84,41 @@ const OrderSuccessPage = () => {
                 </div>
 
                 {/* Payment Instructions */}
-                {order.payment_method !== 'stripe' && (
+                {order.payment_method !== 'manual' && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <h3 className="font-semibold mb-2">Instructions de paiement</h3>
+                    <h3 className="font-semibold mb-2">💳 Complétez votre paiement</h3>
+                    
+                    {/* Stripe */}
+                    {order.payment_method === 'stripe' && order.stripe_payment_url && (
+                      <div className="text-sm space-y-3">
+                        <p>Payez en toute sécurité avec votre carte bancaire :</p>
+                        <a
+                          href={order.stripe_payment_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block w-full text-center bg-[#635bff] hover:bg-[#5349e0] text-white font-semibold py-3 px-6 rounded"
+                        >
+                          Payer avec Stripe
+                        </a>
+                      </div>
+                    )}
+
+                    {/* PayPal */}
+                    {order.payment_method === 'paypal' && order.paypal_approval_url && (
+                      <div className="text-sm space-y-3">
+                        <p>Payez avec votre compte PayPal :</p>
+                        <a
+                          href={order.paypal_approval_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block w-full text-center bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold py-3 px-6 rounded"
+                        >
+                          Payer avec PayPal
+                        </a>
+                      </div>
+                    )}
+                    
+                    {/* CoinPal */}
                     {order.payment_method === 'coinpal' && order.coinpal_payment_url && (
                       <div className="text-sm space-y-3">
                         <p>Complétez votre paiement crypto via CoinPal.io :</p>
@@ -104,21 +136,63 @@ const OrderSuccessPage = () => {
                           Payer avec CoinPal.io
                         </a>
                         <p className="text-xs text-gray-600">
-                          Vous serez redirigé vers CoinPal.io pour effectuer votre paiement en toute sécurité.
+                          Accepte BTC, ETH, USDT, BNB et 50+ cryptos
                         </p>
                       </div>
                     )}
-                    {order.payment_method === 'binance' && (
-                      <p className="text-sm">
-                        Veuillez compléter votre paiement via Binance Pay. Le lien de paiement sera envoyé à votre email.
-                      </p>
+
+                    {/* Plisio */}
+                    {order.payment_method === 'plisio' && order.plisio_invoice_url && (
+                      <div className="text-sm space-y-3">
+                        <p>Payez avec 100+ cryptomonnaies via Plisio :</p>
+                        {order.plisio_qr_code && (
+                          <div className="flex justify-center">
+                            <img src={order.plisio_qr_code} alt="QR Code" className="w-48 h-48" />
+                          </div>
+                        )}
+                        {order.plisio_wallet_hash && (
+                          <div className="bg-white p-3 rounded border">
+                            <p className="text-xs font-mono break-all">{order.plisio_wallet_hash}</p>
+                          </div>
+                        )}
+                        <a
+                          href={order.plisio_invoice_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded"
+                        >
+                          Payer avec Plisio
+                        </a>
+                      </div>
                     )}
-                    {order.payment_method === 'plisio' && (
-                      <p className="text-sm">
-                        Veuillez compléter votre paiement crypto via Plisio. Les instructions ont été envoyées à votre email.
-                      </p>
+
+                    {/* Binance Pay */}
+                    {order.payment_method === 'binance' && order.binance_checkout_url && (
+                      <div className="text-sm space-y-3">
+                        <p>Payez avec Binance Pay (0% de frais) :</p>
+                        {order.binance_qr_code && (
+                          <div className="flex justify-center">
+                            <img src={order.binance_qr_code} alt="QR Code Binance" className="w-48 h-48" />
+                          </div>
+                        )}
+                        <a
+                          href={order.binance_checkout_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block w-full text-center bg-[#f3ba2f] hover:bg-[#e0aa1f] text-black font-semibold py-3 px-6 rounded"
+                        >
+                          Payer avec Binance Pay
+                        </a>
+                        <p className="text-xs text-gray-600">
+                          Paiement crypto instantané - 0% de frais
+                        </p>
+                      </div>
                     )}
-                    {order.payment_method === 'manual' && (
+                  </div>
+                )}
+
+                {/* Manual Payment */}
+                {order.payment_method === 'manual' && (
                       <div className="text-sm space-y-2">
                         <p><strong>Bank Transfer Details:</strong></p>
                         <p>Bank: Your Bank Name</p>
