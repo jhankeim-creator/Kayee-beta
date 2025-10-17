@@ -273,7 +273,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Ecwid-style Admin API endpoints testing completed"
+    - "Shop Page Badge System implementation needed"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
