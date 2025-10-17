@@ -127,7 +127,7 @@ async def delete_category(category_id: str):
 # ==================== REVIEWS ====================
 
 @complete_router.post("/reviews")
-async def create_review(product_id: str, user_name: str, user_email: str, rating: int, comment: str, images: List[str] = []):
+async def create_review(review: ReviewCreate):
     """Create review"""
     review_data = {
         "id": str(uuid.uuid4()),
