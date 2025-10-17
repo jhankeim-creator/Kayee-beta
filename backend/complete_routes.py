@@ -145,7 +145,7 @@ async def create_review(review: ReviewCreate):
     await db.reviews.insert_one(review_data)
     
     # Update product rating
-    await update_product_rating(product_id)
+    await update_product_rating(review.product_id)
     
     return review_data
 
