@@ -276,7 +276,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Shop Page Badge System implementation needed"
+    - "All Ecwid-style features verified in production"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
