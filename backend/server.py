@@ -88,20 +88,75 @@ class Product(BaseModel):
     name: str
     description: str
     price: float
-    images: List[str]
+    compare_at_price: Optional[float] = None  # Original price for sale display
+    cost: Optional[float] = None  # Cost price for profit calculation
+    images: List[str] = []
     category: str
     stock: int
+    sku: Optional[str] = None
+    barcode: Optional[str] = None
+    weight: Optional[float] = None
     featured: bool = False
+    on_sale: bool = False
+    is_new: bool = False
+    best_seller: bool = False
+    digital_product: bool = False
+    download_url: Optional[str] = None
+    tags: List[str] = []
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
+    has_variations: bool = False
+    variations_count: int = 0
+    rating: float = 0.0
+    reviews_count: int = 0
+    view_count: int = 0
+    sales_count: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ProductCreate(BaseModel):
     name: str
     description: str
     price: float
-    images: List[str]
+    compare_at_price: Optional[float] = None
+    cost: Optional[float] = None
+    images: List[str] = []
     category: str
-    stock: int
+    stock: int = 0
+    sku: Optional[str] = None
+    barcode: Optional[str] = None
+    weight: Optional[float] = None
     featured: bool = False
+    on_sale: bool = False
+    is_new: bool = False
+    best_seller: bool = False
+    digital_product: bool = False
+    download_url: Optional[str] = None
+    tags: List[str] = []
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
+
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    compare_at_price: Optional[float] = None
+    cost: Optional[float] = None
+    images: Optional[List[str]] = None
+    category: Optional[str] = None
+    stock: Optional[int] = None
+    sku: Optional[str] = None
+    barcode: Optional[str] = None
+    weight: Optional[float] = None
+    featured: Optional[bool] = None
+    on_sale: Optional[bool] = None
+    is_new: Optional[bool] = None
+    best_seller: Optional[bool] = None
+    digital_product: Optional[bool] = None
+    download_url: Optional[str] = None
+    tags: Optional[List[str]] = None
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
 
 class CartItem(BaseModel):
     product_id: str
