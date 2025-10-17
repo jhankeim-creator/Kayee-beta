@@ -17,6 +17,7 @@ import TrackOrderPage from './pages/TrackOrderPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import MyOrders from './pages/MyOrders';
+import FAQPage from './pages/FAQPage';
 import WhatsAppButton from './components/WhatsAppButton';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
