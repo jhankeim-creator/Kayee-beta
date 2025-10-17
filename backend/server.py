@@ -662,6 +662,14 @@ async def get_admin_stats(admin: User = Depends(get_current_admin)):
         "total_revenue": total_revenue
     }
 
+@api_router.delete("/orders/{order_id}")
+async def delete_order(order_id: str, admin: User = Depends(get_current_admin)):
+    """Delete an order"""
+    result = await db.orders.delete_one({"id": order_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return {"message": "Order deleted successfully"}
+
 # ===== COINPAL ROUTES =====
 
 @api_router.post("/coinpal/create-payment")
