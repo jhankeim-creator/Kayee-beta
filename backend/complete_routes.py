@@ -131,12 +131,12 @@ async def create_review(review: ReviewCreate):
     """Create review"""
     review_data = {
         "id": str(uuid.uuid4()),
-        "product_id": product_id,
-        "user_name": user_name,
-        "user_email": user_email,
-        "rating": rating,
-        "comment": comment,
-        "images": images,
+        "product_id": review.product_id,
+        "user_name": review.user_name,
+        "user_email": review.user_email,
+        "rating": review.rating,
+        "comment": review.comment,
+        "images": review.images,
         "status": "pending",
         "helpful_count": 0,
         "created_at": datetime.now(timezone.utc).isoformat()
