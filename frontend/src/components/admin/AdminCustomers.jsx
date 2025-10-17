@@ -38,6 +38,19 @@ const AdminCustomers = () => {
     }
   };
 
+  const deleteCustomer = async (customerId) => {
+    if (!window.confirm('Delete this customer and all their data?')) return;
+    
+    try {
+      await axios.delete(`${API}/admin/customers/${customerId}`);
+      toast.success('Customer deleted successfully');
+      loadCustomers();
+    } catch (error) {
+      console.error('Failed to delete customer:', error);
+      toast.error('Failed to delete customer');
+    }
+  };
+
   const filteredCustomers = customers.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.email.toLowerCase().includes(searchTerm.toLowerCase())
