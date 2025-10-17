@@ -441,6 +441,9 @@ async def create_order(order_data: OrderCreate):
                 {"id": order.id},
                 {"$set": payment_info}
             )
+            # Mettre à jour l'objet order avec les infos de paiement
+            for key, value in payment_info.items():
+                setattr(order, key, value)
     
     except Exception as e:
         logger.error(f"Failed to create payment for order {order.id}: {str(e)}")
