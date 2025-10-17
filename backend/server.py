@@ -291,12 +291,18 @@ async def register(user_data: UserCreate):
 
 @api_router.post("/auth/login", response_model=Token)
 async def login(credentials: UserLogin):
+    print(f"Login attempt for email: {credentials.email}")
     user_doc = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     
     if not user_doc:
+        print("User not found")
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    if not verify_password(credentials.password, user_doc.get('password_hash', '')):
+    print(f"User found: {user_doc.get('email')}")
+    password_valid = verify_password(credentials.password, user_doc.get('password_hash', ''))
+    print(f"Password valid: {password_valid}")
+    
+    if not password_valid:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     user_doc = parse_from_mongo(user_doc)
