@@ -69,6 +69,10 @@ const AdminDashboard = () => {
                     <LayoutDashboard className="h-4 w-4" />
                     Dashboard
                   </TabsTrigger>
+                  <TabsTrigger value="add-product" data-testid="tab-add-product" className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    Add Product
+                  </TabsTrigger>
                   <TabsTrigger value="products" data-testid="tab-products" className="flex items-center gap-2">
                     <Package className="h-4 w-4" />
                     Products
@@ -95,6 +99,10 @@ const AdminDashboard = () => {
                   <AdminDashboardStats />
                 </TabsContent>
                 
+                <TabsContent value="add-product">
+                  <AdminProductAdd />
+                </TabsContent>
+                
                 <TabsContent value="products">
                   <AdminProducts />
                 </TabsContent>
@@ -112,7 +120,7 @@ const AdminDashboard = () => {
                 </TabsContent>
                 
                 <TabsContent value="categories">
-                  <AdminCategories />
+                  <CategoryManager />
                 </TabsContent>
               </Tabs>
             </CardContent>
