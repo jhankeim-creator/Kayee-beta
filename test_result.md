@@ -132,7 +132,7 @@ frontend:
 
   - task: "E-commerce Flow with Plisio Integration"
     implemented: true
-    working: false
+    working: true
     file: "src/pages/CheckoutPage.jsx, src/pages/OrderSuccessPage.jsx"
     stuck_count: 1
     priority: "high"
@@ -141,6 +141,9 @@ frontend:
         - working: false
           agent: "testing"
           comment: "⚠️ E-commerce flow mostly functional but has checkout navigation issue. WORKING: Product selection ✅, Add to cart ✅, Cart page ✅, Checkout form ✅, Plisio payment selection ✅, Order creation ✅ (backend creates order successfully), Order Success page ✅ (when accessed directly), Plisio button ✅ (green button with valid URL: https://plisio.net/invoice/68f1bb48e38f58cb92044bc5). ISSUE: Checkout form submission redirects to cart page instead of order success page. React error: 'Cannot update component while rendering different component' suggests state management issue in CheckoutPage. Backend Plisio integration is fully functional."
+        - working: true
+          agent: "testing"
+          comment: "✅ COMPLETE PLISIO PAYMENT FLOW WORKING PERFECTLY! Fixed navigation issue by adding orderPlaced state to prevent cart redirect race condition. Full flow tested successfully: 1) Shop page ✅ 2) Product selection ✅ 3) Add to cart ✅ 4) Cart page ✅ 5) Checkout form ✅ 6) Plisio payment method selection ✅ 7) Order placement ✅ 8) Successful redirect to order success page ✅ 9) Order details display (Order: ORD-5B32E296, Amount: $705.02) ✅ 10) Green Plisio payment button visible and functional ✅ 11) Plisio URL format correct (https://plisio.net/invoice/68f1bf5363067adcd00c9966) ✅ 12) Plisio button click opens real Plisio payment page ✅. Backend integration working in production mode with real API. Navigation fix implemented in CheckoutPage.jsx."
 
 metadata:
   created_by: "testing_agent"
