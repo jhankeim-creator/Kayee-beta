@@ -1,12 +1,14 @@
 """
 Complete API routes for full e-commerce functionality
 """
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from typing import List, Optional
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 from datetime import datetime, timezone
 import uuid
+import shutil
+from pathlib import Path
 
 # Create router
 complete_router = APIRouter(prefix="/api/v2", tags=["complete"])
@@ -15,6 +17,49 @@ complete_router = APIRouter(prefix="/api/v2", tags=["complete"])
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+
+# Upload directory
+UPLOAD_DIR = Path("/app/backend/uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+# ==================== MEDIA UPLOAD ====================
+
+@complete_router.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    """Upload image or video"""
+    # Validate file type
+    allowed = ["image/jpeg", "image/png", "image/gif", "image/webp", "video/mp4"]
+    if file.content_type not in allowed:
+        raise HTTPException(status_code=400, detail="Invalid file type")
+    
+    # Generate unique filename
+    file_ext = Path(file.filename).suffix
+    unique_name = f"{uuid.uuid4()}{file_ext}"
+    file_path = UPLOAD_DIR / unique_name
+    
+    # Save file
+    with file_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Save to database
+    media = {
+        "id": str(uuid.uuid4()),
+        "filename": unique_name,
+        "original_name": file.filename,
+        "url": f"/uploads/{unique_name}",
+        "type": "image" if file.content_type.startswith("image") else "video",
+        "size": file_path.stat().st_size,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.media.insert_one(media)
+    
+    return {"url": media["url"], "id": media["id"], "type": media["type"]}
+
+@complete_router.get("/media")
+async def get_media():
+    """Get all uploaded media"""
+    media = await db.media.find({}, {"_id": 0}).sort("created_at", -1).limit(100).to_list(100)
+    return media
 
 # ==================== CATEGORIES ====================
 
