@@ -23,6 +23,16 @@ db = client[os.environ['DB_NAME']]
 UPLOAD_DIR = Path("/app/backend/uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
+# ==================== MODELS ====================
+
+class ReviewCreate(BaseModel):
+    product_id: str
+    user_name: str
+    user_email: str
+    rating: int
+    comment: str
+    images: List[str] = []
+
 # ==================== MEDIA UPLOAD ====================
 
 @complete_router.post("/upload")
