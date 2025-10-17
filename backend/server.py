@@ -343,6 +343,12 @@ async def delete_category(category_id: str, admin: User = Depends(get_current_ad
 async def get_products(
     category: Optional[str] = None, 
     featured: Optional[bool] = None,
+    on_sale: Optional[bool] = None,
+    is_new: Optional[bool] = None,
+    best_seller: Optional[bool] = None,
+    tags: Optional[str] = None,  # Comma-separated tags
+    sort_by: Optional[str] = "created_at",  # price, name, created_at, sales_count
+    sort_order: Optional[str] = "desc",  # asc or desc
     skip: int = 0,
     limit: int = 100
 ):
@@ -351,8 +357,19 @@ async def get_products(
         query["category"] = category
     if featured is not None:
         query["featured"] = featured
+    if on_sale is not None:
+        query["on_sale"] = on_sale
+    if is_new is not None:
+        query["is_new"] = is_new
+    if best_seller is not None:
+        query["best_seller"] = best_seller
+    if tags:
+        tag_list = [t.strip() for t in tags.split(",")]
+        query["tags"] = {"$in": tag_list}
     
-    products = await db.products.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
+    sort_direction = -1 if sort_order == "desc" else 1
+    
+    products = await db.products.find(query, {"_id": 0}).sort(sort_by, sort_direction).skip(skip).limit(limit).to_list(limit)
     for prod in products:
         parse_from_mongo(prod)
     return [Product(**prod) for prod in products]
