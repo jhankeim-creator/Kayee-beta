@@ -51,6 +51,11 @@ const Footer = () => {
             <h4 className="font-semibold mb-4">Customer Service</h4>
             <ul className="space-y-2 text-sm">
               <li>
+                <Link to="/faq" className="text-gray-400 hover:text-[#d4af37]">
+                  FAQ
+                </Link>
+              </li>
+              <li>
                 <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#d4af37] flex items-center">
                   <MessageCircle className="h-4 w-4 mr-2" />
                   WhatsApp Support
