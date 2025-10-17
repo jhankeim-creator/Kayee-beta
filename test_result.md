@@ -228,6 +228,42 @@ frontend:
         - working: true
           agent: "testing"
           comment: "✅ COMPLETE PLISIO PAYMENT FLOW WORKING PERFECTLY! Fixed navigation issue by adding orderPlaced state to prevent cart redirect race condition. Full flow tested successfully: 1) Shop page ✅ 2) Product selection ✅ 3) Add to cart ✅ 4) Cart page ✅ 5) Checkout form ✅ 6) Plisio payment method selection ✅ 7) Order placement ✅ 8) Successful redirect to order success page ✅ 9) Order details display (Order: ORD-5B32E296, Amount: $705.02) ✅ 10) Green Plisio payment button visible and functional ✅ 11) Plisio URL format correct (https://plisio.net/invoice/68f1bf5363067adcd00c9966) ✅ 12) Plisio button click opens real Plisio payment page ✅. Backend integration working in production mode with real API. Navigation fix implemented in CheckoutPage.jsx."
+        
+  - task: "Admin Dashboard with New Tabs"
+    implemented: true
+    working: true
+    file: "src/pages/AdminDashboard.jsx, src/components/admin/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ Admin Dashboard fully functional with all 6 Ecwid-style tabs: Dashboard, Products, Orders, Customers, Coupons, Categories. Dashboard Overview displays comprehensive statistics: Today's Sales ($14,589.71), Week Sales ($15,789.68), Total Customers (5), Pending Orders (23), Low Stock Items (167), Total Sales ($15,789.68). Includes Sales Trend chart (Last 7 Days), Top Products section, and Recent Orders section. All navigation and data loading working perfectly. Fixed admin login by creating proper admin user with bcrypt password hash."
+        
+  - task: "Admin Coupons Management"
+    implemented: true
+    working: true
+    file: "src/components/admin/AdminCoupons.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ Admin Coupons page fully functional displaying all 4 coupons: WELCOME10 (10% discount, 5/∞ uses), SUMMER20 (20% discount, 23/100 uses, expires 12/16/2025), FREESHIP ($10 discount, 45/∞ uses), VIP50 ($50 discount, 12/50 uses, expires 11/16/2025). Each coupon shows proper discount type, usage counts, minimum purchase requirements, expiry dates, and active status. Create new coupon functionality available with form for code, discount type, value, minimum purchase, max uses, and expiry date."
+        
+  - task: "Admin Customers CRM"
+    implemented: true
+    working: true
+    file: "src/components/admin/AdminCustomers.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ Admin Customers CRM fully functional with comprehensive customer management. Statistics cards show: Total Customers (5), VIP Customers (2), Total Revenue ($13,820.59), Total Orders (22). Customer table displays 5 customers with complete profiles: Emmanuel Gracia (VIP, 15 orders, $10,775.01), Test User (Regular, 3 orders, $225.50), Test Plisio (Wholesale, 1 order, $705.02), Test User Plisio (Wholesale, 1 order, $705.02), Jean Dupont (VIP, 2 orders, $1,410.04). Includes search functionality, group filtering (All, Regular, VIP, Wholesale), contact information, order history, and customer classification system."
 
 metadata:
   created_by: "testing_agent"
