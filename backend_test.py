@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Suite for Ecwid-style Admin API Endpoints
-Tests the complete admin dashboard functionality
+Backend API Testing Suite for E-commerce Features
+Tests shipping options, payment methods, and order functionality
 """
 
 import requests
