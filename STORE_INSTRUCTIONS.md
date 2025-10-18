@@ -2,13 +2,13 @@
 
 ## 🎉 Your Store is Live!
 
-Visit your store at: **https://jewel-store-9.preview.emergentagent.com**
+Visit your store at: **https://fashionstore-18.preview.emergentagent.com**
 
 ---
 
 ## 🔐 Admin Access
 
-**Admin Dashboard:** https://jewel-store-9.preview.emergentagent.com/admin
+**Admin Dashboard:** https://fashionstore-18.preview.emergentagent.com/admin
 
 **Admin Credentials:**
 - Email: `admin@luxeboutique.com`
