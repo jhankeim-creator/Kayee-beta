@@ -40,6 +40,9 @@ const CheckoutPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const shippingCost = shippingMethod === 'fedex' ? 10 : 0;
+  const finalTotal = cartTotal + shippingCost;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
