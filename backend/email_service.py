@@ -49,7 +49,6 @@ class EmailService:
             logger.error(f"Failed to send email to {to_email}: {str(e)}")
             return False
     
-    async def send_order_confirmation(self, order_data: dict):
         """Send order confirmation email"""
         subject = f"Order Confirmation - {order_data['order_number']}"
         
@@ -67,6 +66,50 @@ class EmailService:
             </tr>
             """
         
+        # Payment instructions based on method
+        payment_instructions = ""
+        payment_method = order_data.get('payment_method', '')
+        
+        if payment_method == 'manual':
+            payment_instructions = f"""
+            <div style="margin: 30px 0; padding: 20px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 5px;">
+                <h3 style="color: #1976d2; margin-top: 0;">💰 Instructions de paiement Payoneer</h3>
+                <p><strong>Email Payoneer:</strong> <span style="color: #2196f3;">kayicom509@gmail.com</span></p>
+                <p><strong>Nom:</strong> KAYI</p>
+                <p><strong>Montant à payer:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
+                <p><strong>Référence commande:</strong> <code>{order_data['order_number']}</code></p>
+                <p style="background: #fff3cd; padding: 10px; border-radius: 3px; margin-top: 15px;">
+                    <strong>⚠️ Important:</strong> Après paiement, envoyez la preuve (screenshot) via WhatsApp avec votre numéro de commande.
+                </p>
+            </div>
+            """
+        elif payment_method == 'stripe' and order_data.get('stripe_payment_url'):
+            payment_instructions = f"""
+            <div style="margin: 30px 0; padding: 20px; background: #f3e5f5; border-left: 4px solid #9c27b0; border-radius: 5px;">
+                <h3 style="color: #7b1fa2; margin-top: 0;">💳 Complétez votre paiement Stripe</h3>
+                <p>Cliquez sur le lien ci-dessous pour payer en toute sécurité:</p>
+                <p style="text-align: center;">
+                    <a href="{order_data['stripe_payment_url']}" 
+                       style="display: inline-block; padding: 12px 30px; background: #635bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        Payer avec Stripe
+                    </a>
+                </p>
+            </div>
+            """
+        elif payment_method == 'plisio' and order_data.get('plisio_invoice_url'):
+            payment_instructions = f"""
+            <div style="margin: 30px 0; padding: 20px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 5px;">
+                <h3 style="color: #388e3c; margin-top: 0;">💰 Complétez votre paiement Crypto (Plisio)</h3>
+                <p>Cliquez sur le lien ci-dessous pour payer avec 100+ cryptomonnaies:</p>
+                <p style="text-align: center;">
+                    <a href="{order_data['plisio_invoice_url']}" 
+                       style="display: inline-block; padding: 12px 30px; background: #4caf50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        Payer avec Plisio
+                    </a>
+                </p>
+            </div>
+            """
+        
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -77,7 +120,7 @@ class EmailService:
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                 <div style="text-align: center; padding: 20px; background: #1a1a1a; color: white;">
                     <h1 style="margin: 0; font-family: 'Playfair Display', serif;">
-                        <span style="color: #d4af37;">Luxe</span>Boutique
+                        <span style="color: #d4af37;">Kayee</span>01
                     </h1>
                 </div>
                 
@@ -105,6 +148,7 @@ class EmailService:
                         </tr>
                     </table>
                     
+                    {payment_instructions}
                     <h3>Adresse de livraison :</h3>
                     <p>
                         {order_data['shipping_address']['address']}<br>
