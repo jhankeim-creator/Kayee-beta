@@ -296,7 +296,7 @@ class EmailService:
                 </div>
                 
                 <div style="text-align: center; padding: 20px; background: #f5f5f5; color: #666; font-size: 12px;">
-                    <p>© 2025 Kayee01. Tous droits réservés.</p>
+                    <p>© 2025 Kayee01. All rights reserved.</p>
                 </div>
             </div>
         </body>
