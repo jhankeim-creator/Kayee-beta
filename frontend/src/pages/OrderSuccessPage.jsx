@@ -188,7 +188,7 @@ const OrderSuccessPage = () => {
                 {/* Manual Payment */}
                 {order.payment_method === 'manual' && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                    <h3 className="font-bold text-lg mb-4 text-blue-900">💰 Paiement Payoneer</h3>
+                    <h3 className="font-bold text-lg mb-4 text-blue-900">💰 Manual Payment</h3>
                     <div className="text-sm space-y-3">
                       <div className="bg-yellow-100 p-4 rounded border border-yellow-300">
                         <p className="font-bold text-yellow-900 mb-3 text-center text-lg">📧 Payment instructions sent to your email</p>
