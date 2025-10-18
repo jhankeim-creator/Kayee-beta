@@ -404,43 +404,71 @@ class EcommerceTester:
             )
             return None
 
-    def test_get_order_by_id(self, order_id: str):
-        """Test retrieving order by ID and verify Plisio fields"""
+    def test_get_order_by_id(self, order_id: str, expected_payment_method: str = None):
+        """Test retrieving order by ID and verify all fields"""
         try:
             response = self.session.get(f"{self.api_base}/orders/{order_id}", timeout=10)
             
             if response.status_code == 200:
                 order_data = response.json()
                 
-                # Check Plisio fields are still present
-                plisio_fields = {
-                    "plisio_invoice_id": order_data.get("plisio_invoice_id"),
-                    "plisio_invoice_url": order_data.get("plisio_invoice_url"),
-                    "plisio_qr_code": order_data.get("plisio_qr_code"),
-                    "plisio_wallet_hash": order_data.get("plisio_wallet_hash")
-                }
+                # Check shipping fields
+                shipping_method = order_data.get("shipping_method")
+                shipping_cost = order_data.get("shipping_cost")
                 
-                present_fields = {k: v for k, v in plisio_fields.items() if v is not None}
+                # Check payment method specific fields
+                payment_method = order_data.get("payment_method")
                 
                 details = {
                     "order_id": order_id,
-                    "plisio_fields_present": list(present_fields.keys()),
-                    **present_fields
+                    "payment_method": payment_method,
+                    "shipping_method": shipping_method,
+                    "shipping_cost": shipping_cost,
+                    "total": order_data.get("total")
                 }
                 
-                if "plisio_invoice_id" in present_fields and "plisio_invoice_url" in present_fields:
+                # Check for payment-specific fields
+                if payment_method == "stripe":
+                    details["stripe_payment_id"] = order_data.get("stripe_payment_id")
+                    details["stripe_payment_url"] = order_data.get("stripe_payment_url")
+                elif payment_method == "plisio":
+                    details["plisio_invoice_id"] = order_data.get("plisio_invoice_id")
+                    details["plisio_invoice_url"] = order_data.get("plisio_invoice_url")
+                
+                # Check that coinpal fields are not present
+                details["coinpal_payment_id"] = order_data.get("coinpal_payment_id")
+                details["coinpal_payment_url"] = order_data.get("coinpal_payment_url")
+                
+                # Validate required fields are present
+                has_shipping_fields = (
+                    shipping_method is not None and 
+                    shipping_cost is not None
+                )
+                
+                coinpal_absent = (
+                    order_data.get("coinpal_payment_id") is None and
+                    order_data.get("coinpal_payment_url") is None
+                )
+                
+                if has_shipping_fields and coinpal_absent:
                     self.log_result(
                         "Get Order by ID", 
                         True, 
-                        "Order retrieved with Plisio fields intact",
+                        f"Order retrieved successfully with shipping fields and no coinpal data",
                         details
                     )
                     return order_data
                 else:
+                    issues = []
+                    if not has_shipping_fields:
+                        issues.append("Missing shipping fields")
+                    if not coinpal_absent:
+                        issues.append("CoinPal fields still present")
+                    
                     self.log_result(
                         "Get Order by ID", 
                         False, 
-                        "Missing required Plisio fields in retrieved order",
+                        f"Order validation failed: {'; '.join(issues)}",
                         details
                     )
                     return None
