@@ -539,7 +539,7 @@ class EcommerceTester:
 def main():
     """Main test execution"""
     try:
-        tester = PlisioPaymentTester()
+        tester = EcommerceTester()
         success = tester.run_complete_test()
         
         # Exit with appropriate code
