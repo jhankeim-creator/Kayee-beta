@@ -88,8 +88,7 @@ const CheckoutPage = () => {
   const paymentMethods = [
     { id: 'stripe', name: 'Carte Bancaire (Stripe)', icon: CreditCard, description: 'Paiement par carte bancaire' },
     { id: 'plisio', name: 'Plisio', icon: Wallet, description: '100+ cryptomonnaies acceptées' },
-    { id: 'payoneer', name: 'Payoneer', icon: DollarSign, description: 'Paiement via Payoneer - Instructions envoyées par email' },
-    { id: 'paypal', name: 'PayPal', icon: DollarSign, description: 'Paiement via PayPal - Instructions envoyées par email' }
+    { id: 'payoneer', name: 'Payoneer', icon: DollarSign, description: 'Paiement via Payoneer - Instructions envoyées par email' }
   ];
 
   return (
