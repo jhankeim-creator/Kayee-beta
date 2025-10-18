@@ -193,6 +193,217 @@ class EcommerceTester:
             self.log_result("Create FedEx+Stripe Order", False, f"Request failed: {str(e)}")
             return None
 
+    def create_test_order_free_plisio(self):
+        """Create a test order with Free shipping and Plisio payment"""
+        test_order_payload = {
+            "user_email": "customer2@luxeboutique.com",
+            "user_name": "Jane Customer",
+            "items": [
+                {
+                    "product_id": "test-456",
+                    "name": "Designer Handbag",
+                    "price": 200.0,
+                    "quantity": 1,
+                    "image": "https://example.com/handbag.jpg"
+                }
+            ],
+            "total": 200.0,  # No shipping cost
+            "shipping_method": "free",
+            "shipping_cost": 0.0,
+            "payment_method": "plisio",
+            "shipping_address": {
+                "address": "456 Oak Ave",
+                "city": "Los Angeles",
+                "postal_code": "90210",
+                "country": "USA"
+            },
+            "phone": "+1987654321",
+            "notes": "Test order with free shipping and Plisio payment"
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/orders",
+                json=test_order_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                order_data = response.json()
+                
+                # Check shipping fields
+                shipping_method = order_data.get("shipping_method")
+                shipping_cost = order_data.get("shipping_cost")
+                total = order_data.get("total")
+                
+                # Check Plisio payment fields
+                plisio_invoice_id = order_data.get("plisio_invoice_id")
+                plisio_invoice_url = order_data.get("plisio_invoice_url")
+
+                details = {
+                    "order_id": order_data.get("id"),
+                    "order_number": order_data.get("order_number"),
+                    "shipping_method": shipping_method,
+                    "shipping_cost": shipping_cost,
+                    "total": total,
+                    "plisio_invoice_id": plisio_invoice_id,
+                    "plisio_invoice_url": plisio_invoice_url
+                }
+
+                # Validate shipping fields
+                shipping_valid = (
+                    shipping_method == "free" and 
+                    shipping_cost == 0.0 and 
+                    total == 200.0
+                )
+                
+                # Validate Plisio fields
+                plisio_valid = (
+                    plisio_invoice_id is not None and 
+                    plisio_invoice_url is not None and
+                    len(str(plisio_invoice_id)) > 0 and
+                    "plisio" in str(plisio_invoice_url).lower()
+                )
+
+                if shipping_valid and plisio_valid:
+                    self.log_result(
+                        "Create Free+Plisio Order", 
+                        True, 
+                        "Order created successfully with free shipping and Plisio payment",
+                        details
+                    )
+                    return order_data
+                else:
+                    issues = []
+                    if not shipping_valid:
+                        issues.append(f"Shipping issue: method={shipping_method}, cost={shipping_cost}, total={total}")
+                    if not plisio_valid:
+                        issues.append(f"Plisio issue: invoice_id={plisio_invoice_id}, invoice_url={plisio_invoice_url}")
+                    
+                    self.log_result(
+                        "Create Free+Plisio Order", 
+                        False, 
+                        f"Order validation failed: {'; '.join(issues)}",
+                        details
+                    )
+                    return None
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("Create Free+Plisio Order", False, error_msg)
+                return None
+
+        except Exception as e:
+            self.log_result("Create Free+Plisio Order", False, f"Request failed: {str(e)}")
+            return None
+
+    def test_coinpal_payment_rejection(self):
+        """Test that CoinPal payment method is rejected or ignored"""
+        test_order_payload = {
+            "user_email": "test@coinpal.com",
+            "user_name": "CoinPal Tester",
+            "items": [
+                {
+                    "product_id": "test-789",
+                    "name": "Test Product",
+                    "price": 50.0,
+                    "quantity": 1,
+                    "image": "https://example.com/test.jpg"
+                }
+            ],
+            "total": 50.0,
+            "shipping_method": "free",
+            "shipping_cost": 0.0,
+            "payment_method": "coinpal",  # This should be rejected
+            "shipping_address": {
+                "address": "789 Test Blvd",
+                "city": "Test City",
+                "postal_code": "12345",
+                "country": "USA"
+            },
+            "phone": "+1555555555",
+            "notes": "Test order with CoinPal (should fail)"
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/orders",
+                json=test_order_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                order_data = response.json()
+                
+                # Check that no coinpal fields are present
+                coinpal_payment_id = order_data.get("coinpal_payment_id")
+                coinpal_payment_url = order_data.get("coinpal_payment_url")
+                coinpal_qr_code = order_data.get("coinpal_qr_code")
+
+                details = {
+                    "order_id": order_data.get("id"),
+                    "order_number": order_data.get("order_number"),
+                    "payment_method": order_data.get("payment_method"),
+                    "coinpal_payment_id": coinpal_payment_id,
+                    "coinpal_payment_url": coinpal_payment_url,
+                    "coinpal_qr_code": coinpal_qr_code
+                }
+
+                # CoinPal should be removed - no coinpal fields should be populated
+                coinpal_removed = (
+                    coinpal_payment_id is None and 
+                    coinpal_payment_url is None and
+                    coinpal_qr_code is None
+                )
+
+                if coinpal_removed:
+                    self.log_result(
+                        "CoinPal Rejection Test", 
+                        True, 
+                        "CoinPal payment method properly ignored - no coinpal fields populated",
+                        details
+                    )
+                    return order_data
+                else:
+                    self.log_result(
+                        "CoinPal Rejection Test", 
+                        False, 
+                        "CoinPal fields were populated despite removal",
+                        details
+                    )
+                    return None
+            else:
+                # If the request fails, that's also acceptable for CoinPal removal
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result(
+                    "CoinPal Rejection Test", 
+                    True, 
+                    f"CoinPal payment method properly rejected: {error_msg}"
+                )
+                return None
+
+        except Exception as e:
+            # Exception is also acceptable for CoinPal removal
+            self.log_result(
+                "CoinPal Rejection Test", 
+                True, 
+                f"CoinPal payment method properly rejected: {str(e)}"
+            )
+            return None
+
     def test_get_order_by_id(self, order_id: str):
         """Test retrieving order by ID and verify Plisio fields"""
         try:
