@@ -210,6 +210,51 @@ const CheckoutPage = () => {
                   </CardContent>
                 </Card>
 
+                {/* Shipping Method */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Shipping Method</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <RadioGroup
+                      value={shippingMethod}
+                      onValueChange={setShippingMethod}
+                    >
+                      <div
+                        className="flex items-start space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+                        onClick={() => setShippingMethod('free')}
+                      >
+                        <RadioGroupItem value="free" id="free" />
+                        <div className="flex-1">
+                          <Label htmlFor="free" className="cursor-pointer">
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold">Free Delivery</span>
+                              <span className="text-[#d4af37] font-bold">$0.00</span>
+                            </div>
+                          </Label>
+                          <p className="text-sm text-gray-600 mt-1">Delivery in 7-14 business days</p>
+                        </div>
+                      </div>
+
+                      <div
+                        className="flex items-start space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+                        onClick={() => setShippingMethod('fedex')}
+                      >
+                        <RadioGroupItem value="fedex" id="fedex" />
+                        <div className="flex-1">
+                          <Label htmlFor="fedex" className="cursor-pointer">
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold">FedEx Express</span>
+                              <span className="text-[#d4af37] font-bold">$10.00</span>
+                            </div>
+                          </Label>
+                          <p className="text-sm text-gray-600 mt-1">Delivery in 3-5 business days</p>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  </CardContent>
+                </Card>
+
                 {/* Payment Method */}
                 <Card>
                   <CardHeader>
