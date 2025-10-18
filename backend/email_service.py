@@ -26,15 +26,7 @@ class EmailService:
             html_part = MIMEText(html_content, 'html')
             message.attach(html_part)
             
-            # For testing/demo, just log the email instead of sending
-            if not self.smtp_user or self.smtp_user == 'your-email@gmail.com':
-                logger.info(f"📧 EMAIL (Demo Mode - Not Sent):")
-                logger.info(f"To: {to_email}")
-                logger.info(f"Subject: {subject}")
-                logger.info(f"Content: {html_content[:200]}...")
-                return True
-            
-            # Send actual email
+            # Send actual email in production
             await aiosmtplib.send(
                 message,
                 hostname=self.smtp_host,
