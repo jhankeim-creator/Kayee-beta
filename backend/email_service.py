@@ -93,12 +93,12 @@ class EmailService:
         elif payment_method == 'stripe' and order_data.get('stripe_payment_url'):
             payment_instructions = f"""
             <div style="margin: 30px 0; padding: 20px; background: #f3e5f5; border-left: 4px solid #9c27b0; border-radius: 5px;">
-                <h3 style="color: #7b1fa2; margin-top: 0;">💳 Complétez votre paiement Stripe</h3>
-                <p>Cliquez sur le lien ci-dessous pour payer en toute sécurité:</p>
+                <h3 style="color: #7b1fa2; margin-top: 0;">💳 Complete Your Stripe Payment</h3>
+                <p>Click the link below to pay securely:</p>
                 <p style="text-align: center;">
                     <a href="{order_data['stripe_payment_url']}" 
                        style="display: inline-block; padding: 12px 30px; background: #635bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                        Payer avec Stripe
+                        Pay with Stripe
                     </a>
                 </p>
             </div>
@@ -106,12 +106,12 @@ class EmailService:
         elif payment_method == 'plisio' and order_data.get('plisio_invoice_url'):
             payment_instructions = f"""
             <div style="margin: 30px 0; padding: 20px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 5px;">
-                <h3 style="color: #388e3c; margin-top: 0;">💰 Complétez votre paiement Crypto (Plisio)</h3>
-                <p>Cliquez sur le lien ci-dessous pour payer avec 100+ cryptomonnaies:</p>
+                <h3 style="color: #388e3c; margin-top: 0;">💰 Complete Your Crypto Payment (Plisio)</h3>
+                <p>Click the link below to pay with 100+ cryptocurrencies:</p>
                 <p style="text-align: center;">
                     <a href="{order_data['plisio_invoice_url']}" 
                        style="display: inline-block; padding: 12px 30px; background: #4caf50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                        Payer avec Plisio
+                        Pay with Plisio
                     </a>
                 </p>
             </div>
