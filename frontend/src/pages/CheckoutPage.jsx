@@ -17,6 +17,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [shippingMethod, setShippingMethod] = useState('free');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
