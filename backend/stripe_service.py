@@ -2,6 +2,8 @@ import os
 import requests
 import logging
 from typing import Dict
+from dotenv import load_dotenv
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -12,10 +14,20 @@ class StripeService:
     """
     
     def __init__(self):
+        # Load environment variables
+        ROOT_DIR = Path(__file__).parent
+        load_dotenv(ROOT_DIR / '.env')
+        
         self.api_key = os.environ.get('STRIPE_SECRET_KEY', 'your_stripe_secret_key')
         self.publishable_key = os.environ.get('STRIPE_PUBLISHABLE_KEY', 'your_stripe_publishable_key')
         self.base_url = "https://api.stripe.com/v1"
         self.is_demo = self.api_key == 'your_stripe_secret_key'
+        
+        logger.info(f"Stripe Service initialized - Demo mode: {self.is_demo}")
+        if not self.is_demo:
+            logger.info(f"Using Stripe API key: {self.api_key[:20]}...")
+        else:
+            logger.info("Using demo Stripe configuration")
     
     async def create_payment_link(
         self,
