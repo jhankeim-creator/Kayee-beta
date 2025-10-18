@@ -12,8 +12,8 @@ class EmailService:
         self.smtp_port = int(os.environ.get('SMTP_PORT', '587'))
         self.smtp_user = os.environ.get('SMTP_USER', '')
         self.smtp_password = os.environ.get('SMTP_PASSWORD', '')
-        self.from_email = os.environ.get('FROM_EMAIL', 'noreply@luxeboutique.com')
-        self.from_name = os.environ.get('FROM_NAME', 'LuxeBoutique')
+        self.from_email = os.environ.get('FROM_EMAIL', 'noreply@kayee01.com')
+        self.from_name = os.environ.get('FROM_NAME', 'Kayee01')
     
     async def send_email(self, to_email: str, subject: str, html_content: str):
         """Send an email using SMTP"""
