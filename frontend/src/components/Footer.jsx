@@ -84,10 +84,9 @@ const Footer = () => {
             <h4 className="font-semibold mb-4">We Accept</h4>
             <div className="space-y-2 text-sm text-gray-400">
               <p>💳 Credit Cards (Stripe)</p>
+              <p>💰 Payoneer</p>
               <p>💰 PayPal</p>
-              <p>₿ Cryptocurrency (Binance Pay)</p>
               <p>💰 Multiple Crypto (Plisio)</p>
-              <p>🏦 Manual Payment</p>
             </div>
           </div>
         </div>
