@@ -480,61 +480,7 @@ class EcommerceTester:
             self.log_result("Get Order by ID", False, f"Request failed: {str(e)}")
             return None
 
-    def check_plisio_demo_mode(self):
-        """Check backend logs to determine if Plisio is in demo mode"""
-        try:
-            # Check the Plisio API key from backend .env
-            with open('/app/backend/.env', 'r') as f:
-                for line in f:
-                    if line.startswith('PLISIO_API_KEY='):
-                        api_key = line.split('=', 1)[1].strip().strip('"')
-                        is_demo = api_key == 'your_plisio_api_key'
-                        
-                        details = {
-                            "api_key_prefix": api_key[:20] + "..." if len(api_key) > 20 else api_key,
-                            "is_demo_key": is_demo
-                        }
-                        
-                        self.log_result(
-                            "Plisio Mode Check", 
-                            True, 
-                            f"Plisio is in {'Demo' if is_demo else 'Production'} mode",
-                            details
-                        )
-                        return is_demo
-            
-            self.log_result("Plisio Mode Check", False, "Could not find PLISIO_API_KEY in backend .env")
-            return None
-            
-        except Exception as e:
-            self.log_result("Plisio Mode Check", False, f"Error checking Plisio mode: {str(e)}")
-            return None
-
-    def validate_plisio_url_format(self, invoice_url: str, is_demo: bool):
-        """Validate that the Plisio URL format matches the expected mode"""
-        if is_demo:
-            expected_pattern = "https://plisio.net/invoice/demo_"
-            is_valid = invoice_url.startswith(expected_pattern)
-            expected_msg = "Demo URL should start with 'https://plisio.net/invoice/demo_'"
-        else:
-            # For production, just check it's a valid Plisio URL
-            is_valid = "plisio.net" in invoice_url and invoice_url.startswith("https://")
-            expected_msg = "Production URL should be a valid Plisio invoice URL"
-        
-        details = {
-            "invoice_url": invoice_url,
-            "expected_format": expected_msg,
-            "is_valid": is_valid
-        }
-        
-        self.log_result(
-            "Plisio URL Format", 
-            is_valid, 
-            f"URL format {'matches' if is_valid else 'does not match'} expected pattern",
-            details
-        )
-        
-        return is_valid
+    # Removed old Plisio-specific methods - now integrated into main order tests
 
     def run_complete_test(self):
         """Run the complete E-commerce features test"""
