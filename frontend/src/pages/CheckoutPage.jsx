@@ -86,9 +86,9 @@ const CheckoutPage = () => {
   };
 
   const paymentMethods = [
-    { id: 'stripe', name: 'Carte Bancaire (Stripe)', icon: CreditCard, description: 'Paiement par carte bancaire' },
-    { id: 'plisio', name: 'Plisio', icon: Wallet, description: '100+ cryptomonnaies acceptées' },
-    { id: 'payoneer', name: 'Payoneer', icon: DollarSign, description: 'Paiement via Payoneer - Instructions envoyées par email' }
+    { id: 'stripe', name: 'Credit Card (Stripe)', icon: CreditCard, description: 'Pay with credit or debit card' },
+    { id: 'plisio', name: 'Cryptocurrency (Plisio)', icon: Wallet, description: '100+ cryptocurrencies accepted' },
+    { id: 'manual', name: 'Manual Payment', icon: DollarSign, description: 'Bank transfer, Payoneer - Instructions sent by email' }
   ];
 
   return (
