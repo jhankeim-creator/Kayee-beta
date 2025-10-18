@@ -520,21 +520,6 @@ async def create_order(order_data: OrderCreate):
                     "plisio_wallet_hash": payment_result.get('wallet_hash')
                 }
         
-        elif order_data.payment_method == 'binance':
-            payment_result = await binance_service.create_order(
-                merchant_order_no=order.id,
-                total_amount=order.total,
-                currency="USDT",
-                description=f"Order {order_number}",
-                buyer_email=order.user_email
-            )
-            if payment_result.get('success'):
-                payment_info = {
-                    "binance_order_id": payment_result.get('order_id'),
-                    "binance_checkout_url": payment_result.get('checkout_url'),
-                    "binance_qr_code": payment_result.get('qr_code')
-                }
-        
         # Mettre à jour la commande avec les infos de paiement
         if payment_info:
             await db.orders.update_one(
