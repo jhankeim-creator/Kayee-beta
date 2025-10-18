@@ -86,25 +86,10 @@ class EmailService:
                 <p><strong>Montant à payer:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
                 <p><strong>Référence commande:</strong> <code>{order_data['order_number']}</code></p>
                 <p style="background: #fff3cd; padding: 10px; border-radius: 3px; margin-top: 15px;">
-                    <strong>⚠️ Important:</strong> Après paiement, envoyez la preuve (screenshot) via WhatsApp avec votre numéro de commande.
+                    <strong>⚠️ Important:</strong> Après paiement, envoyez la preuve (screenshot) via WhatsApp (+12393293813) avec votre numéro de commande.
                 </p>
             </div>
             """
-        elif payment_method == 'paypal':
-            # Si pas de lien PayPal automatique, donner instructions manuelles
-            if not order_data.get('paypal_approval_url'):
-                payment_instructions = f"""
-                <div style="margin: 30px 0; padding: 20px; background: #e3f2fd; border-left: 4px solid #0070ba; border-radius: 5px;">
-                    <h3 style="color: #0070ba; margin-top: 0;">💰 Instructions de paiement PayPal</h3>
-                    <p><strong>Email PayPal:</strong> <span style="color: #0070ba;">kayicom509@gmail.com</span></p>
-                    <p><strong>Nom:</strong> KAYI</p>
-                    <p><strong>Montant à payer:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
-                    <p><strong>Référence commande:</strong> <code>{order_data['order_number']}</code></p>
-                    <p style="background: #fff3cd; padding: 10px; border-radius: 3px; margin-top: 15px;">
-                        <strong>⚠️ Important:</strong> Après paiement, envoyez la confirmation via WhatsApp avec votre numéro de commande.
-                    </p>
-                </div>
-                """
         elif payment_method == 'stripe' and order_data.get('stripe_payment_url'):
             payment_instructions = f"""
             <div style="margin: 30px 0; padding: 20px; background: #f3e5f5; border-left: 4px solid #9c27b0; border-radius: 5px;">
