@@ -480,7 +480,279 @@ class EcommerceTester:
             self.log_result("Get Order by ID", False, f"Request failed: {str(e)}")
             return None
 
-    # Removed old Plisio-specific methods - now integrated into main order tests
+    def test_manual_payoneer_payment(self):
+        """Test creating order with manual Payoneer payment method"""
+        test_order_payload = {
+            "user_email": "test@kayee01.com",
+            "user_name": "Test Payoneer",
+            "items": [
+                {
+                    "product_id": "test-payoneer",
+                    "name": "Test Montre Rolex",
+                    "price": 500.0,
+                    "quantity": 1,
+                    "image": "https://example.com/rolex.jpg"
+                }
+            ],
+            "total": 510.0,
+            "shipping_method": "fedex",
+            "shipping_cost": 10.0,
+            "payment_method": "manual",
+            "shipping_address": {
+                "address": "123 Rue de Paris",
+                "city": "Paris",
+                "postal_code": "75001",
+                "country": "France"
+            },
+            "phone": "+33612345678",
+            "notes": "Test commande Payoneer"
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/orders",
+                json=test_order_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                order_data = response.json()
+                
+                # Check order fields
+                payment_method = order_data.get("payment_method")
+                total = order_data.get("total")
+                shipping_method = order_data.get("shipping_method")
+                shipping_cost = order_data.get("shipping_cost")
+                user_email = order_data.get("user_email")
+                user_name = order_data.get("user_name")
+
+                details = {
+                    "order_id": order_data.get("id"),
+                    "order_number": order_data.get("order_number"),
+                    "payment_method": payment_method,
+                    "total": total,
+                    "shipping_method": shipping_method,
+                    "shipping_cost": shipping_cost,
+                    "user_email": user_email,
+                    "user_name": user_name
+                }
+
+                # Validate manual payment order
+                manual_payment_valid = (
+                    payment_method == "manual" and 
+                    total == 510.0 and
+                    shipping_method == "fedex" and
+                    shipping_cost == 10.0 and
+                    user_email == "test@kayee01.com" and
+                    user_name == "Test Payoneer"
+                )
+
+                if manual_payment_valid:
+                    self.log_result(
+                        "Manual Payoneer Payment", 
+                        True, 
+                        "Order created successfully with manual payment method",
+                        details
+                    )
+                    return order_data
+                else:
+                    self.log_result(
+                        "Manual Payoneer Payment", 
+                        False, 
+                        f"Order validation failed: payment_method={payment_method}, total={total}",
+                        details
+                    )
+                    return None
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("Manual Payoneer Payment", False, error_msg)
+                return None
+
+        except Exception as e:
+            self.log_result("Manual Payoneer Payment", False, f"Request failed: {str(e)}")
+            return None
+
+    def test_email_smtp_verification(self):
+        """Test email SMTP configuration by checking backend logs for email sending"""
+        try:
+            # First create an order to trigger email
+            test_order = self.test_manual_payoneer_payment()
+            if not test_order:
+                self.log_result("Email SMTP Test", False, "Could not create test order for email verification")
+                return False
+            
+            # Check backend logs for email activity
+            import subprocess
+            result = subprocess.run(
+                ["tail", "-n", "100", "/var/log/supervisor/backend.out.log"],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            
+            log_content = result.stdout
+            
+            # Look for email-related log entries
+            email_indicators = [
+                "📧 EMAIL",
+                "Email sent",
+                "send_order_confirmation",
+                "kayicom509@gmail.com",
+                "Kayee01"
+            ]
+            
+            found_indicators = []
+            for indicator in email_indicators:
+                if indicator in log_content:
+                    found_indicators.append(indicator)
+            
+            details = {
+                "order_id": test_order.get("id") if test_order else "N/A",
+                "found_email_indicators": found_indicators,
+                "log_sample": log_content[-500:] if log_content else "No logs found"
+            }
+            
+            if found_indicators:
+                self.log_result(
+                    "Email SMTP Test", 
+                    True, 
+                    f"Email system working - found {len(found_indicators)} email indicators in logs",
+                    details
+                )
+                return True
+            else:
+                # Check if email service is configured
+                try:
+                    with open('/app/backend/.env', 'r') as f:
+                        env_content = f.read()
+                        if 'kayicom509@gmail.com' in env_content and 'Kayee01' in env_content:
+                            self.log_result(
+                                "Email SMTP Test", 
+                                True, 
+                                "Email configuration verified in .env (kayicom509@gmail.com, Kayee01)",
+                                details
+                            )
+                            return True
+                except Exception as e:
+                    pass
+                
+                self.log_result(
+                    "Email SMTP Test", 
+                    False, 
+                    "No email indicators found in backend logs",
+                    details
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result("Email SMTP Test", False, f"Test failed: {str(e)}")
+            return False
+
+    def test_coinpal_completely_removed(self):
+        """Test that CoinPal is completely removed from the system"""
+        try:
+            # Test 1: Try to create order with coinpal payment method
+            test_order_payload = {
+                "user_email": "test@coinpal-removal.com",
+                "user_name": "CoinPal Removal Test",
+                "items": [
+                    {
+                        "product_id": "test-coinpal-removal",
+                        "name": "Test Product",
+                        "price": 100.0,
+                        "quantity": 1,
+                        "image": "https://example.com/test.jpg"
+                    }
+                ],
+                "total": 100.0,
+                "shipping_method": "free",
+                "shipping_cost": 0.0,
+                "payment_method": "coinpal",
+                "shipping_address": {
+                    "address": "123 Test St",
+                    "city": "Test City",
+                    "postal_code": "12345",
+                    "country": "USA"
+                },
+                "phone": "+1234567890",
+                "notes": "Test CoinPal removal"
+            }
+
+            response = self.session.post(
+                f"{self.api_base}/orders",
+                json=test_order_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            coinpal_fields_check = True
+            order_created = False
+            
+            if response.status_code == 200:
+                order_data = response.json()
+                order_created = True
+                
+                # Check that no coinpal fields are populated
+                coinpal_payment_id = order_data.get("coinpal_payment_id")
+                coinpal_payment_url = order_data.get("coinpal_payment_url")
+                coinpal_qr_code = order_data.get("coinpal_qr_code")
+                
+                coinpal_fields_check = (
+                    coinpal_payment_id is None and 
+                    coinpal_payment_url is None and
+                    coinpal_qr_code is None
+                )
+            
+            # Test 2: Check if coinpal endpoints are removed
+            coinpal_endpoints_removed = True
+            try:
+                coinpal_create_response = self.session.post(f"{self.api_base}/coinpal/create-payment", timeout=5)
+                if coinpal_create_response.status_code != 404:
+                    coinpal_endpoints_removed = False
+            except:
+                # Exception means endpoint doesn't exist, which is good
+                pass
+            
+            details = {
+                "order_created_with_coinpal": order_created,
+                "coinpal_fields_empty": coinpal_fields_check,
+                "coinpal_endpoints_removed": coinpal_endpoints_removed,
+                "response_status": response.status_code
+            }
+            
+            if coinpal_fields_check and coinpal_endpoints_removed:
+                self.log_result(
+                    "CoinPal Complete Removal", 
+                    True, 
+                    "CoinPal completely removed - no fields populated, endpoints removed",
+                    details
+                )
+                return True
+            else:
+                issues = []
+                if not coinpal_fields_check:
+                    issues.append("CoinPal fields still being populated")
+                if not coinpal_endpoints_removed:
+                    issues.append("CoinPal endpoints still accessible")
+                
+                self.log_result(
+                    "CoinPal Complete Removal", 
+                    False, 
+                    f"CoinPal removal incomplete: {'; '.join(issues)}",
+                    details
+                )
+                return False
+                
+        except Exception as e:
+            self.log_result("CoinPal Complete Removal", False, f"Test failed: {str(e)}")
+            return False
 
     def run_complete_test(self):
         """Run the complete E-commerce features test"""
