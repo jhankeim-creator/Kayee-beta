@@ -22,7 +22,7 @@ def get_backend_url():
         print(f"❌ Error reading frontend .env: {e}")
         return None
 
-class AdminAPITester:
+class EcommerceTester:
     def __init__(self):
         self.backend_url = get_backend_url()
         if not self.backend_url:
