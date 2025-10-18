@@ -757,7 +757,7 @@ class EcommerceTester:
     def run_complete_test(self):
         """Run the complete E-commerce features test"""
         print("🚀 Starting E-commerce Features Test")
-        print("Testing: Shipping Options, Stripe Payment Links, CoinPal Removal")
+        print("Testing: Email SMTP, Manual Payoneer Payment, CoinPal Removal")
         print("=" * 60)
         
         # Test 1: Backend Health Check
@@ -765,19 +765,36 @@ class EcommerceTester:
             print("❌ Backend health check failed. Stopping tests.")
             return False
         
-        # Test 2: Create Order with FedEx shipping and Stripe payment
+        # Test 2: Test Email SMTP Configuration
+        print("🧪 Testing Email SMTP Configuration...")
+        self.test_email_smtp_verification()
+        
+        # Test 3: Test Manual Payoneer Payment
+        print("🧪 Testing Manual Payoneer Payment...")
+        payoneer_order = self.test_manual_payoneer_payment()
+        
+        # Test 4: Test CoinPal Complete Removal
+        print("🧪 Testing CoinPal Complete Removal...")
+        self.test_coinpal_completely_removed()
+        
+        # Test 5: Retrieve Payoneer order by ID to verify all details
+        if payoneer_order:
+            print("🧪 Testing Payoneer Order Retrieval...")
+            self.test_get_order_by_id(payoneer_order.get("id"), "manual")
+        
+        # Test 6: Create Order with FedEx shipping and Stripe payment (existing test)
         print("🧪 Testing FedEx Shipping + Stripe Payment...")
         fedex_stripe_order = self.create_test_order_fedex_stripe()
         
-        # Test 3: Create Order with Free shipping and Plisio payment
+        # Test 7: Create Order with Free shipping and Plisio payment (existing test)
         print("🧪 Testing Free Shipping + Plisio Payment...")
         free_plisio_order = self.create_test_order_free_plisio()
         
-        # Test 4: Test CoinPal payment rejection
+        # Test 8: Test CoinPal payment rejection (existing test)
         print("🧪 Testing CoinPal Payment Rejection...")
         self.test_coinpal_payment_rejection()
         
-        # Test 5: Retrieve orders by ID to verify fields
+        # Test 9: Retrieve orders by ID to verify fields
         if fedex_stripe_order:
             print("🧪 Testing Order Retrieval (FedEx+Stripe)...")
             self.test_get_order_by_id(fedex_stripe_order.get("id"), "stripe")
