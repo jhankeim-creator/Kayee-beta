@@ -505,21 +505,6 @@ async def create_order(order_data: OrderCreate):
                     "paypal_approval_url": payment_result.get('approval_url')
                 }
         
-        elif order_data.payment_method == 'coinpal':
-            payment_result = await coinpal_service.create_payment(
-                order_id=order.id,
-                amount=order.total,
-                currency="USD",
-                description=f"Order {order_number}",
-                customer_email=order.user_email
-            )
-            if payment_result.get('success'):
-                payment_info = {
-                    "coinpal_payment_id": payment_result.get('payment_id'),
-                    "coinpal_payment_url": payment_result.get('payment_url'),
-                    "coinpal_qr_code": payment_result.get('qr_code')
-                }
-        
         elif order_data.payment_method == 'plisio':
             payment_result = await plisio_service.create_invoice(
                 order_number=order.id,
