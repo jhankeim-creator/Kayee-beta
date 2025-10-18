@@ -49,6 +49,7 @@ class EmailService:
             logger.error(f"Failed to send email to {to_email}: {str(e)}")
             return False
     
+    async def send_order_confirmation(self, order_data: dict):
         """Send order confirmation email"""
         subject = f"Order Confirmation - {order_data['order_number']}"
         
