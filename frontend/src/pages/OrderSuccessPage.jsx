@@ -185,33 +185,37 @@ const OrderSuccessPage = () => {
                   </div>
                 )}
 
-                {/* Manual Payment */}
-                {order.payment_method === 'manual' && (
+                {/* Payoneer Payment */}
+                {order.payment_method === 'payoneer' && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                    <h3 className="font-bold text-lg mb-4 text-blue-900">💰 Instructions de paiement manuel - Payoneer</h3>
-                    <div className="text-sm space-y-4">
-                      <div className="bg-white p-4 rounded border border-blue-200">
-                        <p className="font-bold text-blue-900 mb-2">Payoneer Payment:</p>
-                        <p><strong>Email Payoneer:</strong> <span className="text-blue-600">kayicom509@gmail.com</span></p>
-                        <p><strong>Nom:</strong> KAYI</p>
-                        <p><strong>Montant à payer:</strong> <span className="text-[#d4af37] font-bold text-lg">${order.total.toFixed(2)}</span></p>
-                        <p><strong>Référence commande:</strong> <span className="font-mono">{order.order_number}</span></p>
+                    <h3 className="font-bold text-lg mb-4 text-blue-900">💰 Instructions de paiement Payoneer</h3>
+                    <div className="text-sm space-y-3">
+                      <div className="bg-yellow-100 p-4 rounded border border-yellow-300">
+                        <p className="font-bold text-yellow-900 mb-2">📧 Instructions envoyées par email</p>
+                        <p className="text-yellow-900">Nous vous avons envoyé un email avec toutes les instructions de paiement Payoneer.</p>
+                        <p className="text-yellow-900 mt-2">Vérifiez votre boîte de réception: <strong>{order.user_email}</strong></p>
                       </div>
                       
-                      <div className="bg-white p-4 rounded border border-blue-200">
-                        <p className="font-bold text-blue-900 mb-2">🏦 Virement bancaire (optionnel):</p>
-                        <p>Veuillez nous contacter par WhatsApp pour obtenir les détails bancaires</p>
+                      <div className="bg-white p-4 rounded border border-blue-200 mt-3">
+                        <p className="text-gray-700">Si vous n'avez pas reçu l'email, contactez-nous via WhatsApp avec votre numéro de commande: <strong>{order.order_number}</strong></p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* PayPal Payment */}
+                {order.payment_method === 'paypal' && !order.paypal_approval_url && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                    <h3 className="font-bold text-lg mb-4 text-blue-900">💰 Instructions de paiement PayPal</h3>
+                    <div className="text-sm space-y-3">
+                      <div className="bg-yellow-100 p-4 rounded border border-yellow-300">
+                        <p className="font-bold text-yellow-900 mb-2">📧 Instructions envoyées par email</p>
+                        <p className="text-yellow-900">Nous vous avons envoyé un email avec toutes les instructions de paiement PayPal.</p>
+                        <p className="text-yellow-900 mt-2">Vérifiez votre boîte de réception: <strong>{order.user_email}</strong></p>
                       </div>
                       
-                      <div className="bg-white p-4 rounded border border-blue-200">
-                        <p className="font-bold text-blue-900 mb-2">₿ Crypto (optionnel):</p>
-                        <p>BTC, ETH, USDT acceptés - Contactez-nous pour l'adresse wallet</p>
-                      </div>
-                      
-                      <div className="bg-yellow-100 p-4 rounded border border-yellow-300 mt-4">
-                        <p className="font-bold text-yellow-900 mb-2">⚠️ Important:</p>
-                        <p className="text-yellow-900">Après avoir effectué le paiement, veuillez nous envoyer la preuve de paiement (screenshot) via WhatsApp avec votre numéro de commande: <strong>{order.order_number}</strong></p>
-                        <p className="text-yellow-900 mt-2">Votre commande sera traitée dans les 24h après confirmation du paiement.</p>
+                      <div className="bg-white p-4 rounded border border-blue-200 mt-3">
+                        <p className="text-gray-700">Si vous n'avez pas reçu l'email, contactez-nous via WhatsApp avec votre numéro de commande: <strong>{order.order_number}</strong></p>
                       </div>
                     </div>
                   </div>
