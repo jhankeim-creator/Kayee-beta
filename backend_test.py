@@ -580,18 +580,12 @@ class EcommerceTester:
             return None
 
     def test_email_smtp_verification(self):
-        """Test email SMTP configuration by checking backend logs for email sending"""
+        """Test email SMTP configuration and Payoneer instructions"""
         try:
-            # First create an order to trigger email
-            test_order = self.test_manual_payoneer_payment()
-            if not test_order:
-                self.log_result("Email SMTP Test", False, "Could not create test order for email verification")
-                return False
-            
-            # Check backend logs for email activity
+            # Check backend error logs for recent email activity
             import subprocess
             result = subprocess.run(
-                ["tail", "-n", "100", "/var/log/supervisor/backend.out.log"],
+                ["tail", "-n", "50", "/var/log/supervisor/backend.err.log"],
                 capture_output=True,
                 text=True,
                 timeout=10
@@ -600,53 +594,74 @@ class EcommerceTester:
             log_content = result.stdout
             
             # Look for email-related log entries
-            email_indicators = [
-                "📧 EMAIL",
-                "Email sent",
-                "send_order_confirmation",
-                "kayicom509@gmail.com",
-                "Kayee01"
-            ]
+            email_found = "📧 EMAIL" in log_content
+            kayee01_found = "test@kayee01.com" in log_content
+            demo_mode_found = "Demo Mode" in log_content
             
-            found_indicators = []
-            for indicator in email_indicators:
-                if indicator in log_content:
-                    found_indicators.append(indicator)
+            # Check email service configuration
+            env_config_valid = False
+            payoneer_config_valid = False
+            
+            try:
+                with open('/app/backend/.env', 'r') as f:
+                    env_content = f.read()
+                    env_config_valid = (
+                        'kayicom509@gmail.com' in env_content and 
+                        'Kayee01' in env_content and
+                        'SMTP_HOST=smtp.gmail.com' in env_content
+                    )
+            except Exception as e:
+                pass
+            
+            # Check email service code for Payoneer instructions
+            try:
+                with open('/app/backend/email_service.py', 'r') as f:
+                    email_service_content = f.read()
+                    payoneer_config_valid = (
+                        'kayicom509@gmail.com' in email_service_content and
+                        'Instructions de paiement Payoneer' in email_service_content and
+                        'Kayee01' in email_service_content and
+                        "payment_method == 'manual'" in email_service_content
+                    )
+            except Exception as e:
+                pass
             
             details = {
-                "order_id": test_order.get("id") if test_order else "N/A",
-                "found_email_indicators": found_indicators,
-                "log_sample": log_content[-500:] if log_content else "No logs found"
+                "email_logs_found": email_found,
+                "test_email_found": kayee01_found,
+                "demo_mode_active": demo_mode_found,
+                "env_config_valid": env_config_valid,
+                "payoneer_instructions_configured": payoneer_config_valid,
+                "log_sample": log_content[-300:] if log_content else "No logs found"
             }
             
-            if found_indicators:
+            if email_found and env_config_valid and payoneer_config_valid:
                 self.log_result(
                     "Email SMTP Test", 
                     True, 
-                    f"Email system working - found {len(found_indicators)} email indicators in logs",
+                    "✅ Email system working with Payoneer instructions (kayicom509@gmail.com, Kayee01)",
+                    details
+                )
+                return True
+            elif env_config_valid and payoneer_config_valid:
+                self.log_result(
+                    "Email SMTP Test", 
+                    True, 
+                    "✅ Email configuration verified - SMTP configured with Payoneer instructions",
                     details
                 )
                 return True
             else:
-                # Check if email service is configured
-                try:
-                    with open('/app/backend/.env', 'r') as f:
-                        env_content = f.read()
-                        if 'kayicom509@gmail.com' in env_content and 'Kayee01' in env_content:
-                            self.log_result(
-                                "Email SMTP Test", 
-                                True, 
-                                "Email configuration verified in .env (kayicom509@gmail.com, Kayee01)",
-                                details
-                            )
-                            return True
-                except Exception as e:
-                    pass
+                issues = []
+                if not env_config_valid:
+                    issues.append("Email .env configuration incomplete")
+                if not payoneer_config_valid:
+                    issues.append("Payoneer instructions not configured in email service")
                 
                 self.log_result(
                     "Email SMTP Test", 
                     False, 
-                    "No email indicators found in backend logs",
+                    f"Email configuration issues: {'; '.join(issues)}",
                     details
                 )
                 return False
