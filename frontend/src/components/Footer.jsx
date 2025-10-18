@@ -74,7 +74,7 @@ const Footer = () => {
               </li>
               <li className="text-gray-400 flex items-start">
                 <MapPin className="h-4 w-4 mr-2 mt-1" />
-                <span>Your Address Here</span>
+                <span>Contact: kayee01.shop@gmail.com</span>
               </li>
             </ul>
           </div>
