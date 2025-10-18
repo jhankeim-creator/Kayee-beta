@@ -103,8 +103,8 @@ class StripeService:
                 "customer_creation": "always"
             }
             
-            if customer_email:
-                payment_link_data["customer_email"] = customer_email
+            # Note: customer_email is not supported in payment links API
+            # Customer email will be collected during checkout
             
             link_response = requests.post(
                 f"{self.base_url}/payment_links",
