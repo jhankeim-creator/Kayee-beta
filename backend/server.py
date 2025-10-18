@@ -207,6 +207,8 @@ class OrderCreate(BaseModel):
     total: float
     payment_method: str
     shipping_address: dict
+    shipping_method: Optional[str] = "free"
+    shipping_cost: Optional[float] = 0.0
     phone: str
     notes: Optional[str] = None
 
