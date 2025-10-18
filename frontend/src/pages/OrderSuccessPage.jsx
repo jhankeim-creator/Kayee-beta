@@ -187,19 +187,32 @@ const OrderSuccessPage = () => {
 
                 {/* Manual Payment */}
                 {order.payment_method === 'manual' && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <h3 className="font-semibold mb-2">Instructions de paiement manuel</h3>
-                    <div className="text-sm space-y-2">
-                      <p><strong>Bank Transfer Details:</strong></p>
-                      <p>Bank: Your Bank Name</p>
-                      <p>Account: XXXX-XXXX-XXXX</p>
-                      <p>Reference: {order.order_number}</p>
-                      <p className="mt-2"><strong>Or pay with crypto manually:</strong></p>
-                      <p>BTC: [Your BTC Address]</p>
-                      <p>ETH: [Your ETH Address]</p>
-                      <p className="mt-2 text-yellow-800">
-                        After payment, please contact us via WhatsApp to confirm.
-                      </p>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                    <h3 className="font-bold text-lg mb-4 text-blue-900">💰 Instructions de paiement manuel - Payoneer</h3>
+                    <div className="text-sm space-y-4">
+                      <div className="bg-white p-4 rounded border border-blue-200">
+                        <p className="font-bold text-blue-900 mb-2">Payoneer Payment:</p>
+                        <p><strong>Email Payoneer:</strong> <span className="text-blue-600">kayicom509@gmail.com</span></p>
+                        <p><strong>Nom:</strong> KAYI</p>
+                        <p><strong>Montant à payer:</strong> <span className="text-[#d4af37] font-bold text-lg">${order.total.toFixed(2)}</span></p>
+                        <p><strong>Référence commande:</strong> <span className="font-mono">{order.order_number}</span></p>
+                      </div>
+                      
+                      <div className="bg-white p-4 rounded border border-blue-200">
+                        <p className="font-bold text-blue-900 mb-2">🏦 Virement bancaire (optionnel):</p>
+                        <p>Veuillez nous contacter par WhatsApp pour obtenir les détails bancaires</p>
+                      </div>
+                      
+                      <div className="bg-white p-4 rounded border border-blue-200">
+                        <p className="font-bold text-blue-900 mb-2">₿ Crypto (optionnel):</p>
+                        <p>BTC, ETH, USDT acceptés - Contactez-nous pour l'adresse wallet</p>
+                      </div>
+                      
+                      <div className="bg-yellow-100 p-4 rounded border border-yellow-300 mt-4">
+                        <p className="font-bold text-yellow-900 mb-2">⚠️ Important:</p>
+                        <p className="text-yellow-900">Après avoir effectué le paiement, veuillez nous envoyer la preuve de paiement (screenshot) via WhatsApp avec votre numéro de commande: <strong>{order.order_number}</strong></p>
+                        <p className="text-yellow-900 mt-2">Votre commande sera traitée dans les 24h après confirmation du paiement.</p>
+                      </div>
                     </div>
                   </div>
                 )}
