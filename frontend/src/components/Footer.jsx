@@ -12,7 +12,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'Playfair Display' }}>
-              <span className="text-[#d4af37]">Luxe</span>Boutique
+              <span className="text-[#d4af37]">Kayee</span>01
             </h3>
             <p className="text-gray-400 text-sm">
               Your destination for luxury fashion and exquisite jewelry.
