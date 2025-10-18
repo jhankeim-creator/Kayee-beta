@@ -262,6 +262,33 @@ const AdminProductAdd = () => {
               )}
             </div>
 
+            {/* Add Image by URL */}
+            <div className="border-t pt-4">
+              <Label>Or Add Image by URL</Label>
+              <div className="flex gap-2 mt-2">
+                <Input
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://example.com/image.jpg"
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (imageUrl.trim()) {
+                      setImages(prev => [...prev, imageUrl.trim()]);
+                      setImageUrl('');
+                      toast.success('Image URL added!');
+                    }
+                  }}
+                  disabled={!imageUrl.trim()}
+                >
+                  Add URL
+                </Button>
+              </div>
+            </div>
+
             {/* Image Previews */}
             {images.length > 0 && (
               <div>
