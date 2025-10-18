@@ -34,8 +34,9 @@ const AdminProductAdd = () => {
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
-  useState(() => {
+  useEffect(() => {
     loadCategories();
   }, []);
 
