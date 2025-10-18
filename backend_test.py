@@ -69,30 +69,32 @@ class EcommerceTester:
             self.log_result("Backend Health", False, f"Backend not accessible: {str(e)}")
             return False
 
-    def create_test_order_with_plisio(self):
-        """Create a test order with Plisio payment method"""
+    def create_test_order_fedex_stripe(self):
+        """Create a test order with FedEx shipping and Stripe payment"""
         test_order_payload = {
-            "user_email": "test@example.com",
-            "user_name": "Test User",
+            "user_email": "customer@luxeboutique.com",
+            "user_name": "John Customer",
             "items": [
                 {
                     "product_id": "test-123",
-                    "name": "Test Product",
-                    "price": 100.50,
+                    "name": "Luxury Watch",
+                    "price": 100.0,
                     "quantity": 1,
-                    "image": "https://example.com/image.jpg"
+                    "image": "https://example.com/watch.jpg"
                 }
             ],
-            "total": 100.50,
-            "payment_method": "plisio",
+            "total": 110.0,  # $100 product + $10 shipping
+            "shipping_method": "fedex",
+            "shipping_cost": 10.0,
+            "payment_method": "stripe",
             "shipping_address": {
-                "address": "123 Test St",
-                "city": "Test City",
-                "postal_code": "12345",
-                "country": "US"
+                "address": "123 Main St",
+                "city": "New York",
+                "postal_code": "10001",
+                "country": "USA"
             },
             "phone": "+1234567890",
-            "notes": "Test order for Plisio"
+            "notes": "Test order with FedEx shipping and Stripe payment"
         }
 
         try:
