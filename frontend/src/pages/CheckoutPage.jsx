@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import Footer from '../components/Footer';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { CreditCard, Coins, Wallet, DollarSign } from 'lucide-react';
+import { CreditCard, Coins, Wallet, DollarSign, Truck } from 'lucide-react';
 
 const CheckoutPage = () => {
   const { cart, cartTotal, clearCart, API } = useContext(CartContext);
