@@ -188,11 +188,11 @@ const OrderSuccessPage = () => {
                 {/* Payoneer Payment */}
                 {order.payment_method === 'payoneer' && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                    <h3 className="font-bold text-lg mb-4 text-blue-900">💰 Instructions de paiement PayPal</h3>
+                    <h3 className="font-bold text-lg mb-4 text-blue-900">💰 Instructions de paiement Payoneer</h3>
                     <div className="text-sm space-y-3">
                       <div className="bg-yellow-100 p-4 rounded border border-yellow-300">
                         <p className="font-bold text-yellow-900 mb-2">📧 Instructions envoyées par email</p>
-                        <p className="text-yellow-900">Nous vous avons envoyé un email avec toutes les instructions de paiement PayPal.</p>
+                        <p className="text-yellow-900">Nous vous avons envoyé un email avec toutes les instructions de paiement Payoneer.</p>
                         <p className="text-yellow-900 mt-2">Vérifiez votre boîte de réception: <strong>{order.user_email}</strong></p>
                       </div>
                       
