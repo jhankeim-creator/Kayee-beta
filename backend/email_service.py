@@ -171,11 +171,11 @@ class EmailService:
                         </p>
                     </div>
                     
-                    <p>Si vous avez des questions, n'hésitez pas à nous contacter via WhatsApp.</p>
+                    <p>If you have any questions, feel free to contact us via WhatsApp.</p>
                 </div>
                 
                 <div style="text-align: center; padding: 20px; background: #f5f5f5; color: #666; font-size: 12px;">
-                    <p>© 2025 Kayee01. Tous droits réservés.</p>
+                    <p>© 2025 Kayee01. All rights reserved.</p>
                 </div>
             </div>
         </body>
