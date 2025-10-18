@@ -371,6 +371,42 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Test Email SMTP with Payoneer Instructions"
+    implemented: true
+    working: true
+    file: "backend/email_service.py, backend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ EMAIL SMTP FULLY WORKING - Email system configured with kayicom509@gmail.com and Kayee01 branding. Payoneer payment instructions properly implemented in email templates for manual payment method. Email service working in demo mode with proper SMTP configuration (smtp.gmail.com). Order confirmation emails contain Payoneer instructions with email kayicom509@gmail.com and name 'KAYI' when payment_method='manual'."
+
+  - task: "Test Manual Payoneer Payment Method"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ MANUAL PAYONEER PAYMENT WORKING PERFECTLY - Orders with payment_method='manual' create successfully. Test order (ORD-FAE5427F) created with all correct fields: total=510.0, shipping_method=fedex, shipping_cost=10.0, user_email=test@kayee01.com, user_name='Test Payoneer'. Order retrieval by ID works correctly with all fields intact. Manual payment method properly supported."
+
+  - task: "Test CoinPal Complete Removal"
+    implemented: false
+    working: false
+    file: "backend/server.py, backend/payment_routes.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ COINPAL NOT COMPLETELY REMOVED - While CoinPal payment fields (coinpal_payment_id, coinpal_payment_url, coinpal_qr_code) are properly ignored and remain None when orders are created with 'coinpal' payment method, the CoinPal API endpoints still exist in server.py (lines 664-731): /api/coinpal/create-payment, /api/coinpal/check-payment/{payment_id}, /api/coinpal/webhook. These endpoints should be completely removed. CoinPal service files and routes still present in codebase."
+
 agent_communication:
     - agent: "testing"
       message: "Plisio payment flow testing completed successfully. All backend APIs are working correctly. The system is using production Plisio API with real invoice creation. Order creation, field validation, and retrieval all functioning as expected. No issues found."
@@ -388,3 +424,5 @@ agent_communication:
       message: "🎯 COMPREHENSIVE REPLICAROLEX WOOCOMMERCE TESTING COMPLETED! ✅ HOMEPAGE: Perfect ReplicaRolex theme with hero section displaying 'Luxury Replica Watches' title and 'Highest Quality 1:1 Superclone Watches' subtitle. 9 featured products with complete badge system - SALE (3), NEW (4), BEST SELLER (4). ✅ SHOP PAGE: 14 products displayed with badges - SALE (3), NEW (6), BEST SELLER (7), plus 3 products with strikethrough pricing. ✅ PRODUCT PAGE: Complete product details with images, pricing, and Customer Reviews section. 'Write a Review' button functional. ✅ ADMIN PANEL: Login working with admin@luxe.com / Admin123!. All tabs functional - Categories (Watches, Fashion, Jewelry), Add Product form complete with all fields, Products list showing all entries. ✅ REVIEW SYSTEM: Complete review creation flow working - 5-star rating selection, form fields (name, email, comment), successful submission with confirmation message. ⚠️ MINOR ISSUES: Some Unsplash images blocked by CORS (ERR_BLOCKED_BY_ORB), AdminProductAdd component has initialization error but still functional. 🎉 RESULT: ALL CRITICAL WOOCOMMERCE-STYLE FEATURES WORKING PERFECTLY! Site is production-ready with ReplicaRolex theme, complete product catalog, admin management, and review system."
     - agent: "testing"
       message: "🎯 NEW FEATURES TESTING COMPLETED SUCCESSFULLY! ✅ SHIPPING OPTIONS: Both FedEx ($10) and Free shipping working perfectly. Order totals correctly include shipping costs (FedEx: $110 = $100 + $10 shipping, Free: $200 product only). Shipping fields (shipping_method, shipping_cost) properly saved and retrieved. ✅ STRIPE PAYMENT LINKS: Fixed environment variable loading issue in stripe_service.py. Stripe integration now working in production mode with real API key. Successfully creates payment links (e.g., plink_1SJTQ5KTndky3mn0ewZ5KHzC) with valid URLs (https://buy.stripe.com/...). ✅ COINPAL REMOVAL: Confirmed CoinPal payment method is properly ignored. Orders with 'coinpal' payment method create successfully but coinpal_payment_id and coinpal_payment_url fields remain None. ✅ ORDER MODEL FIELDS: All new fields (shipping_method, shipping_cost, stripe_payment_id, stripe_payment_url) are properly implemented and working. ✅ EMAIL CONFIGURATION: SMTP setup verified working in demo mode with kayicom509@gmail.com. 🎉 ALL NEW FEATURES ARE FULLY FUNCTIONAL AND PRODUCTION-READY!"
+    - agent: "testing"
+      message: "🎯 PAYONEER & EMAIL TESTING COMPLETED! ✅ EMAIL SMTP: Email system fully configured with kayicom509@gmail.com and Kayee01 branding. Payoneer payment instructions properly implemented for manual payment method. Email service working in demo mode with correct SMTP configuration. ✅ MANUAL PAYONEER PAYMENT: Orders with payment_method='manual' create successfully with all correct fields (total, shipping, user details). Order retrieval works perfectly. ✅ EXISTING FEATURES: All shipping options, Stripe payment links, and Plisio integration continue working correctly. ❌ COINPAL REMOVAL INCOMPLETE: While CoinPal payment fields are properly ignored (remain None), CoinPal API endpoints still exist in server.py (/api/coinpal/create-payment, /api/coinpal/check-payment, /api/coinpal/webhook). These endpoints need complete removal. 9/10 tests passed (90% success rate)."
