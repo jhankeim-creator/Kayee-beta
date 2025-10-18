@@ -90,7 +90,7 @@ const CheckoutPage = () => {
     { id: 'paypal', name: 'PayPal', icon: DollarSign, description: 'Paiement sécurisé via PayPal' },
     { id: 'binance', name: 'Binance Pay', icon: Coins, description: '0% frais - Paiement crypto instantané' },
     { id: 'plisio', name: 'Plisio', icon: Wallet, description: '100+ cryptomonnaies acceptées' },
-    { id: 'manual', name: 'Paiement Manuel', icon: DollarSign, description: 'Virement bancaire ou crypto manuel' }
+    { id: 'manual', name: 'Paiement Manuel (Payoneer)', icon: DollarSign, description: 'Virement bancaire, Payoneer ou crypto manuel' }
   ];
 
   return (
