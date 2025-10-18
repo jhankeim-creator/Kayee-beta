@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the new Ecwid-style Admin API endpoints including dashboard stats, coupons, customers, store settings, and advanced filtering"
+user_problem_statement: "Fix bugs: DollarSign error, image upload by URL, remove CoinPal, add Stripe payment links, add shipping options (FedEx $10 / Free), configure email (kayicom509@gmail.com)"
 
 backend:
   - task: "Plisio Payment Integration"
