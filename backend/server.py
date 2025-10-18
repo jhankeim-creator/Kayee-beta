@@ -184,8 +184,6 @@ class Order(BaseModel):
     # Payment gateway specific fields
     stripe_payment_id: Optional[str] = None
     stripe_payment_url: Optional[str] = None
-    paypal_order_id: Optional[str] = None
-    paypal_approval_url: Optional[str] = None
     coinpal_payment_id: Optional[str] = None
     coinpal_payment_url: Optional[str] = None
     coinpal_qr_code: Optional[str] = None
