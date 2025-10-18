@@ -132,17 +132,17 @@ class EmailService:
                 </div>
                 
                 <div style="padding: 30px 20px;">
-                    <h2 style="color: #d4af37;">Merci pour votre commande !</h2>
-                    <p>Bonjour <strong>{order_data['user_name']}</strong>,</p>
-                    <p>Nous avons bien reçu votre commande. Voici les détails :</p>
+                    <h2 style="color: #d4af37;">Thank you for your order!</h2>
+                    <p>Hello <strong>{order_data['user_name']}</strong>,</p>
+                    <p>We have received your order. Here are the details:</p>
                     
                     <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <p><strong>Numéro de commande :</strong> {order_data['order_number']}</p>
-                        <p><strong>Méthode de paiement :</strong> {order_data['payment_method']}</p>
-                        <p><strong>Statut :</strong> {order_data['status']}</p>
+                        <p><strong>Order Number:</strong> {order_data['order_number']}</p>
+                        <p><strong>Payment Method:</strong> {order_data['payment_method']}</p>
+                        <p><strong>Status:</strong> {order_data['status']}</p>
                     </div>
                     
-                    <h3>Articles commandés :</h3>
+                    <h3>Ordered Items:</h3>
                     <table style="width: 100%; border-collapse: collapse;">
                         {items_html}
                         <tr>
