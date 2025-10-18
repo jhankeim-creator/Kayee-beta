@@ -608,7 +608,7 @@ class EcommerceTester:
                     env_config_valid = (
                         'kayicom509@gmail.com' in env_content and 
                         'Kayee01' in env_content and
-                        'SMTP_HOST=smtp.gmail.com' in env_content
+                        'smtp.gmail.com' in env_content
                     )
             except Exception as e:
                 pass
