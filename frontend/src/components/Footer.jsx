@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { MessageCircle, Mail, MapPin } from 'lucide-react';
 
 const Footer = () => {
-  const whatsappNumber = '+1234567890'; // You can change this
+  const whatsappNumber = '+12393293813';
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`;
 
   return (
