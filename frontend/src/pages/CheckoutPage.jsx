@@ -246,7 +246,7 @@ const CheckoutPage = () => {
                               <span className="text-[#d4af37] font-bold">$10.00</span>
                             </div>
                           </Label>
-                          <p className="text-sm text-gray-600 mt-1">Delivery in 3-5 business days</p>
+                          <p className="text-sm text-gray-600 mt-1">Delivery in 5-7 business days</p>
                         </div>
                       </div>
                     </RadioGroup>
