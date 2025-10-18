@@ -118,29 +118,6 @@ const OrderSuccessPage = () => {
                       </div>
                     )}
                     
-                    {/* CoinPal */}
-                    {order.payment_method === 'coinpal' && order.coinpal_payment_url && (
-                      <div className="text-sm space-y-3">
-                        <p>Complétez votre paiement crypto via CoinPal.io :</p>
-                        {order.coinpal_qr_code && (
-                          <div className="flex justify-center">
-                            <img src={order.coinpal_qr_code} alt="QR Code" className="w-48 h-48" />
-                          </div>
-                        )}
-                        <a
-                          href={order.coinpal_payment_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block w-full text-center bg-[#d4af37] hover:bg-[#b8941f] text-white font-semibold py-3 px-6 rounded"
-                        >
-                          Payer avec CoinPal.io
-                        </a>
-                        <p className="text-xs text-gray-600">
-                          Accepte BTC, ETH, USDT, BNB et 50+ cryptos
-                        </p>
-                      </div>
-                    )}
-
                     {/* Plisio */}
                     {order.payment_method === 'plisio' && order.plisio_invoice_url && (
                       <div className="text-sm space-y-3">
