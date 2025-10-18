@@ -3,6 +3,12 @@ import aiosmtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import logging
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load environment variables
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +20,8 @@ class EmailService:
         self.smtp_password = os.environ.get('SMTP_PASSWORD', '')
         self.from_email = os.environ.get('FROM_EMAIL', 'noreply@kayee01.com')
         self.from_name = os.environ.get('FROM_NAME', 'Kayee01')
+        
+        logger.info(f"EmailService initialized - SMTP User: {self.smtp_user}, Host: {self.smtp_host}")
     
     async def send_email(self, to_email: str, subject: str, html_content: str):
         """Send an email using SMTP"""
