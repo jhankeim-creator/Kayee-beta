@@ -105,6 +105,78 @@
 user_problem_statement: "Fix bugs: DollarSign error, image upload by URL, remove CoinPal, add Stripe payment links, add shipping options (FedEx $10 / Free), configure email (kayicom509@gmail.com)"
 
 backend:
+  - task: "Fix AdminProductAdd useEffect bug"
+    implemented: true
+    working: true
+    file: "frontend/src/components/admin/AdminProductAdd.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Fixed useState hook incorrectly used as useEffect. Changed line 38 from useState to useEffect for loading categories on component mount."
+
+  - task: "Add image upload by URL"
+    implemented: true
+    working: true
+    file: "frontend/src/components/admin/AdminProductAdd.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Added input field and button to add images via URL. User can now paste image URLs and add them to the product images array."
+
+  - task: "Remove CoinPal.io payment option"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/CheckoutPage.jsx, backend/server.py, backend/.env, frontend/src/components/Footer.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Removed CoinPal from payment methods in CheckoutPage, removed coinpal payment creation code from server.py, removed CoinPal env variables, updated footer to show PayPal instead."
+
+  - task: "Stripe Payment Links Integration"
+    implemented: true
+    working: true
+    file: "backend/stripe_service.py, backend/server.py, backend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Stripe service already implemented. Added real Stripe API key to .env (sk_live_51OOx...). Payment link generation works similar to Plisio - creates product, price, and payment link on order creation."
+
+  - task: "Add Shipping Options (FedEx $10 / Free)"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/CheckoutPage.jsx, backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Added shipping method selection in checkout with two options: Free Delivery ($0.00, 7-14 days) and FedEx Express ($10.00, 3-5 days). Updated Order and OrderCreate models to include shipping_method and shipping_cost fields. Final total now includes shipping cost."
+
+  - task: "Configure Email SMTP"
+    implemented: true
+    working: true
+    file: "backend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Configured SMTP with user's Gmail: kayicom509@gmail.com with app password. Updated FROM_EMAIL to use same address."
+
   - task: "Plisio Payment Integration"
     implemented: true
     working: true
