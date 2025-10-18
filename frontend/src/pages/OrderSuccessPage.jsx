@@ -28,7 +28,7 @@ const OrderSuccessPage = () => {
     }
   };
 
-  const whatsappNumber = '+1234567890';
+  const whatsappNumber = '+12393293813';
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Hi, I have a question about order ${order?.order_number}`;
 
   if (loading) {
