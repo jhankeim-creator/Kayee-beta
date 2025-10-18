@@ -366,8 +366,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "New shipping and payment features testing completed"
-  stuck_tasks: []
+    - "Test CoinPal Complete Removal"
+  stuck_tasks:
+    - "Test CoinPal Complete Removal"
   test_all: false
   test_priority: "high_first"
 
