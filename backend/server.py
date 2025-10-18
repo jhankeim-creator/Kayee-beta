@@ -487,19 +487,6 @@ async def create_order(order_data: OrderCreate):
                     "stripe_payment_url": payment_result.get('payment_url')
                 }
         
-        elif order_data.payment_method == 'paypal':
-            payment_result = await paypal_service.create_order(
-                order_id=order.id,
-                amount=order.total,
-                currency="USD",
-                description=f"Order {order_number}"
-            )
-            if payment_result.get('success'):
-                payment_info = {
-                    "paypal_order_id": payment_result.get('order_id'),
-                    "paypal_approval_url": payment_result.get('approval_url')
-                }
-        
         elif order_data.payment_method == 'plisio':
             payment_result = await plisio_service.create_invoice(
                 order_number=order.id,
