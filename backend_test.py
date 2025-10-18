@@ -108,54 +108,76 @@ class EcommerceTester:
             if response.status_code == 200:
                 order_data = response.json()
                 
-                # Check required Plisio fields
-                required_fields = ["plisio_invoice_id", "plisio_invoice_url"]
-                optional_fields = ["plisio_qr_code", "plisio_wallet_hash"]
+                # Check shipping fields
+                shipping_method = order_data.get("shipping_method")
+                shipping_cost = order_data.get("shipping_cost")
+                total = order_data.get("total")
                 
-                missing_required = []
-                present_optional = []
+                # Check Stripe payment fields
+                stripe_payment_id = order_data.get("stripe_payment_id")
+                stripe_payment_url = order_data.get("stripe_payment_url")
                 
-                for field in required_fields:
-                    if field not in order_data or order_data[field] is None:
-                        missing_required.append(field)
-                
-                for field in optional_fields:
-                    if field in order_data and order_data[field] is not None:
-                        present_optional.append(field)
+                # Check that coinpal fields are not present or null
+                coinpal_payment_id = order_data.get("coinpal_payment_id")
+                coinpal_payment_url = order_data.get("coinpal_payment_url")
 
                 details = {
                     "order_id": order_data.get("id"),
                     "order_number": order_data.get("order_number"),
-                    "plisio_invoice_id": order_data.get("plisio_invoice_id"),
-                    "plisio_invoice_url": order_data.get("plisio_invoice_url"),
-                    "plisio_qr_code": order_data.get("plisio_qr_code"),
-                    "plisio_wallet_hash": order_data.get("plisio_wallet_hash"),
-                    "present_optional_fields": present_optional
+                    "shipping_method": shipping_method,
+                    "shipping_cost": shipping_cost,
+                    "total": total,
+                    "stripe_payment_id": stripe_payment_id,
+                    "stripe_payment_url": stripe_payment_url,
+                    "coinpal_payment_id": coinpal_payment_id,
+                    "coinpal_payment_url": coinpal_payment_url
                 }
 
-                if missing_required:
+                # Validate shipping fields
+                shipping_valid = (
+                    shipping_method == "fedex" and 
+                    shipping_cost == 10.0 and 
+                    total == 110.0
+                )
+                
+                # Validate Stripe fields
+                stripe_valid = (
+                    stripe_payment_id is not None and 
+                    stripe_payment_url is not None and
+                    len(str(stripe_payment_id)) > 0 and
+                    "stripe" in str(stripe_payment_url).lower()
+                )
+                
+                # Validate CoinPal removal
+                coinpal_removed = (
+                    coinpal_payment_id is None and 
+                    coinpal_payment_url is None
+                )
+
+                if shipping_valid and stripe_valid and coinpal_removed:
                     self.log_result(
-                        "Create Plisio Order", 
-                        False, 
-                        f"Missing required Plisio fields: {missing_required}",
-                        details
-                    )
-                    return None
-                else:
-                    # Check if URL indicates demo mode
-                    invoice_url = order_data.get("plisio_invoice_url", "")
-                    is_demo = "demo_" in invoice_url
-                    
-                    details["demo_mode"] = is_demo
-                    details["url_format"] = "Demo URL" if is_demo else "Production URL"
-                    
-                    self.log_result(
-                        "Create Plisio Order", 
+                        "Create FedEx+Stripe Order", 
                         True, 
-                        f"Order created successfully ({'Demo' if is_demo else 'Production'} mode)",
+                        "Order created successfully with FedEx shipping and Stripe payment",
                         details
                     )
                     return order_data
+                else:
+                    issues = []
+                    if not shipping_valid:
+                        issues.append(f"Shipping issue: method={shipping_method}, cost={shipping_cost}, total={total}")
+                    if not stripe_valid:
+                        issues.append(f"Stripe issue: payment_id={stripe_payment_id}, payment_url={stripe_payment_url}")
+                    if not coinpal_removed:
+                        issues.append(f"CoinPal not removed: payment_id={coinpal_payment_id}, payment_url={coinpal_payment_url}")
+                    
+                    self.log_result(
+                        "Create FedEx+Stripe Order", 
+                        False, 
+                        f"Order validation failed: {'; '.join(issues)}",
+                        details
+                    )
+                    return None
             else:
                 error_msg = f"HTTP {response.status_code}"
                 try:
@@ -164,11 +186,11 @@ class EcommerceTester:
                 except:
                     error_msg += f": {response.text}"
                 
-                self.log_result("Create Plisio Order", False, error_msg)
+                self.log_result("Create FedEx+Stripe Order", False, error_msg)
                 return None
 
         except Exception as e:
-            self.log_result("Create Plisio Order", False, f"Request failed: {str(e)}")
+            self.log_result("Create FedEx+Stripe Order", False, f"Request failed: {str(e)}")
             return None
 
     def test_get_order_by_id(self, order_id: str):
