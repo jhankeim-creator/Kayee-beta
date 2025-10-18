@@ -185,8 +185,8 @@ const OrderSuccessPage = () => {
                   </div>
                 )}
 
-                {/* Payoneer Payment */}
-                {order.payment_method === 'payoneer' && (
+                {/* Manual Payment */}
+                {order.payment_method === 'manual' && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
                     <h3 className="font-bold text-lg mb-4 text-blue-900">💰 Paiement Payoneer</h3>
                     <div className="text-sm space-y-3">
