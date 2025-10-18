@@ -537,8 +537,9 @@ class EcommerceTester:
         return is_valid
 
     def run_complete_test(self):
-        """Run the complete Plisio payment flow test"""
-        print("🚀 Starting Plisio Payment Flow Test")
+        """Run the complete E-commerce features test"""
+        print("🚀 Starting E-commerce Features Test")
+        print("Testing: Shipping Options, Stripe Payment Links, CoinPal Removal")
         print("=" * 60)
         
         # Test 1: Backend Health Check
@@ -546,24 +547,26 @@ class EcommerceTester:
             print("❌ Backend health check failed. Stopping tests.")
             return False
         
-        # Test 2: Check Plisio Mode
-        is_demo = self.check_plisio_demo_mode()
+        # Test 2: Create Order with FedEx shipping and Stripe payment
+        print("🧪 Testing FedEx Shipping + Stripe Payment...")
+        fedex_stripe_order = self.create_test_order_fedex_stripe()
         
-        # Test 3: Create Order with Plisio
-        order_data = self.create_test_order_with_plisio()
-        if not order_data:
-            print("❌ Order creation failed. Stopping tests.")
-            return False
+        # Test 3: Create Order with Free shipping and Plisio payment
+        print("🧪 Testing Free Shipping + Plisio Payment...")
+        free_plisio_order = self.create_test_order_free_plisio()
         
-        # Test 4: Validate URL format
-        invoice_url = order_data.get("plisio_invoice_url")
-        if invoice_url and is_demo is not None:
-            self.validate_plisio_url_format(invoice_url, is_demo)
+        # Test 4: Test CoinPal payment rejection
+        print("🧪 Testing CoinPal Payment Rejection...")
+        self.test_coinpal_payment_rejection()
         
-        # Test 5: Retrieve Order by ID
-        order_id = order_data.get("id")
-        if order_id:
-            retrieved_order = self.test_get_order_by_id(order_id)
+        # Test 5: Retrieve orders by ID to verify fields
+        if fedex_stripe_order:
+            print("🧪 Testing Order Retrieval (FedEx+Stripe)...")
+            self.test_get_order_by_id(fedex_stripe_order.get("id"), "stripe")
+        
+        if free_plisio_order:
+            print("🧪 Testing Order Retrieval (Free+Plisio)...")
+            self.test_get_order_by_id(free_plisio_order.get("id"), "plisio")
         
         # Summary
         print("=" * 60)
