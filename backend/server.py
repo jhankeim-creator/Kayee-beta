@@ -178,6 +178,8 @@ class Order(BaseModel):
     payment_method: str  # stripe, binance, plisio, manual
     payment_status: str = "pending"  # pending, confirmed, failed
     shipping_address: dict
+    shipping_method: Optional[str] = "free"  # free or fedex
+    shipping_cost: Optional[float] = 0.0
     phone: str
     notes: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
