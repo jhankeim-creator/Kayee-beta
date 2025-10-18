@@ -18,6 +18,9 @@ class EmailService:
     async def send_email(self, to_email: str, subject: str, html_content: str):
         """Send an email using SMTP"""
         try:
+            logger.info(f"Attempting to send email to {to_email}")
+            logger.info(f"SMTP Config: {self.smtp_host}:{self.smtp_port}, User: {self.smtp_user}")
+            
             message = MIMEMultipart('alternative')
             message['From'] = f"{self.from_name} <{self.from_email}>"
             message['To'] = to_email
@@ -35,10 +38,13 @@ class EmailService:
                 username=self.smtp_user,
                 password=self.smtp_password
             )
-            logger.info(f"✓ Email sent to {to_email}")
+            logger.info(f"✓ Email sent successfully to {to_email}")
             return True
         except Exception as e:
             logger.error(f"Failed to send email to {to_email}: {str(e)}")
+            logger.error(f"Error type: {type(e).__name__}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             return False
     
     async def send_order_confirmation(self, order_data: dict):
