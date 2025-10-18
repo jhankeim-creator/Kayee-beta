@@ -16,7 +16,6 @@ import jwt
 
 # Import payment services
 from email_service import email_service
-from coinpal_service import coinpal_service
 from plisio_service import plisio_service
 from stripe_service import stripe_service
 from paypal_service import paypal_service
