@@ -87,10 +87,9 @@ const CheckoutPage = () => {
 
   const paymentMethods = [
     { id: 'stripe', name: 'Carte Bancaire (Stripe)', icon: CreditCard, description: 'Paiement par carte bancaire' },
-    { id: 'paypal', name: 'PayPal', icon: DollarSign, description: 'Paiement sécurisé via PayPal' },
-    { id: 'binance', name: 'Binance Pay', icon: Coins, description: '0% frais - Paiement crypto instantané' },
     { id: 'plisio', name: 'Plisio', icon: Wallet, description: '100+ cryptomonnaies acceptées' },
-    { id: 'manual', name: 'Paiement Manuel (Payoneer)', icon: DollarSign, description: 'Virement bancaire, Payoneer ou crypto manuel' }
+    { id: 'payoneer', name: 'Payoneer', icon: DollarSign, description: 'Paiement via Payoneer - Instructions envoyées par email' },
+    { id: 'paypal', name: 'PayPal', icon: DollarSign, description: 'Paiement via PayPal - Instructions envoyées par email' }
   ];
 
   return (
