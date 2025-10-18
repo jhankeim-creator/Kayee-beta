@@ -58,7 +58,9 @@ const CheckoutPage = () => {
           quantity: item.quantity,
           image: item.images[0]
         })),
-        total: cartTotal,
+        total: finalTotal,
+        shipping_method: shippingMethod,
+        shipping_cost: shippingCost,
         payment_method: formData.paymentMethod,
         shipping_address: {
           address: formData.address,
