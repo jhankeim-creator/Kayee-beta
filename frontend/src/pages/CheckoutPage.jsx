@@ -336,11 +336,13 @@ const CheckoutPage = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Shipping</span>
-                        <span className="font-semibold">TBD</span>
+                        <span className="font-semibold">
+                          {shippingMethod === 'fedex' ? '$10.00' : 'FREE'}
+                        </span>
                       </div>
                       <div className="border-t pt-2 flex justify-between text-lg font-bold">
                         <span>Total</span>
-                        <span className="text-[#d4af37]" data-testid="order-total">${cartTotal.toFixed(2)}</span>
+                        <span className="text-[#d4af37]" data-testid="order-total">${finalTotal.toFixed(2)}</span>
                       </div>
                     </div>
                     <Button
