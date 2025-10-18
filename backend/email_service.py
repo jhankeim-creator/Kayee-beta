@@ -77,16 +77,16 @@ class EmailService:
         payment_instructions = ""
         payment_method = order_data.get('payment_method', '')
         
-        if payment_method == 'payoneer':
+        if payment_method == 'manual':
             payment_instructions = f"""
             <div style="margin: 30px 0; padding: 20px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 5px;">
-                <h3 style="color: #1976d2; margin-top: 0;">💰 Instructions de paiement Payoneer</h3>
-                <p><strong>Email Payoneer:</strong> <span style="color: #2196f3;">kayicom509@gmail.com</span></p>
-                <p><strong>Nom:</strong> KAYI</p>
-                <p><strong>Montant à payer:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
-                <p><strong>Référence commande:</strong> <code>{order_data['order_number']}</code></p>
+                <h3 style="color: #1976d2; margin-top: 0;">💰 Manual Payment Instructions</h3>
+                <p><strong>Payoneer Email:</strong> <span style="color: #2196f3;">kayicom509@gmail.com</span></p>
+                <p><strong>Name:</strong> KAYI</p>
+                <p><strong>Amount to Pay:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
+                <p><strong>Order Reference:</strong> <code>{order_data['order_number']}</code></p>
                 <p style="background: #fff3cd; padding: 10px; border-radius: 3px; margin-top: 15px;">
-                    <strong>⚠️ Important:</strong> Après paiement, envoyez la preuve (screenshot) via WhatsApp (+12393293813) avec votre numéro de commande.
+                    <strong>⚠️ Important:</strong> After payment, send proof (screenshot) via WhatsApp (+12393293813) with your order number.
                 </p>
             </div>
             """
