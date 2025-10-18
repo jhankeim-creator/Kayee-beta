@@ -37,8 +37,8 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="text-2xl font-bold" style={{ fontFamily: 'Playfair Display' }}>
-              <span className="text-[#d4af37]">Luxe</span>
-              <span className="text-[#1a1a1a]">Boutique</span>
+              <span className="text-[#d4af37]">Kayee</span>
+              <span className="text-[#1a1a1a]">01</span>
             </div>
           </Link>
 
