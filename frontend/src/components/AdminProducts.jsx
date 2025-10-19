@@ -180,7 +180,6 @@ const AdminProducts = () => {
             <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
             <div className="flex justify-between items-center mb-3">
               <span className="font-bold text-[#d4af37]">${product.price.toFixed(2)}</span>
-              <span className="text-sm text-gray-600">Stock: {product.stock}</span>
             </div>
             <div className="flex gap-2">
               <Button
