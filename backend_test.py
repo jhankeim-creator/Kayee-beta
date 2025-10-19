@@ -22,7 +22,7 @@ def get_backend_url():
         print(f"❌ Error reading frontend .env: {e}")
         return None
 
-class EcommerceTester:
+class Kayee01Tester:
     def __init__(self):
         self.backend_url = get_backend_url()
         if not self.backend_url:
@@ -31,6 +31,7 @@ class EcommerceTester:
         self.api_base = f"{self.backend_url}/api"
         self.session = requests.Session()
         self.test_results = []
+        self.admin_token = None
         
         print(f"🔗 Backend URL: {self.backend_url}")
         print(f"🔗 API Base: {self.api_base}")
