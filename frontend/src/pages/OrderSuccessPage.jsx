@@ -86,34 +86,19 @@ const OrderSuccessPage = () => {
                 {/* Payment Instructions */}
                 {order.payment_method !== 'manual' && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <h3 className="font-semibold mb-2">💳 Complétez votre paiement</h3>
+                    <h3 className="font-semibold mb-2">💳 Complete Your Payment</h3>
                     
                     {/* Stripe */}
                     {order.payment_method === 'stripe' && order.stripe_payment_url && (
                       <div className="text-sm space-y-3">
-                        <p>Payez en toute sécurité avec votre carte bancaire :</p>
+                        <p>Pay securely with your credit card:</p>
                         <a
                           href={order.stripe_payment_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-block w-full text-center bg-[#635bff] hover:bg-[#5349e0] text-white font-semibold py-3 px-6 rounded"
                         >
-                          Payer avec Stripe
-                        </a>
-                      </div>
-                    )}
-
-                    {/* PayPal */}
-                    {order.payment_method === 'paypal' && order.paypal_approval_url && (
-                      <div className="text-sm space-y-3">
-                        <p>Payez avec votre compte PayPal :</p>
-                        <a
-                          href={order.paypal_approval_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block w-full text-center bg-[#0070ba] hover:bg-[#005ea6] text-white font-semibold py-3 px-6 rounded"
-                        >
-                          Payer avec PayPal
+                          Pay with Stripe
                         </a>
                       </div>
                     )}
@@ -121,7 +106,7 @@ const OrderSuccessPage = () => {
                     {/* Plisio */}
                     {order.payment_method === 'plisio' && order.plisio_invoice_url && (
                       <div className="text-sm space-y-3">
-                        <p>Payez avec 100+ cryptomonnaies via Plisio :</p>
+                        <p>Pay with 100+ cryptocurrencies via Plisio:</p>
                         {order.plisio_qr_code && (
                           <div className="flex justify-center">
                             <img src={order.plisio_qr_code} alt="QR Code" className="w-48 h-48" />
@@ -138,31 +123,14 @@ const OrderSuccessPage = () => {
                           rel="noopener noreferrer"
                           className="inline-block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded"
                         >
-                          Payer avec Plisio
+                          Pay with Plisio
                         </a>
                       </div>
                     )}
 
-                    {/* Binance Pay */}
-                    {/* Message pour les paiements qui n'ont pas été créés */}
-                    {!order.stripe_payment_url && !order.paypal_approval_url && !order.coinpal_payment_url && 
-                     !order.plisio_invoice_url && !order.binance_checkout_url && order.payment_method !== 'manual' && (
-                      <div className="text-sm space-y-3">
-                        <p className="font-semibold">🎮 Mode Démo Activé</p>
-                        <p>Les paiements sont en mode démonstration. Pour activer les paiements réels :</p>
-                        <ul className="list-disc ml-5 space-y-1">
-                          <li>Configurez vos clés API dans <code className="bg-gray-200 px-1">/app/backend/.env</code></li>
-                          <li>Redémarrez le backend</li>
-                          <li>Les liens de paiement seront générés automatiquement</li>
-                        </ul>
-                        <p className="text-xs text-gray-600 mt-2">
-                          Consultez <strong>/app/INTEGRATION_GUIDE.md</strong> pour plus d'informations
-                        </p>
-                      </div>
-                    )}
-
-                    {order.payment_method === 'binance' && order.binance_checkout_url && (
-                      <div className="text-sm space-y-3">
+                    {/* Demo mode message removed - production only */}
+                  </div>
+                )}
                         <p>Payez avec Binance Pay (0% de frais) :</p>
                         {order.binance_qr_code && (
                           <div className="flex justify-center">
