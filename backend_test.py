@@ -577,18 +577,18 @@ class Kayee01Tester:
             self.log_result("Get Order by ID", False, f"Request failed: {str(e)}")
             return None
 
-    def test_manual_payoneer_payment(self):
-        """Test creating order with manual Payoneer payment method"""
+    def test_email_production_manual_payment(self):
+        """Test email production with manual payment method"""
         test_order_payload = {
-            "user_email": "test@kayee01.com",
-            "user_name": "Test Payoneer",
+            "user_email": "Info.kayicom.com@gmx.fr",
+            "user_name": "Anson",
             "items": [
                 {
-                    "product_id": "test-payoneer",
-                    "name": "Test Montre Rolex",
+                    "product_id": "real-002",
+                    "name": "Luxury Product",
                     "price": 500.0,
                     "quantity": 1,
-                    "image": "https://example.com/rolex.jpg"
+                    "image": "https://example.com/product.jpg"
                 }
             ],
             "total": 510.0,
@@ -596,13 +596,13 @@ class Kayee01Tester:
             "shipping_cost": 10.0,
             "payment_method": "manual",
             "shipping_address": {
-                "address": "123 Rue de Paris",
+                "address": "123 Production St",
                 "city": "Paris",
                 "postal_code": "75001",
                 "country": "France"
             },
-            "phone": "+33612345678",
-            "notes": "Test commande Payoneer"
+            "phone": "+33123456789",
+            "notes": "Test email production"
         }
 
         try:
