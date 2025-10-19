@@ -21,7 +21,7 @@ async def create_admin():
     client = AsyncIOMotorClient(mongo_url)
     db = client[os.environ['DB_NAME']]
     
-    admin_email = "admin@luxe.com"
+    admin_email = "admin@kayee01.com"
     admin_password = "Admin123!"
     
     print(f"Creating/Updating admin account...")
