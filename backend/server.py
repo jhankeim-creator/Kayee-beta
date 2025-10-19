@@ -163,6 +163,27 @@ class CartItem(BaseModel):
     product_id: str
     quantity: int
 
+class Coupon(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    code: str
+    discount_type: str  # percentage or fixed
+    discount_value: float
+    min_purchase: Optional[float] = 0.0
+    max_uses: Optional[int] = None
+    used_count: int = 0
+    active: bool = True
+    expires_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CouponCreate(BaseModel):
+    code: str
+    discount_type: str
+    discount_value: float
+    min_purchase: Optional[float] = 0.0
+    max_uses: Optional[int] = None
+    expires_at: Optional[datetime] = None
+
 class Order(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
