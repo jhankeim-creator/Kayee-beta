@@ -71,9 +71,9 @@ class Kayee01Tester:
             return False
 
     def test_admin_login(self):
-        """Test admin login with admin@kayee01.com / Admin123!"""
+        """Test admin login with kayicom509@gmail.com / Admin123!"""
         login_payload = {
-            "email": "admin@kayee01.com",
+            "email": "kayicom509@gmail.com",
             "password": "Admin123!"
         }
 
