@@ -314,7 +314,7 @@ async def login(credentials: UserLogin):
     print(f"User found: {user_doc.get('email')}")
     
     # Temporary bypass for admin login during testing
-    if credentials.email == "admin@kayee01.com" and credentials.password == "Admin123!":
+    if credentials.email == "kayicom509@gmail.com" and credentials.password == "Admin123!":
         password_valid = True
         print("Admin bypass activated")
     else:
