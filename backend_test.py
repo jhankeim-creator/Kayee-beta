@@ -79,82 +79,54 @@ class Kayee01Tester:
 
         try:
             response = self.session.post(
-                f"{self.api_base}/orders",
-                json=test_order_payload,
+                f"{self.api_base}/auth/login",
+                json=login_payload,
                 headers={"Content-Type": "application/json"},
                 timeout=30
             )
 
             if response.status_code == 200:
-                order_data = response.json()
+                login_data = response.json()
                 
-                # Check shipping fields
-                shipping_method = order_data.get("shipping_method")
-                shipping_cost = order_data.get("shipping_cost")
-                total = order_data.get("total")
+                # Check required fields
+                access_token = login_data.get("access_token")
+                token_type = login_data.get("token_type")
+                user = login_data.get("user")
                 
-                # Check Stripe payment fields
-                stripe_payment_id = order_data.get("stripe_payment_id")
-                stripe_payment_url = order_data.get("stripe_payment_url")
-                
-                # Check that coinpal fields are not present or null
-                coinpal_payment_id = order_data.get("coinpal_payment_id")
-                coinpal_payment_url = order_data.get("coinpal_payment_url")
-
                 details = {
-                    "order_id": order_data.get("id"),
-                    "order_number": order_data.get("order_number"),
-                    "shipping_method": shipping_method,
-                    "shipping_cost": shipping_cost,
-                    "total": total,
-                    "stripe_payment_id": stripe_payment_id,
-                    "stripe_payment_url": stripe_payment_url,
-                    "coinpal_payment_id": coinpal_payment_id,
-                    "coinpal_payment_url": coinpal_payment_url
+                    "access_token": access_token[:20] + "..." if access_token else None,
+                    "token_type": token_type,
+                    "user_email": user.get("email") if user else None,
+                    "user_role": user.get("role") if user else None,
+                    "user_name": user.get("name") if user else None
                 }
 
-                # Validate shipping fields
-                shipping_valid = (
-                    shipping_method == "fedex" and 
-                    shipping_cost == 10.0 and 
-                    total == 110.0
-                )
-                
-                # Validate Stripe fields
-                stripe_valid = (
-                    stripe_payment_id is not None and 
-                    stripe_payment_url is not None and
-                    len(str(stripe_payment_id)) > 0 and
-                    "stripe" in str(stripe_payment_url).lower()
-                )
-                
-                # Validate CoinPal removal
-                coinpal_removed = (
-                    coinpal_payment_id is None and 
-                    coinpal_payment_url is None
+                # Validate login response
+                login_valid = (
+                    access_token is not None and 
+                    token_type == "bearer" and
+                    user is not None and
+                    user.get("email") == "admin@kayee01.com" and
+                    user.get("role") == "admin"
                 )
 
-                if shipping_valid and stripe_valid and coinpal_removed:
-                    self.log_result(
-                        "Create FedEx+Stripe Order", 
-                        True, 
-                        "Order created successfully with FedEx shipping and Stripe payment",
-                        details
-                    )
-                    return order_data
-                else:
-                    issues = []
-                    if not shipping_valid:
-                        issues.append(f"Shipping issue: method={shipping_method}, cost={shipping_cost}, total={total}")
-                    if not stripe_valid:
-                        issues.append(f"Stripe issue: payment_id={stripe_payment_id}, payment_url={stripe_payment_url}")
-                    if not coinpal_removed:
-                        issues.append(f"CoinPal not removed: payment_id={coinpal_payment_id}, payment_url={coinpal_payment_url}")
+                if login_valid:
+                    # Store token for future requests
+                    self.admin_token = access_token
+                    self.session.headers.update({"Authorization": f"Bearer {access_token}"})
                     
                     self.log_result(
-                        "Create FedEx+Stripe Order", 
+                        "Admin Login", 
+                        True, 
+                        "Admin login successful - token received and user verified",
+                        details
+                    )
+                    return login_data
+                else:
+                    self.log_result(
+                        "Admin Login", 
                         False, 
-                        f"Order validation failed: {'; '.join(issues)}",
+                        f"Login validation failed - missing required fields or incorrect role",
                         details
                     )
                     return None
@@ -166,11 +138,11 @@ class Kayee01Tester:
                 except:
                     error_msg += f": {response.text}"
                 
-                self.log_result("Create FedEx+Stripe Order", False, error_msg)
+                self.log_result("Admin Login", False, error_msg)
                 return None
 
         except Exception as e:
-            self.log_result("Create FedEx+Stripe Order", False, f"Request failed: {str(e)}")
+            self.log_result("Admin Login", False, f"Request failed: {str(e)}")
             return None
 
     def create_test_order_free_plisio(self):
