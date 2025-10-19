@@ -1141,16 +1141,17 @@ class Kayee01Tester:
             return False
 
     def test_crypto_discount_plisio(self):
-        """Test 15% crypto discount for Plisio payment method"""
+        """Test 15% crypto discount for Plisio payment method as specified in review request"""
+        # Use exact test data from review request
         test_order_payload = {
-            "user_email": "customer@kayee01.com",
-            "user_name": "Test Customer",
+            "user_email": "Info.kayicom.com@gmx.fr",
+            "user_name": "Final Test",
             "items": [
                 {
-                    "product_id": "test",
-                    "name": "Test Watch",
-                    "price": 100.0,
-                    "quantity": 2,
+                    "product_id": "final",
+                    "name": "Test Product",
+                    "price": 200.0,
+                    "quantity": 1,
                     "image": "test.jpg"
                 }
             ],
@@ -1159,7 +1160,7 @@ class Kayee01Tester:
             "shipping_cost": 10.0,
             "payment_method": "plisio",
             "shipping_address": {
-                "address": "123 Test",
+                "address": "123",
                 "city": "Paris",
                 "postal_code": "75001",
                 "country": "FR"
