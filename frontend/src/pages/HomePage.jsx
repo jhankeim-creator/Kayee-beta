@@ -48,10 +48,10 @@ const HomePage = () => {
               className="text-5xl md:text-7xl font-bold text-white mb-6"
               style={{ fontFamily: 'Playfair Display' }}
             >
-              Luxury Replica Watches
+              Luxury Fashion & Accessories
             </h1>
             <p className="text-xl md:text-2xl text-white mb-8">
-              Highest Quality 1:1 Superclone Watches
+              Premium Quality Watches, Clothing & Accessories
             </p>
             <Button
               onClick={() => navigate('/shop')}
