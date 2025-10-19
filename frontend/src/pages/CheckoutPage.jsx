@@ -18,6 +18,9 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [shippingMethod, setShippingMethod] = useState('free');
+  const [couponCode, setCouponCode] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponApplied, setCouponApplied] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
