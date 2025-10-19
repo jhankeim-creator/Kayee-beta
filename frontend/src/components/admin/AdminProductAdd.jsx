@@ -234,6 +234,9 @@ const AdminProductAdd = () => {
           </CardContent>
         </Card>
 
+        {/* Product Variants */}
+        <ProductVariants formData={formData} setFormData={setFormData} />
+
         {/* Images & Videos */}
         <Card>
           <CardHeader>
