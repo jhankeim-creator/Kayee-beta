@@ -107,7 +107,7 @@ const CheckoutPage = () => {
 
   const paymentMethods = [
     { id: 'stripe', name: 'Credit Card (Stripe)', icon: CreditCard, description: 'Pay with credit or debit card' },
-    { id: 'plisio', name: '15% OFF - Cryptocurrency (Plisio)', icon: Wallet, description: '100+ cryptocurrencies accepted - Save 15%!' },
+    { id: 'plisio', name: 'Cryptocurrency (Plisio)', icon: Wallet, description: '100+ cryptocurrencies accepted', discount: '15% OFF' },
     { id: 'manual', name: 'Manual Payment', icon: DollarSign, description: 'Bank transfer, Payoneer - Instructions sent by email' }
   ];
 
