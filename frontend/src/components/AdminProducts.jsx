@@ -189,6 +189,15 @@ const AdminProducts = () => {
                 <Edit className="h-4 w-4" />
               </Button>
               <Button
+                onClick={() => handleDuplicate(product)}
+                variant="outline"
+                size="sm"
+                className="flex-1 text-blue-600 hover:text-blue-700"
+                data-testid={`duplicate-product-${product.id}`}
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+              <Button
                 onClick={() => handleDelete(product.id)}
                 variant="outline"
                 size="sm"
