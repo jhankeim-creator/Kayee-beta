@@ -1241,7 +1241,7 @@ class Kayee01Tester:
             return None
 
     def test_tracking_number_update(self):
-        """Test tracking number update functionality"""
+        """Test tracking number update functionality as specified in review request"""
         # First create a test order
         test_order = self.test_crypto_discount_plisio()
         if not test_order:
@@ -1259,8 +1259,8 @@ class Kayee01Tester:
             return False
         
         try:
-            # Update tracking information
-            tracking_number = "123456789"
+            # Update tracking information as per review request
+            tracking_number = "TEST123"
             tracking_carrier = "fedex"
             
             response = self.session.put(
