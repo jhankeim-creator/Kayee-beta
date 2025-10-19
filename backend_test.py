@@ -145,6 +145,151 @@ class Kayee01Tester:
             self.log_result("Admin Login", False, f"Request failed: {str(e)}")
             return None
 
+    def test_stripe_payment_link_creation(self):
+        """Test Stripe payment link creation for order ORD-3E0AF5B2"""
+        test_order_payload = {
+            "user_email": "Info.kayicom.com@gmx.fr",
+            "user_name": "Real Customer",
+            "items": [
+                {
+                    "product_id": "real-001",
+                    "name": "Rolex Watch",
+                    "price": 500.0,
+                    "quantity": 1,
+                    "image": "https://example.com/rolex.jpg"
+                }
+            ],
+            "total": 510.0,
+            "shipping_method": "fedex",
+            "shipping_cost": 10.0,
+            "payment_method": "stripe",
+            "shipping_address": {
+                "address": "123 Production St",
+                "city": "Paris",
+                "postal_code": "75001",
+                "country": "France"
+            },
+            "phone": "+33123456789",
+            "notes": "Real order test"
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/orders",
+                json=test_order_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                order_data = response.json()
+                
+                # Check Stripe payment fields
+                stripe_payment_id = order_data.get("stripe_payment_id")
+                stripe_payment_url = order_data.get("stripe_payment_url")
+                order_number = order_data.get("order_number")
+                order_id = order_data.get("id")
+                
+                details = {
+                    "order_id": order_id,
+                    "order_number": order_number,
+                    "stripe_payment_id": stripe_payment_id,
+                    "stripe_payment_url": stripe_payment_url,
+                    "total": order_data.get("total"),
+                    "user_email": order_data.get("user_email")
+                }
+
+                # Validate Stripe payment link creation
+                stripe_valid = (
+                    stripe_payment_id is not None and 
+                    stripe_payment_url is not None and
+                    len(str(stripe_payment_id)) > 0 and
+                    ("stripe" in str(stripe_payment_url).lower() or "buy.stripe.com" in str(stripe_payment_url))
+                )
+
+                if stripe_valid:
+                    self.log_result(
+                        "Stripe Payment Link Creation", 
+                        True, 
+                        f"Stripe payment link created successfully for order {order_number}",
+                        details
+                    )
+                    
+                    # Test retrieving the order to verify stripe_payment_url
+                    return self.test_get_order_stripe_url(order_id, order_number)
+                else:
+                    self.log_result(
+                        "Stripe Payment Link Creation", 
+                        False, 
+                        f"Stripe payment link validation failed",
+                        details
+                    )
+                    return None
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("Stripe Payment Link Creation", False, error_msg)
+                return None
+
+        except Exception as e:
+            self.log_result("Stripe Payment Link Creation", False, f"Request failed: {str(e)}")
+            return None
+
+    def test_get_order_stripe_url(self, order_id: str, order_number: str):
+        """Test GET /api/orders/{order_id} to verify stripe_payment_url"""
+        try:
+            response = self.session.get(f"{self.api_base}/orders/{order_id}", timeout=10)
+            
+            if response.status_code == 200:
+                order_data = response.json()
+                
+                stripe_payment_url = order_data.get("stripe_payment_url")
+                stripe_payment_id = order_data.get("stripe_payment_id")
+                
+                details = {
+                    "order_id": order_id,
+                    "order_number": order_number,
+                    "stripe_payment_id": stripe_payment_id,
+                    "stripe_payment_url": stripe_payment_url,
+                    "product_display_check": f"Should show 'Order {order_number}' only"
+                }
+                
+                # Validate that stripe_payment_url is present
+                url_valid = (
+                    stripe_payment_url is not None and 
+                    len(str(stripe_payment_url)) > 0 and
+                    ("stripe" in str(stripe_payment_url).lower() or "buy.stripe.com" in str(stripe_payment_url))
+                )
+                
+                if url_valid:
+                    self.log_result(
+                        "Get Order Stripe URL", 
+                        True, 
+                        f"Order retrieved successfully with valid Stripe payment URL",
+                        details
+                    )
+                    return order_data
+                else:
+                    self.log_result(
+                        "Get Order Stripe URL", 
+                        False, 
+                        f"Stripe payment URL validation failed",
+                        details
+                    )
+                    return None
+            else:
+                self.log_result("Get Order Stripe URL", False, f"HTTP {response.status_code}")
+                return None
+                
+        except Exception as e:
+            self.log_result("Get Order Stripe URL", False, f"Request failed: {str(e)}")
+            return None
+
     def create_test_order_free_plisio(self):
         """Create a test order with Free shipping and Plisio payment"""
         test_order_payload = {
