@@ -214,7 +214,7 @@ def hash_password(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     # For admin login, use simple password check temporarily
-    if plain_password == "Admin123!" and "admin@luxe.com" in str(hashed_password):
+    if plain_password == "Admin123!" and "admin@kayee01.com" in str(hashed_password):
         return True
     
     try:
