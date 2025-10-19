@@ -107,6 +107,29 @@ const AdminProducts = () => {
     }
   };
 
+  const handleDuplicate = async (product) => {
+    try {
+      const duplicatedProduct = {
+        name: `${product.name} (Copy)`,
+        description: product.description,
+        price: product.price,
+        images: product.images,
+        category: product.category,
+        stock: product.stock,
+        featured: false
+      };
+
+      await axios.post(`${API}/products`, duplicatedProduct, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Product duplicated successfully');
+      loadData();
+    } catch (error) {
+      console.error('Failed to duplicate product:', error);
+      toast.error('Failed to duplicate product');
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       name: '',
