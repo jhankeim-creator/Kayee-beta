@@ -24,7 +24,10 @@ const AdminProducts = () => {
     images: '',
     category: '',
     stock: '',
-    featured: false
+    featured: false,
+    has_variants: false,
+    variants: [],
+    variant_options: []
   });
 
   useEffect(() => {
