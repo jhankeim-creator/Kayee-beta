@@ -366,7 +366,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Test CoinPal Complete Removal"
+    - "Kayee01 Complete Testing Finished"
   stuck_tasks:
     - "Test CoinPal Complete Removal"
   test_all: false
