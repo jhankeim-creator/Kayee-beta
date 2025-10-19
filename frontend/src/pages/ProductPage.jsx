@@ -107,22 +107,10 @@ const ProductPage = () => {
               </div>
               <p className="text-gray-700 text-lg mb-6 leading-relaxed">{product.description}</p>
 
-              {/* Stock */}
-              <div className="mb-6">
-                {product.stock > 0 ? (
-                  <p className="text-green-600 font-semibold">
-                    In Stock ({product.stock} available)
-                  </p>
-                ) : (
-                  <p className="text-red-600 font-semibold">Out of Stock</p>
-                )}
-              </div>
-
               {/* Quantity Selector */}
-              {product.stock > 0 && (
-                <div className="mb-6">
-                  <label className="block text-sm font-semibold mb-2">Quantity</label>
-                  <div className="flex items-center space-x-4">
+              <div className="mb-6">
+                <label className="block text-sm font-semibold mb-2">Quantity</label>
+                <div className="flex items-center space-x-4">
                     <Button
                       variant="outline"
                       size="icon"
