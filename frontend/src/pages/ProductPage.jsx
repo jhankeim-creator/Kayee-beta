@@ -125,20 +125,18 @@ const ProductPage = () => {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                      onClick={() => setQuantity(quantity + 1)}
                       data-testid="increase-quantity"
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
-              )}
 
               {/* Add to Cart Button */}
               <div className="flex space-x-4">
                 <Button
                   onClick={handleAddToCart}
-                  disabled={product.stock === 0}
                   className="flex-1 bg-[#d4af37] hover:bg-[#b8941f] text-white py-6 text-lg"
                   data-testid="add-to-cart-button"
                 >
@@ -150,7 +148,6 @@ const ProductPage = () => {
                     handleAddToCart();
                     navigate('/cart');
                   }}
-                  disabled={product.stock === 0}
                   variant="outline"
                   className="flex-1 border-2 border-black hover:bg-black hover:text-white py-6 text-lg"
                 >
