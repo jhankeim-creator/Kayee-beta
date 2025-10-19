@@ -16,6 +16,7 @@ import OrderSuccessPage from './pages/OrderSuccessPage';
 import TrackOrderPage from './pages/TrackOrderPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
+import ForgotPassword from './pages/ForgotPassword';
 import MyOrders from './pages/MyOrders';
 import FAQPage from './pages/FAQPage';
 import TermsOfService from './pages/TermsOfService';
