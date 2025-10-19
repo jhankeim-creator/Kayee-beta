@@ -501,12 +501,15 @@ async def create_order(order_data: OrderCreate):
         crypto_discount = total_amount * 0.15
         total_amount = total_amount - crypto_discount
     
-    order = Order(
-        order_number=order_number,
-        crypto_discount=crypto_discount,
-        total=total_amount,
-        **order_data.model_dump()
-    )
+    # Create order data dict and update with calculated values
+    order_dict = order_data.model_dump()
+    order_dict.update({
+        "order_number": order_number,
+        "crypto_discount": crypto_discount,
+        "total": total_amount
+    })
+    
+    order = Order(**order_dict)
     order_doc = prepare_for_mongo(order.model_dump())
     await db.orders.insert_one(order_doc)
     
