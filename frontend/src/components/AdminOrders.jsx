@@ -68,6 +68,31 @@ const AdminOrders = () => {
     }
   };
 
+  const addTracking = (order) => {
+    setSelectedOrder(order);
+    setTrackingData({
+      tracking_number: order.tracking_number || '',
+      tracking_carrier: order.tracking_carrier || 'fedex'
+    });
+    setShowTrackingDialog(true);
+  };
+
+  const submitTracking = async () => {
+    try {
+      await axios.put(
+        `${API}/orders/${selectedOrder.id}/tracking?tracking_number=${trackingData.tracking_number}&tracking_carrier=${trackingData.tracking_carrier}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success('Tracking number added successfully');
+      setShowTrackingDialog(false);
+      loadOrders();
+    } catch (error) {
+      console.error('Failed to add tracking:', error);
+      toast.error('Failed to add tracking');
+    }
+  };
+
   const viewOrder = (order) => {
     setSelectedOrder(order);
     setShowDialog(true);
