@@ -648,7 +648,7 @@ class Kayee01Tester:
                     self.log_result(
                         "Email Production Manual Payment", 
                         True, 
-                        f"Order created successfully - email should be sent to Info.kayicom.com@gmx.fr for customer Anson",
+                        f"Order created successfully - email should be sent to Info.kayicom.com@gmx.fr with name 'Anson' in email",
                         details
                     )
                     return order_data
