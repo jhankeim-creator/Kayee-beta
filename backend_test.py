@@ -713,6 +713,176 @@ class Kayee01Tester:
             self.log_result("Email Logs Check", False, f"Log check failed: {str(e)}")
             return False
 
+    def test_product_duplication(self):
+        """Test product listing and duplication functionality"""
+        try:
+            # First, get list of products
+            response = self.session.get(f"{self.api_base}/products", timeout=10)
+            
+            if response.status_code != 200:
+                self.log_result("Product Duplication", False, f"Failed to get products: HTTP {response.status_code}")
+                return None
+            
+            products = response.json()
+            
+            if not products:
+                self.log_result("Product Duplication", False, "No products found to duplicate")
+                return None
+            
+            # Select first product to duplicate
+            original_product = products[0]
+            original_name = original_product.get("name", "Unknown Product")
+            
+            # Create duplicate product with "(Copy)" suffix
+            duplicate_product = {
+                "name": f"{original_name} (Copy)",
+                "description": original_product.get("description", ""),
+                "price": original_product.get("price", 0.0),
+                "compare_at_price": original_product.get("compare_at_price"),
+                "cost": original_product.get("cost"),
+                "images": original_product.get("images", []),
+                "category": original_product.get("category", ""),
+                "stock": original_product.get("stock", 0),
+                "sku": f"{original_product.get('sku', 'SKU')}-COPY",
+                "barcode": original_product.get("barcode"),
+                "weight": original_product.get("weight"),
+                "featured": False,  # Don't feature the copy
+                "on_sale": original_product.get("on_sale", False),
+                "is_new": original_product.get("is_new", False),
+                "best_seller": original_product.get("best_seller", False),
+                "digital_product": original_product.get("digital_product", False),
+                "download_url": original_product.get("download_url"),
+                "tags": original_product.get("tags", []),
+                "meta_title": original_product.get("meta_title"),
+                "meta_description": original_product.get("meta_description")
+            }
+            
+            # Need admin authentication for product creation
+            if not self.admin_token:
+                self.log_result("Product Duplication", False, "Admin authentication required - run admin login test first")
+                return None
+            
+            # Create the duplicate product
+            create_response = self.session.post(
+                f"{self.api_base}/products",
+                json=duplicate_product,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=30
+            )
+            
+            if create_response.status_code == 200:
+                new_product = create_response.json()
+                
+                details = {
+                    "original_product_id": original_product.get("id"),
+                    "original_name": original_name,
+                    "duplicate_product_id": new_product.get("id"),
+                    "duplicate_name": new_product.get("name"),
+                    "name_has_copy_suffix": "(Copy)" in new_product.get("name", ""),
+                    "price_copied": new_product.get("price") == original_product.get("price"),
+                    "category_copied": new_product.get("category") == original_product.get("category")
+                }
+                
+                # Validate duplication
+                duplication_valid = (
+                    new_product.get("name") == f"{original_name} (Copy)" and
+                    new_product.get("price") == original_product.get("price") and
+                    new_product.get("category") == original_product.get("category") and
+                    new_product.get("id") != original_product.get("id")
+                )
+                
+                if duplication_valid:
+                    self.log_result(
+                        "Product Duplication", 
+                        True, 
+                        f"Product duplicated successfully with '(Copy)' suffix",
+                        details
+                    )
+                    return new_product
+                else:
+                    self.log_result(
+                        "Product Duplication", 
+                        False, 
+                        f"Product duplication validation failed",
+                        details
+                    )
+                    return None
+            else:
+                error_msg = f"HTTP {create_response.status_code}"
+                try:
+                    error_data = create_response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {create_response.text}"
+                
+                self.log_result("Product Duplication", False, f"Failed to create duplicate: {error_msg}")
+                return None
+                
+        except Exception as e:
+            self.log_result("Product Duplication", False, f"Test failed: {str(e)}")
+            return None
+
+    def test_admin_dashboard_access(self):
+        """Test admin dashboard access after login"""
+        if not self.admin_token:
+            self.log_result("Admin Dashboard Access", False, "Admin token not available - run admin login test first")
+            return False
+        
+        try:
+            # Test dashboard stats endpoint
+            response = self.session.get(
+                f"{self.api_base}/admin/dashboard/stats",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                stats_data = response.json()
+                
+                details = {
+                    "today_sales": stats_data.get("today_sales"),
+                    "today_orders": stats_data.get("today_orders"),
+                    "total_customers": stats_data.get("total_customers"),
+                    "pending_orders": stats_data.get("pending_orders"),
+                    "has_sales_chart": "sales_chart" in stats_data,
+                    "has_recent_orders": "recent_orders" in stats_data
+                }
+                
+                # Validate dashboard data structure
+                dashboard_valid = (
+                    "today_sales" in stats_data and
+                    "today_orders" in stats_data and
+                    "total_customers" in stats_data and
+                    "sales_chart" in stats_data
+                )
+                
+                if dashboard_valid:
+                    self.log_result(
+                        "Admin Dashboard Access", 
+                        True, 
+                        "Admin dashboard accessible with valid statistics data",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Admin Dashboard Access", 
+                        False, 
+                        "Dashboard data structure validation failed",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Admin Dashboard Access", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Admin Dashboard Access", False, f"Request failed: {str(e)}")
+            return False
+
     def test_email_smtp_verification(self):
         """Test email SMTP configuration and Payoneer instructions"""
         try:
