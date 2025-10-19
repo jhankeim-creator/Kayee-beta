@@ -578,31 +578,31 @@ class Kayee01Tester:
             return None
 
     def test_email_production_manual_payment(self):
-        """Test email production with manual payment method"""
+        """Test email production with manual payment method - using exact review request data"""
+        # Use exact test data from review request
         test_order_payload = {
             "user_email": "Info.kayicom.com@gmx.fr",
-            "user_name": "Anson",
+            "user_name": "Final Test",
             "items": [
                 {
-                    "product_id": "real-002",
-                    "name": "Luxury Product",
-                    "price": 500.0,
+                    "product_id": "final",
+                    "name": "Test Product",
+                    "price": 200.0,
                     "quantity": 1,
-                    "image": "https://example.com/product.jpg"
+                    "image": "test.jpg"
                 }
             ],
-            "total": 510.0,
+            "total": 200.0,
             "shipping_method": "fedex",
             "shipping_cost": 10.0,
             "payment_method": "manual",
             "shipping_address": {
-                "address": "123 Production St",
+                "address": "123",
                 "city": "Paris",
                 "postal_code": "75001",
-                "country": "France"
+                "country": "FR"
             },
-            "phone": "+33123456789",
-            "notes": "Test email production"
+            "phone": "+33123456789"
         }
 
         try:
