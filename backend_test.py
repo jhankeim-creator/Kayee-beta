@@ -1092,7 +1092,7 @@ class Kayee01Tester:
                 discount_amount = coupon_data.get("discount_amount")
                 discount_type = coupon_data.get("discount_type")
                 
-                # SAVE10 should be 10% discount, so 10% of $100 = $10
+                # WELCOME10 should be 10% discount, so 10% of $100 = $10
                 expected_discount = 10.0
                 
                 valid_test_passed = (
