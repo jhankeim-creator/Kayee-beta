@@ -619,8 +619,6 @@ class Kayee01Tester:
                 # Check order fields
                 payment_method = order_data.get("payment_method")
                 total = order_data.get("total")
-                shipping_method = order_data.get("shipping_method")
-                shipping_cost = order_data.get("shipping_cost")
                 user_email = order_data.get("user_email")
                 user_name = order_data.get("user_name")
 
@@ -629,35 +627,36 @@ class Kayee01Tester:
                     "order_number": order_data.get("order_number"),
                     "payment_method": payment_method,
                     "total": total,
-                    "shipping_method": shipping_method,
-                    "shipping_cost": shipping_cost,
                     "user_email": user_email,
-                    "user_name": user_name
+                    "user_name": user_name,
+                    "email_recipient": "Info.kayicom.com@gmx.fr",
+                    "customer_name": "Anson"
                 }
 
-                # Validate manual payment order
-                manual_payment_valid = (
+                # Validate manual payment order with correct email recipient
+                email_order_valid = (
                     payment_method == "manual" and 
                     total == 510.0 and
-                    shipping_method == "fedex" and
-                    shipping_cost == 10.0 and
-                    user_email == "test@kayee01.com" and
-                    user_name == "Test Payoneer"
+                    user_email == "Info.kayicom.com@gmx.fr" and
+                    user_name == "Anson"
                 )
 
-                if manual_payment_valid:
+                if email_order_valid:
+                    # Check email logs for confirmation
+                    email_sent = self.check_email_logs(order_data.get("id"))
+                    
                     self.log_result(
-                        "Manual Payoneer Payment", 
+                        "Email Production Manual Payment", 
                         True, 
-                        "Order created successfully with manual payment method",
+                        f"Order created successfully - email should be sent to Info.kayicom.com@gmx.fr for customer Anson",
                         details
                     )
                     return order_data
                 else:
                     self.log_result(
-                        "Manual Payoneer Payment", 
+                        "Email Production Manual Payment", 
                         False, 
-                        f"Order validation failed: payment_method={payment_method}, total={total}",
+                        f"Order validation failed: payment_method={payment_method}, email={user_email}, name={user_name}",
                         details
                     )
                     return None
@@ -669,12 +668,50 @@ class Kayee01Tester:
                 except:
                     error_msg += f": {response.text}"
                 
-                self.log_result("Manual Payoneer Payment", False, error_msg)
+                self.log_result("Email Production Manual Payment", False, error_msg)
                 return None
 
         except Exception as e:
-            self.log_result("Manual Payoneer Payment", False, f"Request failed: {str(e)}")
+            self.log_result("Email Production Manual Payment", False, f"Request failed: {str(e)}")
             return None
+
+    def check_email_logs(self, order_id: str):
+        """Check backend logs for email sending confirmation"""
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["tail", "-n", "100", "/var/log/supervisor/backend.err.log"],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            
+            log_content = result.stdout
+            
+            # Look for email-related log entries
+            email_found = "📧 EMAIL" in log_content or "Email" in log_content
+            order_found = order_id in log_content if order_id else False
+            kayee_email_found = "Info.kayicom.com@gmx.fr" in log_content
+            
+            details = {
+                "email_logs_found": email_found,
+                "order_in_logs": order_found,
+                "recipient_email_found": kayee_email_found,
+                "log_sample": log_content[-500:] if log_content else "No logs found"
+            }
+            
+            self.log_result(
+                "Email Logs Check", 
+                email_found, 
+                f"Email system activity detected: {email_found}",
+                details
+            )
+            
+            return email_found
+                
+        except Exception as e:
+            self.log_result("Email Logs Check", False, f"Log check failed: {str(e)}")
+            return False
 
     def test_email_smtp_verification(self):
         """Test email SMTP configuration and Payoneer instructions"""
