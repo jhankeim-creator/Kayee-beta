@@ -109,6 +109,36 @@ const MyOrders = () => {
                       </div>
                     </div>
 
+                    {/* Tracking Information */}
+                    {order.tracking_number && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <p className="font-semibold text-blue-900 mb-2">📦 Tracking Information</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          <div>
+                            <p className="text-sm text-gray-600">Carrier</p>
+                            <p className="font-semibold uppercase">{order.tracking_carrier}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Tracking Number</p>
+                            <p className="font-semibold">{order.tracking_number}</p>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            const trackingUrls = {
+                              fedex: `https://www.fedex.com/fedextrack/?trknbr=${order.tracking_number}`,
+                              usps: `https://tools.usps.com/go/TrackConfirmAction?tLabels=${order.tracking_number}`
+                            };
+                            window.open(trackingUrls[order.tracking_carrier.toLowerCase()] || '#', '_blank');
+                          }}
+                          className="mt-3 bg-blue-600 hover:bg-blue-700 text-white"
+                          size="sm"
+                        >
+                          Track Package
+                        </Button>
+                      </div>
+                    )}
+
                     <div className="border-t pt-4">
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {order.items.map((item, idx) => (
