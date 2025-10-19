@@ -82,7 +82,7 @@ class EmailService:
             <div style="margin: 30px 0; padding: 20px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 5px;">
                 <h3 style="color: #1976d2; margin-top: 0;">💰 Manual Payment Instructions</h3>
                 <p><strong>Payoneer Email:</strong> <span style="color: #2196f3;">kayicom509@gmail.com</span></p>
-                <p><strong>Name:</strong> KAYI</p>
+                <p><strong>Name:</strong> Anson</p>
                 <p><strong>Amount to Pay:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
                 <p><strong>Order Reference:</strong> <code>{order_data['order_number']}</code></p>
                 <p style="background: #fff3cd; padding: 10px; border-radius: 3px; margin-top: 15px;">
