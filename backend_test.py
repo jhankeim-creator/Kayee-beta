@@ -1074,12 +1074,12 @@ class Kayee01Tester:
             self.log_result("CoinPal Complete Removal", False, f"Test failed: {str(e)}")
             return False
 
-    def test_coupon_validation_save10(self):
-        """Test coupon validation with SAVE10 code"""
+    def test_coupon_validation_welcome10(self):
+        """Test coupon validation with WELCOME10 code"""
         try:
             # Test 1: Valid coupon with cart total $100 (should work, min $50)
             response = self.session.post(
-                f"{self.api_base}/coupons/validate?code=SAVE10&cart_total=100",
+                f"{self.api_base}/coupons/validate?code=WELCOME10&cart_total=100",
                 headers={"Content-Type": "application/json"},
                 timeout=10
             )
