@@ -1184,10 +1184,10 @@ class Kayee01Tester:
                 total = order_data.get("total")
                 original_total = test_order_payload["total"]
                 
-                # Expected: 15% discount on $200 = $30 discount
+                # Expected as per review request: 15% discount on $200 = $30 discount
                 # Final total should be $200 - $30 = $170
-                expected_crypto_discount = original_total * 0.15  # $30
-                expected_final_total = original_total - expected_crypto_discount  # $170
+                expected_crypto_discount = 30.0  # 15% of 200
+                expected_final_total = 170.0  # 200 - 30
                 
                 details = {
                     "order_id": order_data.get("id"),
