@@ -1111,24 +1111,24 @@ class Kayee01Tester:
                 
                 if valid_test_passed:
                     self.log_result(
-                        "Coupon SAVE10 Valid Test", 
+                        "Coupon WELCOME10 Valid Test", 
                         True, 
-                        f"SAVE10 coupon validation successful - 10% discount = ${discount_amount}",
+                        f"WELCOME10 coupon validation successful - 10% discount = ${discount_amount}",
                         details_valid
                     )
                 else:
                     self.log_result(
-                        "Coupon SAVE10 Valid Test", 
+                        "Coupon WELCOME10 Valid Test", 
                         False, 
-                        f"SAVE10 coupon validation failed - expected $10 discount, got ${discount_amount}",
+                        f"WELCOME10 coupon validation failed - expected $10 discount, got ${discount_amount}",
                         details_valid
                     )
             else:
-                self.log_result("Coupon SAVE10 Valid Test", False, f"HTTP {response.status_code}")
+                self.log_result("Coupon WELCOME10 Valid Test", False, f"HTTP {response.status_code}")
             
             # Test 2: Invalid coupon with cart total $30 (should fail, min $50)
             response2 = self.session.post(
-                f"{self.api_base}/coupons/validate?code=SAVE10&cart_total=30",
+                f"{self.api_base}/coupons/validate?code=WELCOME10&cart_total=30",
                 headers={"Content-Type": "application/json"},
                 timeout=10
             )
