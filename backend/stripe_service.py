@@ -58,9 +58,9 @@ class StripeService:
             }
         
         try:
-            # Créer un produit
+            # Create product with only order number
             product_data = {
-                "name": description or f"Order {order_id}",
+                "name": f"Order {order_id}",
                 "description": f"Payment for order {order_id}"
             }
             
