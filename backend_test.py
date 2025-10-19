@@ -1150,25 +1150,25 @@ class Kayee01Tester:
                 
                 if invalid_test_passed:
                     self.log_result(
-                        "Coupon SAVE10 Invalid Test", 
+                        "Coupon WELCOME10 Invalid Test", 
                         True, 
-                        f"SAVE10 coupon correctly rejected for cart under $50 minimum",
+                        f"WELCOME10 coupon correctly rejected for cart under $50 minimum",
                         details_invalid
                     )
                 else:
                     self.log_result(
-                        "Coupon SAVE10 Invalid Test", 
+                        "Coupon WELCOME10 Invalid Test", 
                         False, 
-                        f"SAVE10 coupon rejection reason incorrect: {error_detail}",
+                        f"WELCOME10 coupon rejection reason incorrect: {error_detail}",
                         details_invalid
                     )
             else:
-                self.log_result("Coupon SAVE10 Invalid Test", False, f"Expected HTTP 400, got {response2.status_code}")
+                self.log_result("Coupon WELCOME10 Invalid Test", False, f"Expected HTTP 400, got {response2.status_code}")
             
             return valid_test_passed and invalid_test_passed
                 
         except Exception as e:
-            self.log_result("Coupon SAVE10 Validation", False, f"Test failed: {str(e)}")
+            self.log_result("Coupon WELCOME10 Validation", False, f"Test failed: {str(e)}")
             return False
 
     def test_crypto_discount_plisio(self):
