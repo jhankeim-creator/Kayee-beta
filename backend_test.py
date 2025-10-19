@@ -1434,11 +1434,13 @@ class Kayee01Tester:
                 if not result["success"]:
                     print(f"  • {result['test']}: {result['message']}")
         
-        print("\n🎯 KEY KAYEE01 FEATURES TESTED:")
-        print("  1. ✅ Stripe Payment Links - Order creation with payment URLs")
-        print("  2. ✅ Admin Login - admin@kayee01.com authentication")
-        print("  3. ✅ Email Production - Manual payment emails to Info.kayicom.com@gmx.fr")
-        print("  4. ✅ Product Duplication - Adding '(Copy)' suffix to product names")
+        print("\n🎯 KEY KAYEE01 NEW FEATURES TESTED:")
+        print("  1. ✅ Admin Email Update - kayicom509@gmail.com authentication")
+        print("  2. ✅ Coupon System - WELCOME10 validation with min purchase requirements")
+        print("  3. ✅ Crypto Discount - 15% discount for Plisio payments")
+        print("  4. ✅ Tracking Numbers - Order tracking updates with carrier info")
+        print("  5. ✅ Stripe Payment Links - Order creation with payment URLs")
+        print("  6. ✅ Email Production - Manual payment emails to Info.kayicom.com@gmx.fr")
         
         return failed_tests == 0
 
