@@ -70,32 +70,11 @@ class Kayee01Tester:
             self.log_result("Backend Health", False, f"Backend not accessible: {str(e)}")
             return False
 
-    def create_test_order_fedex_stripe(self):
-        """Create a test order with FedEx shipping and Stripe payment"""
-        test_order_payload = {
-            "user_email": "customer@luxeboutique.com",
-            "user_name": "John Customer",
-            "items": [
-                {
-                    "product_id": "test-123",
-                    "name": "Luxury Watch",
-                    "price": 100.0,
-                    "quantity": 1,
-                    "image": "https://example.com/watch.jpg"
-                }
-            ],
-            "total": 110.0,  # $100 product + $10 shipping
-            "shipping_method": "fedex",
-            "shipping_cost": 10.0,
-            "payment_method": "stripe",
-            "shipping_address": {
-                "address": "123 Main St",
-                "city": "New York",
-                "postal_code": "10001",
-                "country": "USA"
-            },
-            "phone": "+1234567890",
-            "notes": "Test order with FedEx shipping and Stripe payment"
+    def test_admin_login(self):
+        """Test admin login with admin@kayee01.com / Admin123!"""
+        login_payload = {
+            "email": "admin@kayee01.com",
+            "password": "Admin123!"
         }
 
         try:
