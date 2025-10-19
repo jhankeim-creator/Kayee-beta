@@ -295,6 +295,11 @@ const CheckoutPage = () => {
                             <Label htmlFor={method.id} className="flex items-center cursor-pointer">
                               <method.icon className="h-5 w-5 mr-2 text-[#d4af37]" />
                               <span className="font-semibold">{method.name}</span>
+                              {method.discount && (
+                                <span className="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded">
+                                  {method.discount}
+                                </span>
+                              )}
                             </Label>
                             <p className="text-sm text-gray-600 mt-1">{method.description}</p>
                           </div>
