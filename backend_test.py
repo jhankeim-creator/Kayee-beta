@@ -923,9 +923,10 @@ class Kayee01Tester:
                     email_service_content = f.read()
                     payoneer_config_valid = (
                         'kayicom509@gmail.com' in email_service_content and
-                        'Instructions de paiement Payoneer' in email_service_content and
+                        'Manual Payment Instructions' in email_service_content and
                         'Kayee01' in email_service_content and
-                        "payment_method == 'manual'" in email_service_content
+                        "payment_method == 'manual'" in email_service_content and
+                        'Payoneer Email' in email_service_content
                     )
             except Exception as e:
                 pass
