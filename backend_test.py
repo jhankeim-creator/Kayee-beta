@@ -1141,14 +1141,14 @@ class Kayee01Tester:
 def main():
     """Main test execution"""
     try:
-        tester = EcommerceTester()
+        tester = Kayee01Tester()
         success = tester.run_complete_test()
         
         # Exit with appropriate code
         sys.exit(0 if success else 1)
         
     except Exception as e:
-        print(f"❌ Test execution failed: {str(e)}")
+        print(f"❌ Kayee01 test execution failed: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
