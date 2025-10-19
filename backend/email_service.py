@@ -184,6 +184,64 @@ class EmailService:
         
         await self.send_email(order_data['user_email'], subject, html_content)
     
+    
+    async def send_tracking_update(self, user_email: str, order_number: str, tracking_number: str, carrier: str):
+        """Send tracking number update email"""
+        subject = f"Tracking Information - Order {order_number}"
+        
+        carrier_links = {
+            'fedex': f'https://www.fedex.com/fedextrack/?trknbr={tracking_number}',
+            'usps': f'https://tools.usps.com/go/TrackConfirmAction?tLabels={tracking_number}'
+        }
+        
+        tracking_url = carrier_links.get(carrier.lower(), '#')
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="text-align: center; padding: 20px; background: #1a1a1a; color: white;">
+                    <h1 style="margin: 0; font-family: 'Playfair Display', serif;">
+                        <span style="color: #d4af37;">Kayee</span>01
+                    </h1>
+                </div>
+                
+                <div style="padding: 30px 20px;">
+                    <h2 style="color: #d4af37;">📦 Your Order Has Been Shipped!</h2>
+                    <p>Great news! Your order <strong>{order_number}</strong> is on its way.</p>
+                    
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                        <h3 style="margin-top: 0;">Tracking Information:</h3>
+                        <p><strong>Carrier:</strong> {carrier.upper()}</p>
+                        <p><strong>Tracking Number:</strong> <code style="background: #fff; padding: 5px 10px; border-radius: 3px;">{tracking_number}</code></p>
+                    </div>
+                    
+                    <p style="text-align: center;">
+                        <a href="{tracking_url}" 
+                           style="display: inline-block; padding: 12px 30px; background: #d4af37; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            Track Your Package
+                        </a>
+                    </p>
+                    
+                    <p style="margin-top: 30px;">Estimated delivery: 5-7 business days</p>
+                    <p>If you have any questions, feel free to contact us.</p>
+                    <p>Best regards,<br>The Kayee01 Team</p>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: #f5f5f5; color: #666; font-size: 12px;">
+                    <p>© 2025 Kayee01. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        await self.send_email(user_email, subject, html_content)
+
     async def send_order_status_update(self, order_data: dict, old_status: str):
         """Send order status update email"""
         status_messages = {
