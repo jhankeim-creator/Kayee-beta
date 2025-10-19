@@ -180,6 +180,17 @@ const AdminOrders = () => {
               <div className="flex justify-between items-center pt-4 border-t">
                 <p className="text-sm text-gray-600">{order.items.length} item(s)</p>
                 <div className="flex gap-2">
+                  {(order.status === 'shipped' || order.status === 'delivered') && (
+                    <Button
+                      onClick={() => addTracking(order)}
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600"
+                    >
+                      <Package className="mr-2 h-4 w-4" />
+                      {order.tracking_number ? 'Update' : 'Add'} Tracking
+                    </Button>
+                  )}
                   <Button
                     onClick={() => viewOrder(order)}
                     variant="outline"
