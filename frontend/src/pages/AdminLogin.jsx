@@ -104,6 +104,14 @@ const AdminLogin = () => {
                 >
                   {loading ? 'Logging in...' : 'Login'}
                 </Button>
+                <div className="text-center mt-4">
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm text-[#d4af37] hover:underline"
+                  >
+                    Forgot your password?
+                  </Link>
+                </div>
               </form>
             </TabsContent>
 
