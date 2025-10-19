@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Edit, Trash2, Plus } from 'lucide-react';
+import { Edit, Trash2, Plus, Copy } from 'lucide-react';
 
 const AdminProducts = () => {
   const { API, token } = useContext(CartContext);
