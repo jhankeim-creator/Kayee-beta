@@ -283,6 +283,10 @@ const AdminProducts = () => {
                 </SelectContent>
               </Select>
             </div>
+            
+            {/* Product Variants Component */}
+            <ProductVariants formData={formData} setFormData={setFormData} />
+            
             <div>
               <Label htmlFor="images">Image URLs (comma-separated) *</Label>
               <Textarea
