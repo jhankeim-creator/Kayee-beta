@@ -9,6 +9,7 @@ import { useDropzone } from 'react-dropzone';
 import { Upload, X, Image as ImageIcon, Video } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
+import ProductVariants from '../ProductVariants';
 
 const AdminProductAdd = () => {
   const { API } = useContext(CartContext);
