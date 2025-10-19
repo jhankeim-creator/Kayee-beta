@@ -1074,6 +1074,296 @@ class Kayee01Tester:
             self.log_result("CoinPal Complete Removal", False, f"Test failed: {str(e)}")
             return False
 
+    def test_coupon_validation_save10(self):
+        """Test coupon validation with SAVE10 code"""
+        try:
+            # Test 1: Valid coupon with cart total $100 (should work, min $50)
+            response = self.session.post(
+                f"{self.api_base}/coupons/validate?code=SAVE10&cart_total=100",
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            valid_test_passed = False
+            if response.status_code == 200:
+                coupon_data = response.json()
+                
+                valid = coupon_data.get("valid")
+                discount_amount = coupon_data.get("discount_amount")
+                discount_type = coupon_data.get("discount_type")
+                
+                # SAVE10 should be 10% discount, so 10% of $100 = $10
+                expected_discount = 10.0
+                
+                valid_test_passed = (
+                    valid is True and
+                    discount_amount == expected_discount and
+                    discount_type == "percentage"
+                )
+                
+                details_valid = {
+                    "cart_total": 100,
+                    "valid": valid,
+                    "discount_amount": discount_amount,
+                    "discount_type": discount_type,
+                    "expected_discount": expected_discount
+                }
+                
+                if valid_test_passed:
+                    self.log_result(
+                        "Coupon SAVE10 Valid Test", 
+                        True, 
+                        f"SAVE10 coupon validation successful - 10% discount = ${discount_amount}",
+                        details_valid
+                    )
+                else:
+                    self.log_result(
+                        "Coupon SAVE10 Valid Test", 
+                        False, 
+                        f"SAVE10 coupon validation failed - expected $10 discount, got ${discount_amount}",
+                        details_valid
+                    )
+            else:
+                self.log_result("Coupon SAVE10 Valid Test", False, f"HTTP {response.status_code}")
+            
+            # Test 2: Invalid coupon with cart total $30 (should fail, min $50)
+            response2 = self.session.post(
+                f"{self.api_base}/coupons/validate?code=SAVE10&cart_total=30",
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            invalid_test_passed = False
+            if response2.status_code == 400:
+                # Should fail with minimum purchase requirement
+                error_data = response2.json()
+                error_detail = error_data.get("detail", "")
+                
+                invalid_test_passed = "Minimum purchase" in error_detail or "50" in error_detail
+                
+                details_invalid = {
+                    "cart_total": 30,
+                    "status_code": response2.status_code,
+                    "error_detail": error_detail,
+                    "expected_error": "Minimum purchase requirement"
+                }
+                
+                if invalid_test_passed:
+                    self.log_result(
+                        "Coupon SAVE10 Invalid Test", 
+                        True, 
+                        f"SAVE10 coupon correctly rejected for cart under $50 minimum",
+                        details_invalid
+                    )
+                else:
+                    self.log_result(
+                        "Coupon SAVE10 Invalid Test", 
+                        False, 
+                        f"SAVE10 coupon rejection reason incorrect: {error_detail}",
+                        details_invalid
+                    )
+            else:
+                self.log_result("Coupon SAVE10 Invalid Test", False, f"Expected HTTP 400, got {response2.status_code}")
+            
+            return valid_test_passed and invalid_test_passed
+                
+        except Exception as e:
+            self.log_result("Coupon SAVE10 Validation", False, f"Test failed: {str(e)}")
+            return False
+
+    def test_crypto_discount_plisio(self):
+        """Test 15% crypto discount for Plisio payment method"""
+        test_order_payload = {
+            "user_email": "customer@kayee01.com",
+            "user_name": "Test Customer",
+            "items": [
+                {
+                    "product_id": "test",
+                    "name": "Test Watch",
+                    "price": 100.0,
+                    "quantity": 2,
+                    "image": "test.jpg"
+                }
+            ],
+            "total": 200.0,
+            "shipping_method": "fedex",
+            "shipping_cost": 10.0,
+            "payment_method": "plisio",
+            "shipping_address": {
+                "address": "123 Test",
+                "city": "Paris",
+                "postal_code": "75001",
+                "country": "FR"
+            },
+            "phone": "+33123456789"
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/orders",
+                json=test_order_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                order_data = response.json()
+                
+                # Check crypto discount fields
+                crypto_discount = order_data.get("crypto_discount")
+                total = order_data.get("total")
+                original_total = test_order_payload["total"]
+                
+                # Expected: 15% discount on $200 = $30 discount
+                # Final total should be $200 - $30 = $170
+                expected_crypto_discount = original_total * 0.15  # $30
+                expected_final_total = original_total - expected_crypto_discount  # $170
+                
+                details = {
+                    "order_id": order_data.get("id"),
+                    "order_number": order_data.get("order_number"),
+                    "payment_method": order_data.get("payment_method"),
+                    "original_total": original_total,
+                    "crypto_discount": crypto_discount,
+                    "final_total": total,
+                    "expected_crypto_discount": expected_crypto_discount,
+                    "expected_final_total": expected_final_total,
+                    "plisio_invoice_id": order_data.get("plisio_invoice_id"),
+                    "plisio_invoice_url": order_data.get("plisio_invoice_url")
+                }
+
+                # Validate crypto discount calculation
+                crypto_discount_valid = (
+                    crypto_discount == expected_crypto_discount and
+                    total == expected_final_total and
+                    order_data.get("payment_method") == "plisio"
+                )
+
+                if crypto_discount_valid:
+                    self.log_result(
+                        "Crypto Discount 15%", 
+                        True, 
+                        f"15% crypto discount applied correctly: ${crypto_discount} discount, final total ${total}",
+                        details
+                    )
+                    return order_data
+                else:
+                    self.log_result(
+                        "Crypto Discount 15%", 
+                        False, 
+                        f"Crypto discount calculation incorrect - expected ${expected_crypto_discount} discount, got ${crypto_discount}",
+                        details
+                    )
+                    return None
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("Crypto Discount 15%", False, error_msg)
+                return None
+
+        except Exception as e:
+            self.log_result("Crypto Discount 15%", False, f"Request failed: {str(e)}")
+            return None
+
+    def test_tracking_number_update(self):
+        """Test tracking number update functionality"""
+        # First create a test order
+        test_order = self.test_crypto_discount_plisio()
+        if not test_order:
+            self.log_result("Tracking Number Update", False, "Failed to create test order for tracking")
+            return False
+        
+        order_id = test_order.get("id")
+        if not order_id:
+            self.log_result("Tracking Number Update", False, "No order ID available for tracking test")
+            return False
+        
+        # Need admin authentication
+        if not self.admin_token:
+            self.log_result("Tracking Number Update", False, "Admin authentication required")
+            return False
+        
+        try:
+            # Update tracking information
+            tracking_number = "123456789"
+            tracking_carrier = "fedex"
+            
+            response = self.session.put(
+                f"{self.api_base}/orders/{order_id}/tracking?tracking_number={tracking_number}&tracking_carrier={tracking_carrier}",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                # Verify tracking update by getting the order
+                order_response = self.session.get(f"{self.api_base}/orders/{order_id}", timeout=10)
+                
+                if order_response.status_code == 200:
+                    updated_order = order_response.json()
+                    
+                    order_tracking_number = updated_order.get("tracking_number")
+                    order_tracking_carrier = updated_order.get("tracking_carrier")
+                    order_status = updated_order.get("status")
+                    
+                    details = {
+                        "order_id": order_id,
+                        "tracking_number": order_tracking_number,
+                        "tracking_carrier": order_tracking_carrier,
+                        "status": order_status,
+                        "expected_tracking_number": tracking_number,
+                        "expected_tracking_carrier": tracking_carrier,
+                        "expected_status": "shipped"
+                    }
+                    
+                    # Validate tracking update
+                    tracking_valid = (
+                        order_tracking_number == tracking_number and
+                        order_tracking_carrier == tracking_carrier and
+                        order_status == "shipped"
+                    )
+                    
+                    if tracking_valid:
+                        self.log_result(
+                            "Tracking Number Update", 
+                            True, 
+                            f"Tracking updated successfully: {tracking_number} via {tracking_carrier}, status: {order_status}",
+                            details
+                        )
+                        return True
+                    else:
+                        self.log_result(
+                            "Tracking Number Update", 
+                            False, 
+                            f"Tracking validation failed - fields not updated correctly",
+                            details
+                        )
+                        return False
+                else:
+                    self.log_result("Tracking Number Update", False, f"Failed to retrieve updated order: HTTP {order_response.status_code}")
+                    return False
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("Tracking Number Update", False, f"Tracking update failed: {error_msg}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Tracking Number Update", False, f"Test failed: {str(e)}")
+            return False
+
     def run_complete_test(self):
         """Run the complete Kayee01 site test"""
         print("🚀 Starting Kayee01 Site Testing")
