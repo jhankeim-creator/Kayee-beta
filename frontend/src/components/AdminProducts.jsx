@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Edit, Trash2, Plus, Copy } from 'lucide-react';
+import ProductVariants from './ProductVariants';
 
 const AdminProducts = () => {
   const { API, token } = useContext(CartContext);
