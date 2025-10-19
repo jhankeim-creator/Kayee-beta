@@ -1366,8 +1366,8 @@ class Kayee01Tester:
 
     def run_complete_test(self):
         """Run the complete Kayee01 site test"""
-        print("🚀 Starting Kayee01 Site Testing")
-        print("Testing: Stripe Payment Links, Admin Login, Email Production, Product Duplication")
+        print("🚀 Starting Kayee01 Site Testing - NEW FEATURES")
+        print("Testing: Admin Email Update, Coupon System, Crypto Discount, Tracking Numbers")
         print("=" * 60)
         
         # Test 1: Backend Health Check
@@ -1375,8 +1375,8 @@ class Kayee01Tester:
             print("❌ Backend health check failed. Stopping tests.")
             return False
         
-        # Test 2: Admin Login
-        print("🧪 Testing Admin Login (admin@kayee01.com)...")
+        # Test 2: Admin Login with NEW EMAIL (kayicom509@gmail.com)
+        print("🧪 Testing Admin Login (kayicom509@gmail.com)...")
         admin_login = self.test_admin_login()
         
         # Test 3: Admin Dashboard Access
@@ -1384,20 +1384,33 @@ class Kayee01Tester:
             print("🧪 Testing Admin Dashboard Access...")
             self.test_admin_dashboard_access()
         
-        # Test 4: Stripe Payment Link Creation
+        # Test 4: Coupon System Validation (WELCOME10)
+        print("🧪 Testing Coupon System (WELCOME10 validation)...")
+        self.test_coupon_validation_welcome10()
+        
+        # Test 5: Crypto Discount (15% for Plisio)
+        print("🧪 Testing Crypto Discount (15% for Plisio payments)...")
+        crypto_order = self.test_crypto_discount_plisio()
+        
+        # Test 6: Tracking Number Update
+        if admin_login:
+            print("🧪 Testing Tracking Number Update...")
+            self.test_tracking_number_update()
+        
+        # Test 7: Stripe Payment Link Creation
         print("🧪 Testing Stripe Payment Link Creation...")
         stripe_order = self.test_stripe_payment_link_creation()
         
-        # Test 5: Email Production with Manual Payment
+        # Test 8: Email Production with Manual Payment
         print("🧪 Testing Email Production (manual payment to Info.kayicom.com@gmx.fr)...")
         email_order = self.test_email_production_manual_payment()
         
-        # Test 6: Product Duplication
+        # Test 9: Product Duplication
         if admin_login:
             print("🧪 Testing Product Duplication...")
             self.test_product_duplication()
         
-        # Test 7: Email SMTP Configuration Verification
+        # Test 10: Email SMTP Configuration Verification
         print("🧪 Testing Email SMTP Configuration...")
         self.test_email_smtp_verification()
         
