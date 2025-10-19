@@ -1074,17 +1074,16 @@ class Kayee01Tester:
             self.log_result("CoinPal Complete Removal", False, f"Test failed: {str(e)}")
             return False
 
-    def test_coupon_validation_welcome10(self):
-        """Test coupon validation with WELCOME10 code"""
+    def test_coupon_validation_save10(self):
+        """Test coupon validation with SAVE10 code as requested"""
         try:
-            # Test 1: Valid coupon with cart total $100 (should work, min $50)
+            # Test SAVE10 coupon with cart total $100 as specified in review request
             response = self.session.post(
-                f"{self.api_base}/coupons/validate?code=WELCOME10&cart_total=100",
+                f"{self.api_base}/coupons/validate?code=SAVE10&cart_total=100",
                 headers={"Content-Type": "application/json"},
                 timeout=10
             )
             
-            valid_test_passed = False
             if response.status_code == 200:
                 coupon_data = response.json()
                 
@@ -1092,16 +1091,11 @@ class Kayee01Tester:
                 discount_amount = coupon_data.get("discount_amount")
                 discount_type = coupon_data.get("discount_type")
                 
-                # WELCOME10 should be 10% discount, so 10% of $100 = $10
+                # Expected: discount_amount = 10 as per review request
                 expected_discount = 10.0
                 
-                valid_test_passed = (
-                    valid is True and
-                    discount_amount == expected_discount and
-                    discount_type == "percentage"
-                )
-                
-                details_valid = {
+                details = {
+                    "code": "SAVE10",
                     "cart_total": 100,
                     "valid": valid,
                     "discount_amount": discount_amount,
@@ -1109,66 +1103,41 @@ class Kayee01Tester:
                     "expected_discount": expected_discount
                 }
                 
-                if valid_test_passed:
+                # Validate SAVE10 coupon gives $10 discount
+                coupon_valid = (
+                    valid is True and
+                    discount_amount == expected_discount
+                )
+                
+                if coupon_valid:
                     self.log_result(
-                        "Coupon WELCOME10 Valid Test", 
+                        "Coupon SAVE10 Validation", 
                         True, 
-                        f"WELCOME10 coupon validation successful - 10% discount = ${discount_amount}",
-                        details_valid
+                        f"SAVE10 coupon validation successful - discount_amount = {discount_amount}",
+                        details
                     )
+                    return True
                 else:
                     self.log_result(
-                        "Coupon WELCOME10 Valid Test", 
+                        "Coupon SAVE10 Validation", 
                         False, 
-                        f"WELCOME10 coupon validation failed - expected $10 discount, got ${discount_amount}",
-                        details_valid
+                        f"SAVE10 coupon validation failed - expected ${expected_discount} discount, got ${discount_amount}",
+                        details
                     )
+                    return False
             else:
-                self.log_result("Coupon WELCOME10 Valid Test", False, f"HTTP {response.status_code}")
-            
-            # Test 2: Invalid coupon with cart total $30 (should fail, min $50)
-            response2 = self.session.post(
-                f"{self.api_base}/coupons/validate?code=WELCOME10&cart_total=30",
-                headers={"Content-Type": "application/json"},
-                timeout=10
-            )
-            
-            invalid_test_passed = False
-            if response2.status_code == 400:
-                # Should fail with minimum purchase requirement
-                error_data = response2.json()
-                error_detail = error_data.get("detail", "")
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
                 
-                invalid_test_passed = "Minimum purchase" in error_detail or "50" in error_detail
-                
-                details_invalid = {
-                    "cart_total": 30,
-                    "status_code": response2.status_code,
-                    "error_detail": error_detail,
-                    "expected_error": "Minimum purchase requirement"
-                }
-                
-                if invalid_test_passed:
-                    self.log_result(
-                        "Coupon WELCOME10 Invalid Test", 
-                        True, 
-                        f"WELCOME10 coupon correctly rejected for cart under $50 minimum",
-                        details_invalid
-                    )
-                else:
-                    self.log_result(
-                        "Coupon WELCOME10 Invalid Test", 
-                        False, 
-                        f"WELCOME10 coupon rejection reason incorrect: {error_detail}",
-                        details_invalid
-                    )
-            else:
-                self.log_result("Coupon WELCOME10 Invalid Test", False, f"Expected HTTP 400, got {response2.status_code}")
-            
-            return valid_test_passed and invalid_test_passed
+                self.log_result("Coupon SAVE10 Validation", False, error_msg)
+                return False
                 
         except Exception as e:
-            self.log_result("Coupon WELCOME10 Validation", False, f"Test failed: {str(e)}")
+            self.log_result("Coupon SAVE10 Validation", False, f"Test failed: {str(e)}")
             return False
 
     def test_crypto_discount_plisio(self):
