@@ -352,6 +352,21 @@ const CheckoutPage = () => {
                         <span className="text-gray-600">Subtotal</span>
                         <span className="font-semibold">${cartTotal.toFixed(2)}</span>
                       </div>
+                      
+                      {couponDiscount > 0 && (
+                        <div className="flex justify-between text-green-600">
+                          <span>Coupon Discount</span>
+                          <span className="font-semibold">-${couponDiscount.toFixed(2)}</span>
+                        </div>
+                      )}
+                      
+                      {cryptoDiscount > 0 && (
+                        <div className="flex justify-between text-green-600">
+                          <span>Crypto Discount (15%)</span>
+                          <span className="font-semibold">-${cryptoDiscount.toFixed(2)}</span>
+                        </div>
+                      )}
+                      
                       <div className="flex justify-between">
                         <span className="text-gray-600">Shipping</span>
                         <span className="font-semibold">
@@ -363,6 +378,28 @@ const CheckoutPage = () => {
                         <span className="text-[#d4af37]" data-testid="order-total">${finalTotal.toFixed(2)}</span>
                       </div>
                     </div>
+                    
+                    {/* Coupon Code Input */}
+                    <div className="mt-4 mb-4 p-4 bg-gray-50 rounded-lg">
+                      <Label className="mb-2">Have a coupon code?</Label>
+                      <div className="flex gap-2 mt-2">
+                        <Input
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value)}
+                          placeholder="Enter coupon code"
+                          disabled={couponApplied}
+                        />
+                        <Button
+                          type="button"
+                          onClick={handleApplyCoupon}
+                          disabled={!couponCode || couponApplied}
+                          className="bg-green-600 hover:bg-green-700"
+                        >
+                          Apply
+                        </Button>
+                      </div>
+                    </div>
+                    
                     <Button
                       type="submit"
                       disabled={loading}
