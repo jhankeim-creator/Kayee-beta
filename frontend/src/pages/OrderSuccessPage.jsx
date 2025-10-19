@@ -131,27 +131,6 @@ const OrderSuccessPage = () => {
                     {/* Demo mode message removed - production only */}
                   </div>
                 )}
-                        <p>Payez avec Binance Pay (0% de frais) :</p>
-                        {order.binance_qr_code && (
-                          <div className="flex justify-center">
-                            <img src={order.binance_qr_code} alt="QR Code Binance" className="w-48 h-48" />
-                          </div>
-                        )}
-                        <a
-                          href={order.binance_checkout_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block w-full text-center bg-[#f3ba2f] hover:bg-[#e0aa1f] text-black font-semibold py-3 px-6 rounded"
-                        >
-                          Payer avec Binance Pay
-                        </a>
-                        <p className="text-xs text-gray-600">
-                          Paiement crypto instantané - 0% de frais
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
 
                 {/* Manual Payment */}
                 {order.payment_method === 'manual' && (
