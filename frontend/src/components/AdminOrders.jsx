@@ -277,6 +277,53 @@ const AdminOrders = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Tracking Dialog */}
+      <Dialog open={showTrackingDialog} onOpenChange={setShowTrackingDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Tracking Information</DialogTitle>
+          </DialogHeader>
+          {selectedOrder && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Tracking Carrier</label>
+                <Select
+                  value={trackingData.tracking_carrier}
+                  onValueChange={(value) => setTrackingData({...trackingData, tracking_carrier: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fedex">FedEx</SelectItem>
+                    <SelectItem value="usps">USPS</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Tracking Number</label>
+                <input
+                  type="text"
+                  value={trackingData.tracking_number}
+                  onChange={(e) => setTrackingData({...trackingData, tracking_number: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-md"
+                  placeholder="Enter tracking number"
+                />
+              </div>
+              
+              <Button
+                onClick={submitTracking}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={!trackingData.tracking_number}
+              >
+                Save Tracking
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
