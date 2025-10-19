@@ -667,6 +667,54 @@ async def delete_order(order_id: str, admin: User = Depends(get_current_admin)):
         raise HTTPException(status_code=404, detail="Order not found")
     return {"message": "Order deleted successfully"}
 
+# ===== COUPON ROUTES =====
+
+@api_router.post("/coupons", response_model=Coupon)
+async def create_coupon(coupon_data: CouponCreate, admin: User = Depends(get_current_admin)):
+    coupon = Coupon(**coupon_data.model_dump())
+    coupon_doc = prepare_for_mongo(coupon.model_dump())
+    await db.coupons.insert_one(coupon_doc)
+    return coupon
+
+@api_router.get("/coupons", response_model=List[Coupon])
+async def get_coupons(admin: User = Depends(get_current_admin)):
+    coupons = await db.coupons.find({}, {"_id": 0}).to_list(length=None)
+    return [Coupon(**parse_from_mongo(c)) for c in coupons]
+
+@api_router.post("/coupons/validate")
+async def validate_coupon(code: str, cart_total: float):
+    coupon = await db.coupons.find_one({"code": code, "active": True}, {"_id": 0})
+    
+    if not coupon:
+        raise HTTPException(status_code=404, detail="Invalid coupon code")
+    
+    coupon_obj = Coupon(**parse_from_mongo(coupon))
+    
+    # Check expiration
+    if coupon_obj.expires_at and coupon_obj.expires_at < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Coupon has expired")
+    
+    # Check max uses
+    if coupon_obj.max_uses and coupon_obj.used_count >= coupon_obj.max_uses:
+        raise HTTPException(status_code=400, detail="Coupon usage limit reached")
+    
+    # Check minimum purchase
+    if cart_total < coupon_obj.min_purchase:
+        raise HTTPException(status_code=400, detail=f"Minimum purchase of ${coupon_obj.min_purchase} required")
+    
+    # Calculate discount
+    if coupon_obj.discount_type == "percentage":
+        discount = cart_total * (coupon_obj.discount_value / 100)
+    else:
+        discount = coupon_obj.discount_value
+    
+    return {
+        "valid": True,
+        "discount_amount": discount,
+        "discount_type": coupon_obj.discount_type,
+        "discount_value": coupon_obj.discount_value
+    }
+
 # Import payment, oauth, admin and complete routes
 from payment_routes import payment_router
 from oauth_routes import oauth_router
