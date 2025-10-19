@@ -659,6 +659,37 @@ async def get_admin_stats(admin: User = Depends(get_current_admin)):
         "total_revenue": total_revenue
     }
 
+@api_router.put("/orders/{order_id}/tracking")
+async def update_order_tracking(
+    order_id: str,
+    tracking_number: str,
+    tracking_carrier: str,
+    admin: User = Depends(get_current_admin)
+):
+    result = await db.orders.update_one(
+        {"id": order_id},
+        {"$set": {
+            "tracking_number": tracking_number,
+            "tracking_carrier": tracking_carrier,
+            "status": "shipped"
+        }}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Send tracking email to customer
+    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if order:
+        await email_service.send_tracking_update(
+            order['user_email'],
+            order['order_number'],
+            tracking_number,
+            tracking_carrier
+        )
+    
+    return {"message": "Tracking updated successfully"}
+
 @api_router.delete("/orders/{order_id}")
 async def delete_order(order_id: str, admin: User = Depends(get_current_admin)):
     """Delete an order"""
