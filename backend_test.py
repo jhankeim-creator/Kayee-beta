@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Suite for E-commerce Features
-Tests shipping options, payment methods, order functionality, email SMTP, and Payoneer manual payment
+Backend API Testing Suite for Kayee01 Site
+Tests Stripe Payment Links, Admin Login, Email Production, and Product Duplication
 """
 
 import requests
