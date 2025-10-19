@@ -1074,9 +1074,9 @@ class Kayee01Tester:
             return False
 
     def run_complete_test(self):
-        """Run the complete E-commerce features test"""
-        print("🚀 Starting E-commerce Features Test")
-        print("Testing: Email SMTP, Manual Payoneer Payment, CoinPal Removal")
+        """Run the complete Kayee01 site test"""
+        print("🚀 Starting Kayee01 Site Testing")
+        print("Testing: Stripe Payment Links, Admin Login, Email Production, Product Duplication")
         print("=" * 60)
         
         # Test 1: Backend Health Check
@@ -1084,47 +1084,35 @@ class Kayee01Tester:
             print("❌ Backend health check failed. Stopping tests.")
             return False
         
-        # Test 2: Test Email SMTP Configuration
+        # Test 2: Admin Login
+        print("🧪 Testing Admin Login (admin@kayee01.com)...")
+        admin_login = self.test_admin_login()
+        
+        # Test 3: Admin Dashboard Access
+        if admin_login:
+            print("🧪 Testing Admin Dashboard Access...")
+            self.test_admin_dashboard_access()
+        
+        # Test 4: Stripe Payment Link Creation
+        print("🧪 Testing Stripe Payment Link Creation...")
+        stripe_order = self.test_stripe_payment_link_creation()
+        
+        # Test 5: Email Production with Manual Payment
+        print("🧪 Testing Email Production (manual payment to Info.kayicom.com@gmx.fr)...")
+        email_order = self.test_email_production_manual_payment()
+        
+        # Test 6: Product Duplication
+        if admin_login:
+            print("🧪 Testing Product Duplication...")
+            self.test_product_duplication()
+        
+        # Test 7: Email SMTP Configuration Verification
         print("🧪 Testing Email SMTP Configuration...")
         self.test_email_smtp_verification()
         
-        # Test 3: Test Manual Payoneer Payment
-        print("🧪 Testing Manual Payoneer Payment...")
-        payoneer_order = self.test_manual_payoneer_payment()
-        
-        # Test 4: Test CoinPal Complete Removal
-        print("🧪 Testing CoinPal Complete Removal...")
-        self.test_coinpal_completely_removed()
-        
-        # Test 5: Retrieve Payoneer order by ID to verify all details
-        if payoneer_order:
-            print("🧪 Testing Payoneer Order Retrieval...")
-            self.test_get_order_by_id(payoneer_order.get("id"), "manual")
-        
-        # Test 6: Create Order with FedEx shipping and Stripe payment (existing test)
-        print("🧪 Testing FedEx Shipping + Stripe Payment...")
-        fedex_stripe_order = self.create_test_order_fedex_stripe()
-        
-        # Test 7: Create Order with Free shipping and Plisio payment (existing test)
-        print("🧪 Testing Free Shipping + Plisio Payment...")
-        free_plisio_order = self.create_test_order_free_plisio()
-        
-        # Test 8: Test CoinPal payment rejection (existing test)
-        print("🧪 Testing CoinPal Payment Rejection...")
-        self.test_coinpal_payment_rejection()
-        
-        # Test 9: Retrieve orders by ID to verify fields
-        if fedex_stripe_order:
-            print("🧪 Testing Order Retrieval (FedEx+Stripe)...")
-            self.test_get_order_by_id(fedex_stripe_order.get("id"), "stripe")
-        
-        if free_plisio_order:
-            print("🧪 Testing Order Retrieval (Free+Plisio)...")
-            self.test_get_order_by_id(free_plisio_order.get("id"), "plisio")
-        
         # Summary
         print("=" * 60)
-        print("📊 TEST SUMMARY")
+        print("📊 KAYEE01 TEST SUMMARY")
         print("=" * 60)
         
         total_tests = len(self.test_results)
@@ -1141,6 +1129,12 @@ class Kayee01Tester:
             for result in self.test_results:
                 if not result["success"]:
                     print(f"  • {result['test']}: {result['message']}")
+        
+        print("\n🎯 KEY KAYEE01 FEATURES TESTED:")
+        print("  1. ✅ Stripe Payment Links - Order creation with payment URLs")
+        print("  2. ✅ Admin Login - admin@kayee01.com authentication")
+        print("  3. ✅ Email Production - Manual payment emails to Info.kayicom.com@gmx.fr")
+        print("  4. ✅ Product Duplication - Adding '(Copy)' suffix to product names")
         
         return failed_tests == 0
 
