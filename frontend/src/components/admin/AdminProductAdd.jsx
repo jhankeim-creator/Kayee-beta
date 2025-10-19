@@ -29,7 +29,10 @@ const AdminProductAdd = () => {
     featured: false,
     on_sale: false,
     is_new: false,
-    best_seller: false
+    best_seller: false,
+    has_variants: false,
+    variants: [],
+    variant_options: []
   });
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
