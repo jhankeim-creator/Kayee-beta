@@ -44,7 +44,24 @@ const CheckoutPage = () => {
   };
 
   const shippingCost = shippingMethod === 'fedex' ? 10 : 0;
-  const finalTotal = cartTotal + shippingCost;
+  
+  // Calculate crypto discount for Plisio (15%)
+  const cryptoDiscount = formData.paymentMethod === 'plisio' ? cartTotal * 0.15 : 0;
+  
+  // Calculate final total with all discounts
+  const subtotal = cartTotal - couponDiscount - cryptoDiscount;
+  const finalTotal = subtotal + shippingCost;
+
+  const handleApplyCoupon = async () => {
+    try {
+      const response = await axios.post(`${API}/coupons/validate?code=${couponCode}&cart_total=${cartTotal}`);
+      setCouponDiscount(response.data.discount_amount);
+      setCouponApplied(true);
+      toast.success(`Coupon applied! -$${response.data.discount_amount.toFixed(2)}`);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Invalid coupon code');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
