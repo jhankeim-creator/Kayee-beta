@@ -1334,10 +1334,81 @@ class Kayee01Tester:
             self.log_result("Tracking Number Update", False, f"Test failed: {str(e)}")
             return False
 
+    def test_kayee01_comprehensive_review(self):
+        """Test ALL Kayee01 functionalities as specified in the review request"""
+        print("🎯 KAYEE01 COMPREHENSIVE REVIEW TESTING")
+        print("Testing ALL functionalities as requested:")
+        print("1. Admin Login (kayicom509@gmail.com / Admin123!)")
+        print("2. Crypto Discount 15% (plisio payment, total=200, discount=30, final=170)")
+        print("3. Coupon System (SAVE10 code, cart_total=100, discount=10)")
+        print("4. Tracking (TEST123, fedex)")
+        print("5. Email Production (manual payment, Info.kayicom.com@gmx.fr, name 'Anson')")
+        print("=" * 80)
+        
+        all_tests_passed = True
+        
+        # Test 1: Admin Login
+        print("\n🧪 1. ADMIN LOGIN TEST")
+        admin_login = self.test_admin_login()
+        if not admin_login:
+            all_tests_passed = False
+        
+        # Test 2: Crypto Discount (15%)
+        print("\n🧪 2. CRYPTO DISCOUNT TEST (15%)")
+        crypto_order = self.test_crypto_discount_plisio()
+        if not crypto_order:
+            all_tests_passed = False
+        
+        # Test 3: Coupon System
+        print("\n🧪 3. COUPON SYSTEM TEST (SAVE10)")
+        coupon_test = self.test_coupon_validation_save10()
+        if not coupon_test:
+            all_tests_passed = False
+        
+        # Test 4: Tracking
+        print("\n🧪 4. TRACKING NUMBER TEST")
+        if admin_login and crypto_order:
+            tracking_test = self.test_tracking_number_update()
+            if not tracking_test:
+                all_tests_passed = False
+        else:
+            self.log_result("Tracking Test", False, "Skipped - requires admin login and order creation")
+            all_tests_passed = False
+        
+        # Test 5: Email Production
+        print("\n🧪 5. EMAIL PRODUCTION TEST")
+        email_test = self.test_email_production_manual_payment()
+        if not email_test:
+            all_tests_passed = False
+        
+        # Summary
+        print("\n" + "=" * 80)
+        print("📊 KAYEE01 COMPREHENSIVE REVIEW RESULTS")
+        print("=" * 80)
+        
+        total_tests = len(self.test_results)
+        passed_tests = sum(1 for result in self.test_results if result["success"])
+        failed_tests = total_tests - passed_tests
+        
+        print(f"Total Tests: {total_tests}")
+        print(f"✅ Passed: {passed_tests}")
+        print(f"❌ Failed: {failed_tests}")
+        print(f"Success Rate: {(passed_tests/total_tests)*100:.1f}%")
+        
+        if failed_tests > 0:
+            print("\n🔍 FAILED TESTS:")
+            for result in self.test_results:
+                if not result["success"]:
+                    print(f"  • {result['test']}: {result['message']}")
+        
+        print(f"\n🎯 COMPREHENSIVE REVIEW STATUS: {'✅ ALL TESTS PASSED' if all_tests_passed else '❌ SOME TESTS FAILED'}")
+        
+        return all_tests_passed
+
     def run_complete_test(self):
         """Run the complete Kayee01 site test"""
-        print("🚀 Starting Kayee01 Site Testing - NEW FEATURES")
-        print("Testing: Admin Email Update, Coupon System, Crypto Discount, Tracking Numbers")
+        print("🚀 Starting Kayee01 Site Testing - COMPREHENSIVE REVIEW")
+        print("Testing ALL functionalities as specified in review request")
         print("=" * 60)
         
         # Test 1: Backend Health Check
