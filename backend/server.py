@@ -492,8 +492,19 @@ async def delete_product(product_id: str, admin: User = Depends(get_current_admi
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_data: OrderCreate):
     order_number = f"ORD-{str(uuid.uuid4())[:8].upper()}"
+    
+    # Calculate crypto discount (15% for Plisio payments)
+    crypto_discount = 0.0
+    total_amount = order_data.total
+    
+    if order_data.payment_method == 'plisio':
+        crypto_discount = total_amount * 0.15
+        total_amount = total_amount - crypto_discount
+    
     order = Order(
         order_number=order_number,
+        crypto_discount=crypto_discount,
+        total=total_amount,
         **order_data.model_dump()
     )
     order_doc = prepare_for_mongo(order.model_dump())
