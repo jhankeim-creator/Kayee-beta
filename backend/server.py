@@ -181,6 +181,15 @@ class Order(BaseModel):
     notes: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
+    # Tracking information
+    tracking_number: Optional[str] = None
+    tracking_carrier: Optional[str] = None  # fedex, usps
+    
+    # Coupon/Discount
+    coupon_code: Optional[str] = None
+    discount_amount: Optional[float] = 0.0
+    crypto_discount: Optional[float] = 0.0
+    
     # Payment gateway specific fields
     stripe_payment_id: Optional[str] = None
     stripe_payment_url: Optional[str] = None
