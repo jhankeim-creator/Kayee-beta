@@ -1411,79 +1411,8 @@ class Kayee01Tester:
         print("Testing ALL functionalities as specified in review request")
         print("=" * 60)
         
-        # Test 1: Backend Health Check
-        if not self.test_backend_health():
-            print("❌ Backend health check failed. Stopping tests.")
-            return False
-        
-        # Test 2: Admin Login with NEW EMAIL (kayicom509@gmail.com)
-        print("🧪 Testing Admin Login (kayicom509@gmail.com)...")
-        admin_login = self.test_admin_login()
-        
-        # Test 3: Admin Dashboard Access
-        if admin_login:
-            print("🧪 Testing Admin Dashboard Access...")
-            self.test_admin_dashboard_access()
-        
-        # Test 4: Coupon System Validation (WELCOME10)
-        print("🧪 Testing Coupon System (WELCOME10 validation)...")
-        self.test_coupon_validation_welcome10()
-        
-        # Test 5: Crypto Discount (15% for Plisio)
-        print("🧪 Testing Crypto Discount (15% for Plisio payments)...")
-        crypto_order = self.test_crypto_discount_plisio()
-        
-        # Test 6: Tracking Number Update
-        if admin_login:
-            print("🧪 Testing Tracking Number Update...")
-            self.test_tracking_number_update()
-        
-        # Test 7: Stripe Payment Link Creation
-        print("🧪 Testing Stripe Payment Link Creation...")
-        stripe_order = self.test_stripe_payment_link_creation()
-        
-        # Test 8: Email Production with Manual Payment
-        print("🧪 Testing Email Production (manual payment to Info.kayicom.com@gmx.fr)...")
-        email_order = self.test_email_production_manual_payment()
-        
-        # Test 9: Product Duplication
-        if admin_login:
-            print("🧪 Testing Product Duplication...")
-            self.test_product_duplication()
-        
-        # Test 10: Email SMTP Configuration Verification
-        print("🧪 Testing Email SMTP Configuration...")
-        self.test_email_smtp_verification()
-        
-        # Summary
-        print("=" * 60)
-        print("📊 KAYEE01 TEST SUMMARY")
-        print("=" * 60)
-        
-        total_tests = len(self.test_results)
-        passed_tests = sum(1 for result in self.test_results if result["success"])
-        failed_tests = total_tests - passed_tests
-        
-        print(f"Total Tests: {total_tests}")
-        print(f"✅ Passed: {passed_tests}")
-        print(f"❌ Failed: {failed_tests}")
-        print(f"Success Rate: {(passed_tests/total_tests)*100:.1f}%")
-        
-        if failed_tests > 0:
-            print("\n🔍 FAILED TESTS:")
-            for result in self.test_results:
-                if not result["success"]:
-                    print(f"  • {result['test']}: {result['message']}")
-        
-        print("\n🎯 KEY KAYEE01 NEW FEATURES TESTED:")
-        print("  1. ✅ Admin Email Update - kayicom509@gmail.com authentication")
-        print("  2. ✅ Coupon System - WELCOME10 validation with min purchase requirements")
-        print("  3. ✅ Crypto Discount - 15% discount for Plisio payments")
-        print("  4. ✅ Tracking Numbers - Order tracking updates with carrier info")
-        print("  5. ✅ Stripe Payment Links - Order creation with payment URLs")
-        print("  6. ✅ Email Production - Manual payment emails to Info.kayicom.com@gmx.fr")
-        
-        return failed_tests == 0
+        # Run comprehensive review test
+        return self.test_kayee01_comprehensive_review()
 
 def main():
     """Main test execution"""
