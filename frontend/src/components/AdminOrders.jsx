@@ -13,6 +13,11 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [showTrackingDialog, setShowTrackingDialog] = useState(false);
+  const [trackingData, setTrackingData] = useState({
+    tracking_number: '',
+    tracking_carrier: 'fedex'
+  });
 
   useEffect(() => {
     loadOrders();
