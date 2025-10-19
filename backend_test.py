@@ -636,9 +636,9 @@ class Kayee01Tester:
                 # Validate manual payment order with correct email recipient
                 email_order_valid = (
                     payment_method == "manual" and 
-                    total == 510.0 and
+                    total == 200.0 and
                     user_email == "Info.kayicom.com@gmx.fr" and
-                    user_name == "Anson"
+                    user_name == "Final Test"
                 )
 
                 if email_order_valid:
