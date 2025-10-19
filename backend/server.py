@@ -136,6 +136,11 @@ class ProductCreate(BaseModel):
     tags: List[str] = []
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
+    
+    # Product Variants (sizes, colors, etc.)
+    has_variants: bool = False
+    variants: List[dict] = []  # [{name: "Size", values: ["S", "M", "L"]}, {name: "Color", values: ["Black", "White"]}]
+    variant_options: List[dict] = []  # [{size: "M", color: "Black", price: 100, sku: "ABC-M-BLK"}]
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
