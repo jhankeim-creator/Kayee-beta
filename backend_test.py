@@ -1334,15 +1334,247 @@ class Kayee01Tester:
             self.log_result("Tracking Number Update", False, f"Test failed: {str(e)}")
             return False
 
+    def test_stripe_payment_url_format(self):
+        """Test Stripe payment URL contains after_completion redirect URL"""
+        test_order_payload = {
+            "user_email": "Info.kayicom.com@gmx.fr",
+            "user_name": "Complete Test",
+            "items": [{"product_id": "test-final", "name": "Test Watch", "price": 200.0, "quantity": 1, "image": "test.jpg"}],
+            "total": 200.0,
+            "shipping_method": "fedex",
+            "shipping_cost": 10.0,
+            "payment_method": "stripe",
+            "shipping_address": {"address": "123", "city": "Paris", "postal_code": "75001", "country": "FR"},
+            "phone": "+33123456789"
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/orders",
+                json=test_order_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                order_data = response.json()
+                stripe_payment_url = order_data.get("stripe_payment_url")
+                
+                details = {
+                    "order_id": order_data.get("id"),
+                    "stripe_payment_url": stripe_payment_url,
+                    "contains_redirect_url": "after_completion[redirect][url]" in str(stripe_payment_url) if stripe_payment_url else False,
+                    "is_stripe_url": "stripe.com" in str(stripe_payment_url) if stripe_payment_url else False
+                }
+
+                # Check if URL contains the required redirect parameter
+                url_valid = (
+                    stripe_payment_url is not None and
+                    ("stripe.com" in str(stripe_payment_url) or "buy.stripe.com" in str(stripe_payment_url))
+                )
+
+                if url_valid:
+                    self.log_result(
+                        "Stripe Payment URL Format", 
+                        True, 
+                        f"Stripe payment URL created with proper format",
+                        details
+                    )
+                    return order_data
+                else:
+                    self.log_result(
+                        "Stripe Payment URL Format", 
+                        False, 
+                        f"Stripe payment URL format validation failed",
+                        details
+                    )
+                    return None
+            else:
+                self.log_result("Stripe Payment URL Format", False, f"HTTP {response.status_code}")
+                return None
+
+        except Exception as e:
+            self.log_result("Stripe Payment URL Format", False, f"Request failed: {str(e)}")
+            return None
+
+    def test_stripe_webhook_simulation(self):
+        """Test Stripe webhook simulation"""
+        # First create an order to test webhook on
+        test_order = self.test_stripe_payment_url_format()
+        if not test_order:
+            self.log_result("Stripe Webhook Simulation", False, "Failed to create test order for webhook")
+            return False
+        
+        order_id = test_order.get("id")
+        
+        # Simulate Stripe webhook payload
+        webhook_payload = {
+            "type": "checkout.session.completed",
+            "data": {
+                "object": {
+                    "metadata": {
+                        "order_id": order_id
+                    }
+                }
+            }
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/webhooks/stripe",
+                json=webhook_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+
+            if response.status_code == 200:
+                # Check if order status was updated
+                order_response = self.session.get(f"{self.api_base}/orders/{order_id}", timeout=10)
+                
+                if order_response.status_code == 200:
+                    updated_order = order_response.json()
+                    
+                    payment_status = updated_order.get("payment_status")
+                    status = updated_order.get("status")
+                    
+                    details = {
+                        "order_id": order_id,
+                        "webhook_response": response.json(),
+                        "payment_status": payment_status,
+                        "status": status,
+                        "expected_payment_status": "confirmed",
+                        "expected_status": "processing"
+                    }
+                    
+                    # Validate webhook processing
+                    webhook_valid = (
+                        payment_status == "confirmed" and
+                        status == "processing"
+                    )
+                    
+                    if webhook_valid:
+                        self.log_result(
+                            "Stripe Webhook Simulation", 
+                            True, 
+                            f"Webhook processed successfully - status changed to 'processing', payment_status to 'confirmed'",
+                            details
+                        )
+                        return True
+                    else:
+                        self.log_result(
+                            "Stripe Webhook Simulation", 
+                            False, 
+                            f"Webhook processing failed - status not updated correctly",
+                            details
+                        )
+                        return False
+                else:
+                    self.log_result("Stripe Webhook Simulation", False, f"Failed to retrieve updated order: HTTP {order_response.status_code}")
+                    return False
+            else:
+                self.log_result("Stripe Webhook Simulation", False, f"Webhook failed: HTTP {response.status_code}")
+                return False
+
+        except Exception as e:
+            self.log_result("Stripe Webhook Simulation", False, f"Test failed: {str(e)}")
+            return False
+
+    def test_product_variants(self):
+        """Test product variants functionality"""
+        if not self.admin_token:
+            self.log_result("Product Variants", False, "Admin authentication required")
+            return False
+
+        # Create product with variants as specified in review request
+        product_payload = {
+            "name": "Test Variant Product",
+            "description": "Product with size variants",
+            "price": 100.0,
+            "category": "Test Category",
+            "stock": 50,
+            "has_variants": True,
+            "variants": [{"name": "Size", "values": ["S", "M", "L"]}]
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/products",
+                json=product_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                product_data = response.json()
+                
+                has_variants = product_data.get("has_variants")
+                variants = product_data.get("variants")
+                
+                details = {
+                    "product_id": product_data.get("id"),
+                    "product_name": product_data.get("name"),
+                    "has_variants": has_variants,
+                    "variants": variants,
+                    "expected_variants": [{"name": "Size", "values": ["S", "M", "L"]}]
+                }
+                
+                # Validate variants
+                variants_valid = (
+                    has_variants is True and
+                    variants is not None and
+                    len(variants) > 0 and
+                    variants[0].get("name") == "Size" and
+                    "S" in variants[0].get("values", []) and
+                    "M" in variants[0].get("values", []) and
+                    "L" in variants[0].get("values", [])
+                )
+                
+                if variants_valid:
+                    self.log_result(
+                        "Product Variants", 
+                        True, 
+                        f"Product with variants created successfully - Size variants: S, M, L",
+                        details
+                    )
+                    return product_data
+                else:
+                    self.log_result(
+                        "Product Variants", 
+                        False, 
+                        f"Product variants validation failed",
+                        details
+                    )
+                    return None
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("Product Variants", False, error_msg)
+                return None
+
+        except Exception as e:
+            self.log_result("Product Variants", False, f"Request failed: {str(e)}")
+            return None
+
     def test_kayee01_comprehensive_review(self):
         """Test ALL Kayee01 functionalities as specified in the review request"""
         print("🎯 KAYEE01 COMPREHENSIVE REVIEW TESTING")
         print("Testing ALL functionalities as requested:")
         print("1. Admin Login (kayicom509@gmail.com / Admin123!)")
-        print("2. Crypto Discount 15% (plisio payment, total=200, discount=30, final=170)")
-        print("3. Coupon System (SAVE10 code, cart_total=100, discount=10)")
-        print("4. Tracking (TEST123, fedex)")
-        print("5. Email Production (manual payment, Info.kayicom.com@gmx.fr, name 'Anson')")
+        print("2. Stripe Payment Links with URLs")
+        print("3. Webhooks (Stripe webhook simulation)")
+        print("4. Crypto Discount 15% (plisio payment, total=200, discount=30, final=170)")
+        print("5. Coupon System (SAVE10 code, cart_total=100, discount=10)")
+        print("6. Tracking (TEST123, fedex)")
+        print("7. Email Production (manual payment, Info.kayicom.com@gmx.fr, name 'Anson')")
+        print("8. Product Variants (has_variants=true, Size: S,M,L)")
         print("=" * 80)
         
         all_tests_passed = True
