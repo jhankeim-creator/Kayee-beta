@@ -95,12 +95,16 @@ class StripeService:
             
             price_id = price_response.json().get("id")
             
-            # Créer le lien de paiement
+            # Créer le lien de paiement avec URLs de retour
+            frontend_url = os.environ.get('FRONTEND_URL', 'https://fashionstore-18.preview.emergentagent.com')
+            
             payment_link_data = {
                 "line_items[0][price]": price_id,
                 "line_items[0][quantity]": 1,
                 "metadata[order_id]": order_id,
-                "customer_creation": "always"
+                "customer_creation": "always",
+                "after_completion[type]": "redirect",
+                "after_completion[redirect][url]": f"{frontend_url}/order-success/{order_id}?payment=success"
             }
             
             # Note: customer_email is not supported in payment links API
