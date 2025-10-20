@@ -706,6 +706,75 @@ async def delete_order(order_id: str, admin: User = Depends(get_current_admin)):
         raise HTTPException(status_code=404, detail="Order not found")
     return {"message": "Order deleted successfully"}
 
+# ===== WEBHOOK ROUTES =====
+
+@api_router.post("/webhooks/stripe")
+async def stripe_webhook(request: Request):
+    """Webhook pour recevoir les notifications de paiement Stripe"""
+    try:
+        payload = await request.body()
+        event_data = await request.json()
+        
+        event_type = event_data.get('type')
+        
+        if event_type == 'checkout.session.completed' or event_type == 'payment_intent.succeeded':
+            # Paiement réussi
+            metadata = event_data.get('data', {}).get('object', {}).get('metadata', {})
+            order_id = metadata.get('order_id')
+            
+            if order_id:
+                # Mettre à jour la commande
+                await db.orders.update_one(
+                    {"id": order_id},
+                    {"$set": {
+                        "payment_status": "confirmed",
+                        "status": "processing"
+                    }}
+                )
+                
+                # Envoyer email de confirmation
+                order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+                if order:
+                    await email_service.send_order_confirmation(order)
+                
+                logger.info(f"✓ Stripe payment confirmed for order {order_id}")
+        
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Stripe webhook error: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+@api_router.post("/webhooks/plisio")
+async def plisio_webhook(request: Request):
+    """Webhook pour recevoir les notifications de paiement Plisio"""
+    try:
+        data = await request.json()
+        
+        status = data.get('status')
+        order_number = data.get('order_number')
+        
+        if status == 'completed' and order_number:
+            # Paiement crypto confirmé
+            await db.orders.update_one(
+                {"id": order_number},
+                {"$set": {
+                    "payment_status": "confirmed",
+                    "status": "processing"
+                }}
+            )
+            
+            # Envoyer email de confirmation
+            order = await db.orders.find_one({"id": order_number}, {"_id": 0})
+            if order:
+                await email_service.send_order_confirmation(order)
+            
+            logger.info(f"✓ Plisio payment confirmed for order {order_number}")
+        
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Plisio webhook error: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
 # ===== COUPON ROUTES =====
 
 @api_router.post("/coupons", response_model=Coupon)
