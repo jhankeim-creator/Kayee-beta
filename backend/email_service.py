@@ -243,20 +243,23 @@ class EmailService:
         await self.send_email(user_email, subject, html_content)
 
     async def send_invoice(self, order_data: dict):
-        """Send invoice/receipt email after payment confirmation"""
-        subject = f"Invoice #{order_data['order_number']} - Payment Confirmed"
+        """Send professional invoice from Kayee01 website"""
+        subject = f"Invoice #{order_data['order_number']} - Kayee01"
         
         items_html = ""
+        subtotal = 0
         for item in order_data['items']:
+            item_total = item['price'] * item['quantity']
+            subtotal += item_total
             items_html += f"""
             <tr>
                 <td style="padding: 10px; border-bottom: 1px solid #eee;">
                     <strong>{item['name']}</strong><br>
-                    Qty: {item['quantity']} × ${item['price']:.2f}
+                    <span style="color: #666; font-size: 12px;">SKU: {item.get('product_id', 'N/A')}</span>
                 </td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
-                    ${item['price'] * item['quantity']:.2f}
-                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">{item['quantity']}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${item['price']:.2f}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${item_total:.2f}</td>
             </tr>
             """
         
@@ -265,8 +268,8 @@ class EmailService:
         if order_data.get('crypto_discount', 0) > 0:
             crypto_discount_html = f"""
             <tr>
-                <td style="padding: 10px; text-align: right; color: green;">Crypto Discount (15%):</td>
-                <td style="padding: 10px; text-align: right; color: green;">-${order_data['crypto_discount']:.2f}</td>
+                <td colspan="3" style="padding: 10px; text-align: right; color: green;">Crypto Discount (15%):</td>
+                <td style="padding: 10px; text-align: right; color: green; font-weight: bold;">-${order_data['crypto_discount']:.2f}</td>
             </tr>
             """
         
@@ -274,19 +277,36 @@ class EmailService:
         if order_data.get('discount_amount', 0) > 0:
             discount_html = f"""
             <tr>
-                <td style="padding: 10px; text-align: right; color: green;">Coupon Discount:</td>
-                <td style="padding: 10px; text-align: right; color: green;">-${order_data['discount_amount']:.2f}</td>
+                <td colspan="3" style="padding: 10px; text-align: right; color: green;">Coupon Discount{' (' + order_data.get('coupon_code', '') + ')' if order_data.get('coupon_code') else ''}:</td>
+                <td style="padding: 10px; text-align: right; color: green; font-weight: bold;">-${order_data['discount_amount']:.2f}</td>
             </tr>
             """
         
         shipping_html = ""
-        if order_data.get('shipping_cost', 0) > 0:
+        shipping_cost = order_data.get('shipping_cost', 0)
+        if shipping_cost > 0:
+            shipping_method = order_data.get('shipping_method', 'standard').upper()
             shipping_html = f"""
             <tr>
-                <td style="padding: 10px; text-align: right;">Shipping ({order_data.get('shipping_method', 'Standard')}):</td>
-                <td style="padding: 10px; text-align: right;">${order_data['shipping_cost']:.2f}</td>
+                <td colspan="3" style="padding: 10px; text-align: right;">Shipping ({shipping_method}):</td>
+                <td style="padding: 10px; text-align: right;">${shipping_cost:.2f}</td>
             </tr>
             """
+        else:
+            shipping_html = f"""
+            <tr>
+                <td colspan="3" style="padding: 10px; text-align: right;">Shipping:</td>
+                <td style="padding: 10px; text-align: right; color: green; font-weight: bold;">FREE</td>
+            </tr>
+            """
+        
+        # Shipping address
+        shipping_addr = order_data.get('shipping_address', {})
+        address_html = f"""
+        {shipping_addr.get('address', '')}<br>
+        {shipping_addr.get('city', '')}, {shipping_addr.get('postal_code', '')}<br>
+        {shipping_addr.get('country', '')}
+        """
         
         html_content = f"""
         <!DOCTYPE html>
@@ -295,61 +315,86 @@ class EmailService:
             <meta charset="UTF-8">
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-                <div style="text-align: center; padding: 20px; background: #1a1a1a; color: white;">
-                    <h1 style="margin: 0; font-family: 'Playfair Display', serif;">
-                        <span style="color: #d4af37;">Kayee</span>01
-                    </h1>
+            <div style="max-width: 700px; margin: 0 auto; padding: 20px; border: 1px solid #ddd;">
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 3px solid #d4af37;">
+                    <div>
+                        <h1 style="margin: 0; font-family: 'Playfair Display', serif; font-size: 32px;">
+                            <span style="color: #d4af37;">Kayee</span><span style="color: #1a1a1a;">01</span>
+                        </h1>
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">High-Quality 1:1 Replica Watches & Accessories</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <h2 style="margin: 0; color: #1a1a1a; font-size: 28px;">INVOICE</h2>
+                        <p style="margin: 5px 0; font-size: 14px;"><strong>#{order_data['order_number']}</strong></p>
+                    </div>
                 </div>
                 
-                <div style="padding: 30px 20px;">
-                    <h2 style="color: #4caf50;">✅ Payment Confirmed!</h2>
-                    <p>Hello <strong>{order_data['user_name']}</strong>,</p>
-                    <p>Your payment has been received and confirmed. Thank you for your purchase!</p>
-                    
-                    <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #4caf50;">
-                        <h3 style="margin-top: 0; color: #4caf50;">Invoice Details</h3>
-                        <p><strong>Invoice Number:</strong> {order_data['order_number']}</p>
-                        <p><strong>Payment Method:</strong> {order_data['payment_method'].upper()}</p>
-                        <p><strong>Payment Status:</strong> <span style="color: #4caf50; font-weight: bold;">PAID</span></p>
-                        <p><strong>Order Status:</strong> Processing</p>
+                <!-- Invoice Info -->
+                <div style="margin: 30px 0; display: flex; justify-content: space-between;">
+                    <div>
+                        <p style="margin: 0; font-weight: bold; color: #1a1a1a;">Bill To:</p>
+                        <p style="margin: 5px 0;"><strong>{order_data['user_name']}</strong></p>
+                        <p style="margin: 5px 0; font-size: 14px;">{order_data['user_email']}</p>
+                        <p style="margin: 5px 0; font-size: 14px;">{order_data.get('phone', 'N/A')}</p>
                     </div>
-                    
-                    <h3>Items Ordered:</h3>
-                    <table style="width: 100%; border-collapse: collapse;">
+                    <div>
+                        <p style="margin: 0; font-weight: bold; color: #1a1a1a;">Ship To:</p>
+                        <p style="margin: 5px 0; font-size: 14px;">{address_html}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="margin: 5px 0; font-size: 14px;"><strong>Payment Method:</strong></p>
+                        <p style="margin: 5px 0; font-size: 14px; text-transform: uppercase;">{order_data['payment_method']}</p>
+                        <p style="margin: 10px 0 5px 0; font-size: 14px;"><strong>Status:</strong></p>
+                        <p style="margin: 5px 0; padding: 5px 10px; background: #4caf50; color: white; border-radius: 3px; font-size: 12px; display: inline-block;">PAID</p>
+                    </div>
+                </div>
+                
+                <!-- Items Table -->
+                <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                    <thead>
+                        <tr style="background: #1a1a1a; color: white;">
+                            <th style="padding: 12px; text-align: left;">Product</th>
+                            <th style="padding: 12px; text-align: center; width: 80px;">Qty</th>
+                            <th style="padding: 12px; text-align: right; width: 100px;">Price</th>
+                            <th style="padding: 12px; text-align: right; width: 100px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {items_html}
+                    </tbody>
+                    <tfoot>
                         <tr>
-                            <td style="padding: 15px 10px; text-align: right; font-size: 16px;">
-                                <strong>Subtotal:</strong>
-                            </td>
-                            <td style="padding: 15px 10px; text-align: right; font-size: 16px;">
-                                ${order_data['total']:.2f}
-                            </td>
+                            <td colspan="3" style="padding: 10px; text-align: right; font-weight: bold;">Subtotal:</td>
+                            <td style="padding: 10px; text-align: right; font-weight: bold;">${subtotal:.2f}</td>
                         </tr>
                         {crypto_discount_html}
                         {discount_html}
                         {shipping_html}
-                        <tr style="background: #f9f9f9;">
-                            <td style="padding: 15px 10px; text-align: right; font-size: 18px;">
-                                <strong>Total Paid:</strong>
-                            </td>
-                            <td style="padding: 15px 10px; text-align: right; font-size: 18px; color: #4caf50;">
-                                <strong>${order_data['total']:.2f}</strong>
-                            </td>
+                        <tr style="background: #f9f9f9; border-top: 2px solid #d4af37;">
+                            <td colspan="3" style="padding: 15px; text-align: right; font-size: 18px; font-weight: bold;">TOTAL:</td>
+                            <td style="padding: 15px; text-align: right; font-size: 20px; font-weight: bold; color: #d4af37;">${order_data['total']:.2f}</td>
                         </tr>
-                    </table>
-                    
-                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px;">
-                        <p style="margin: 0;"><strong>📦 What's Next?</strong></p>
-                        <p style="margin: 5px 0 0 0;">We're preparing your order for shipment. You'll receive a tracking number once your order ships (5-7 business days).</p>
-                    </div>
-                    
-                    <p style="margin-top: 30px;">Questions? Contact us on WhatsApp: <strong>+12393293813</strong></p>
-                    <p>Best regards,<br>The Kayee01 Team</p>
+                    </tfoot>
+                </table>
+                
+                <!-- Footer Notes -->
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    <p style="margin: 0; font-size: 14px; color: #4caf50; font-weight: bold;">✓ Payment Confirmed - Thank you for your purchase!</p>
+                    <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">Your order will be processed and shipped within 5-7 business days. You'll receive tracking information once your package ships.</p>
                 </div>
                 
-                <div style="text-align: center; padding: 20px; background: #f5f5f5; color: #666; font-size: 12px;">
-                    <p>© 2025 Kayee01. All rights reserved.</p>
+                <!-- Contact Info -->
+                <div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">
+                    <p style="margin: 0; font-size: 13px; color: #666;"><strong>Questions?</strong> Contact us:</p>
+                    <p style="margin: 5px 0; font-size: 13px; color: #666;">📧 Email: kayee01.shop@gmail.com</p>
+                    <p style="margin: 5px 0; font-size: 13px; color: #666;">📱 WhatsApp: +12393293813</p>
+                </div>
+                
+                <!-- Footer -->
+                <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                    <p style="margin: 0; font-size: 11px; color: #999;">© 2025 Kayee01. All rights reserved.</p>
+                    <p style="margin: 5px 0; font-size: 11px; color: #999;">This is an official invoice from Kayee01</p>
                 </div>
             </div>
         </body>
