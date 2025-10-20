@@ -242,6 +242,123 @@ class EmailService:
         
         await self.send_email(user_email, subject, html_content)
 
+    async def send_invoice(self, order_data: dict):
+        """Send invoice/receipt email after payment confirmation"""
+        subject = f"Invoice #{order_data['order_number']} - Payment Confirmed"
+        
+        items_html = ""
+        for item in order_data['items']:
+            items_html += f"""
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                    <strong>{item['name']}</strong><br>
+                    Qty: {item['quantity']} × ${item['price']:.2f}
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+                    ${item['price'] * item['quantity']:.2f}
+                </td>
+            </tr>
+            """
+        
+        # Calculate discounts
+        crypto_discount_html = ""
+        if order_data.get('crypto_discount', 0) > 0:
+            crypto_discount_html = f"""
+            <tr>
+                <td style="padding: 10px; text-align: right; color: green;">Crypto Discount (15%):</td>
+                <td style="padding: 10px; text-align: right; color: green;">-${order_data['crypto_discount']:.2f}</td>
+            </tr>
+            """
+        
+        discount_html = ""
+        if order_data.get('discount_amount', 0) > 0:
+            discount_html = f"""
+            <tr>
+                <td style="padding: 10px; text-align: right; color: green;">Coupon Discount:</td>
+                <td style="padding: 10px; text-align: right; color: green;">-${order_data['discount_amount']:.2f}</td>
+            </tr>
+            """
+        
+        shipping_html = ""
+        if order_data.get('shipping_cost', 0) > 0:
+            shipping_html = f"""
+            <tr>
+                <td style="padding: 10px; text-align: right;">Shipping ({order_data.get('shipping_method', 'Standard')}):</td>
+                <td style="padding: 10px; text-align: right;">${order_data['shipping_cost']:.2f}</td>
+            </tr>
+            """
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="text-align: center; padding: 20px; background: #1a1a1a; color: white;">
+                    <h1 style="margin: 0; font-family: 'Playfair Display', serif;">
+                        <span style="color: #d4af37;">Kayee</span>01
+                    </h1>
+                </div>
+                
+                <div style="padding: 30px 20px;">
+                    <h2 style="color: #4caf50;">✅ Payment Confirmed!</h2>
+                    <p>Hello <strong>{order_data['user_name']}</strong>,</p>
+                    <p>Your payment has been received and confirmed. Thank you for your purchase!</p>
+                    
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #4caf50;">
+                        <h3 style="margin-top: 0; color: #4caf50;">Invoice Details</h3>
+                        <p><strong>Invoice Number:</strong> {order_data['order_number']}</p>
+                        <p><strong>Payment Method:</strong> {order_data['payment_method'].upper()}</p>
+                        <p><strong>Payment Status:</strong> <span style="color: #4caf50; font-weight: bold;">PAID</span></p>
+                        <p><strong>Order Status:</strong> Processing</p>
+                    </div>
+                    
+                    <h3>Items Ordered:</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        {items_html}
+                        <tr>
+                            <td style="padding: 15px 10px; text-align: right; font-size: 16px;">
+                                <strong>Subtotal:</strong>
+                            </td>
+                            <td style="padding: 15px 10px; text-align: right; font-size: 16px;">
+                                ${order_data['total']:.2f}
+                            </td>
+                        </tr>
+                        {crypto_discount_html}
+                        {discount_html}
+                        {shipping_html}
+                        <tr style="background: #f9f9f9;">
+                            <td style="padding: 15px 10px; text-align: right; font-size: 18px;">
+                                <strong>Total Paid:</strong>
+                            </td>
+                            <td style="padding: 15px 10px; text-align: right; font-size: 18px; color: #4caf50;">
+                                <strong>${order_data['total']:.2f}</strong>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                        <p style="margin: 0;"><strong>📦 What's Next?</strong></p>
+                        <p style="margin: 5px 0 0 0;">We're preparing your order for shipment. You'll receive a tracking number once your order ships (5-7 business days).</p>
+                    </div>
+                    
+                    <p style="margin-top: 30px;">Questions? Contact us on WhatsApp: <strong>+12393293813</strong></p>
+                    <p>Best regards,<br>The Kayee01 Team</p>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: #f5f5f5; color: #666; font-size: 12px;">
+                    <p>© 2025 Kayee01. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        await self.send_email(order_data['user_email'], subject, html_content)
+
+
     async def send_order_status_update(self, order_data: dict, old_status: str):
         """Send order status update email"""
         status_messages = {
