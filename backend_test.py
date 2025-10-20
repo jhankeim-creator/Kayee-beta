@@ -1585,20 +1585,36 @@ class Kayee01Tester:
         if not admin_login:
             all_tests_passed = False
         
-        # Test 2: Crypto Discount (15%)
-        print("\n🧪 2. CRYPTO DISCOUNT TEST (15%)")
+        # Test 2: Stripe Payment Links with URLs
+        print("\n🧪 2. STRIPE PAYMENT LINKS TEST")
+        stripe_test = self.test_stripe_payment_url_format()
+        if not stripe_test:
+            all_tests_passed = False
+        
+        # Test 3: Webhooks
+        print("\n🧪 3. WEBHOOKS TEST (Stripe)")
+        if stripe_test:
+            webhook_test = self.test_stripe_webhook_simulation()
+            if not webhook_test:
+                all_tests_passed = False
+        else:
+            self.log_result("Webhook Test", False, "Skipped - requires Stripe order creation")
+            all_tests_passed = False
+        
+        # Test 4: Crypto Discount (15%)
+        print("\n🧪 4. CRYPTO DISCOUNT TEST (15%)")
         crypto_order = self.test_crypto_discount_plisio()
         if not crypto_order:
             all_tests_passed = False
         
-        # Test 3: Coupon System
-        print("\n🧪 3. COUPON SYSTEM TEST (SAVE10)")
+        # Test 5: Coupon System
+        print("\n🧪 5. COUPON SYSTEM TEST (SAVE10)")
         coupon_test = self.test_coupon_validation_save10()
         if not coupon_test:
             all_tests_passed = False
         
-        # Test 4: Tracking
-        print("\n🧪 4. TRACKING NUMBER TEST")
+        # Test 6: Tracking
+        print("\n🧪 6. TRACKING NUMBER TEST")
         if admin_login and crypto_order:
             tracking_test = self.test_tracking_number_update()
             if not tracking_test:
@@ -1607,10 +1623,20 @@ class Kayee01Tester:
             self.log_result("Tracking Test", False, "Skipped - requires admin login and order creation")
             all_tests_passed = False
         
-        # Test 5: Email Production
-        print("\n🧪 5. EMAIL PRODUCTION TEST")
+        # Test 7: Email Production
+        print("\n🧪 7. EMAIL PRODUCTION TEST")
         email_test = self.test_email_production_manual_payment()
         if not email_test:
+            all_tests_passed = False
+        
+        # Test 8: Product Variants
+        print("\n🧪 8. PRODUCT VARIANTS TEST")
+        if admin_login:
+            variants_test = self.test_product_variants()
+            if not variants_test:
+                all_tests_passed = False
+        else:
+            self.log_result("Product Variants Test", False, "Skipped - requires admin login")
             all_tests_passed = False
         
         # Summary
