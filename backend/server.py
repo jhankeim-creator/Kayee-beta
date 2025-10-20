@@ -763,10 +763,10 @@ async def plisio_webhook(request: Request):
                 }}
             )
             
-            # Envoyer email de confirmation
+            # Envoyer facture par email
             order = await db.orders.find_one({"id": order_number}, {"_id": 0})
             if order:
-                await email_service.send_order_confirmation(order)
+                await email_service.send_invoice(order)
             
             logger.info(f"✓ Plisio payment confirmed for order {order_number}")
         
