@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Fix bugs: DollarSign error, image upload by URL, remove CoinPal, add Stripe payment links, add shipping options (FedEx $10 / Free), configure email (kayicom509@gmail.com)"
+user_problem_statement: "Implement comprehensive admin features: password reset flow, order tracking display with carrier links, admin settings panel (payment gateway management, social links, external links max 3, floating announcement Shein-style, bulk email system for coupons/newsletters)"
 
 backend:
   - task: "Fix AdminProductAdd useEffect bug"
