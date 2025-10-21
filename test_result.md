@@ -622,15 +622,18 @@ agent_communication:
 
   - task: "Admin Settings - External Links Management (Max 3)"
     implemented: true
-    working: "NA"
+    working: true
     file: "backend/models.py, backend/server.py, frontend/src/components/admin/AdminSettings.jsx, frontend/src/components/Footer.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Created CRUD system with max 3 external links limit. Models: ExternalLink, ExternalLinkCreate. API routes: GET/POST/PUT/DELETE /api/admin/settings/external-links plus public endpoint /api/settings/external-links. Backend enforces 3-link maximum. Links displayed in Footer Quick Links section. Admin UI for adding/removing external links with title and URL."
+        - working: true
+          agent: "testing"
+          comment: "✅ EXTERNAL LINKS MANAGEMENT WITH MAX 3 LIMIT WORKING PERFECTLY - Complete system tested successfully: 1) POST creates 'Guide d'achat' link (https://kayee01.com/guide) ✅ 2) Created Link 2 and Link 3 successfully ✅ 3) 4th link properly rejected with 400 Bad Request: 'Maximum 3 external links allowed' ✅ 4) GET /api/settings/external-links (public) returns exactly 3 links, respecting max limit ✅. External links system with proper limit enforcement fully functional."
 
   - task: "Floating Announcement (Shein-Style Popup)"
     implemented: true
