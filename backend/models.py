@@ -306,3 +306,120 @@ class BulkStockUpdate(BaseModel):
     product_ids: List[str]
     operation: str  # "add", "subtract", "set"
     value: int
+
+
+
+# ==================== ADMIN SETTINGS (NEW) ====================
+
+class PaymentGatewaySettings(BaseModel):
+    """Payment gateway configuration"""
+    model_config = ConfigDict(extra="ignore")
+    gateway_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    gateway_type: str  # stripe, plisio, manual
+    name: str  # Display name
+    description: Optional[str] = None
+    logo_url: Optional[str] = None
+    enabled: bool = True
+    api_key: Optional[str] = None
+    api_secret: Optional[str] = None
+    instructions: Optional[str] = None  # For manual payments
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class PaymentGatewayCreate(BaseModel):
+    gateway_type: str
+    name: str
+    description: Optional[str] = None
+    logo_url: Optional[str] = None
+    enabled: bool = True
+    api_key: Optional[str] = None
+    api_secret: Optional[str] = None
+    instructions: Optional[str] = None
+
+
+class SocialLink(BaseModel):
+    """Social media link"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    platform: str  # facebook, instagram, twitter, whatsapp
+    url: str
+    icon: Optional[str] = None
+    enabled: bool = True
+
+
+class SocialLinkCreate(BaseModel):
+    platform: str
+    url: str
+    icon: Optional[str] = None
+    enabled: bool = True
+
+
+class ExternalLink(BaseModel):
+    """External link with title"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    url: str
+    enabled: bool = True
+    order: int = 0
+
+
+class ExternalLinkCreate(BaseModel):
+    title: str
+    url: str
+    enabled: bool = True
+
+
+class FloatingAnnouncement(BaseModel):
+    """Floating announcement (Shein-style popup)"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = "floating_announcement"  # Single document
+    enabled: bool = False
+    title: Optional[str] = None
+    message: str
+    image_url: Optional[str] = None
+    link_url: Optional[str] = None
+    link_text: Optional[str] = None
+    button_color: str = "#d4af37"
+    frequency: str = "once_per_session"  # once_per_session, every_visit, daily
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class FloatingAnnouncementUpdate(BaseModel):
+    enabled: Optional[bool] = None
+    title: Optional[str] = None
+    message: Optional[str] = None
+    image_url: Optional[str] = None
+    link_url: Optional[str] = None
+    link_text: Optional[str] = None
+    button_color: Optional[str] = None
+    frequency: Optional[str] = None
+
+
+class BulkEmail(BaseModel):
+    """Bulk email/newsletter"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    subject: str
+    message: str
+    sent_to: int = 0
+    sent_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class BulkEmailCreate(BaseModel):
+    subject: str
+    message: str
+    recipient_filter: str = "all"  # all, customers_with_orders, etc.
+
+
+class AdminSettings(BaseModel):
+    """Complete admin settings"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = "admin_settings"  # Single document
+    payment_gateways: List[PaymentGatewaySettings] = []
+    social_links: List[SocialLink] = []
+    external_links: List[ExternalLink] = []
+    floating_announcement: Optional[FloatingAnnouncement] = None
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
