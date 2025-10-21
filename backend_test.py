@@ -599,6 +599,361 @@ class Kayee01NewFeaturesTester:
             self.log_result("Delete Social Link", False, f"Request failed: {str(e)}")
             return False
 
+    def test_external_links_crud(self):
+        """Test external links CRUD operations with max 3 limit"""
+        if not self.admin_token:
+            self.log_result("External Links CRUD", False, "Admin authentication required")
+            return False
+        
+        # Test 4.1: Create External Link
+        external_link_payload = {
+            "title": "Guide d'achat",
+            "url": "https://kayee01.com/guide",
+            "enabled": True
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/external-links",
+                json=external_link_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                link_data = response.json()
+                
+                link_id = link_data.get("id")
+                title = link_data.get("title")
+                url = link_data.get("url")
+                
+                details = {
+                    "link_id": link_id,
+                    "title": title,
+                    "url": url,
+                    "enabled": link_data.get("enabled")
+                }
+                
+                # Validate external link creation
+                link_valid = (
+                    link_id is not None and
+                    title == "Guide d'achat" and
+                    url == "https://kayee01.com/guide"
+                )
+                
+                if link_valid:
+                    self.log_result(
+                        "Create External Link", 
+                        True, 
+                        f"External link created successfully with ID: {link_id}",
+                        details
+                    )
+                    
+                    # Test creating more links to test max limit
+                    self.test_external_links_max_limit()
+                    
+                    # Test 4.3: Get Public External Links
+                    self.test_get_public_external_links()
+                    
+                    return True
+                else:
+                    self.log_result(
+                        "Create External Link", 
+                        False, 
+                        "External link validation failed",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Create External Link", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Create External Link", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_external_links_max_limit(self):
+        """Test external links max 3 limit enforcement"""
+        # Try to create 3 more links to test the limit
+        for i in range(2, 5):  # Create links 2, 3, 4
+            link_payload = {
+                "title": f"Link {i}",
+                "url": f"https://example.com/link{i}",
+                "enabled": True
+            }
+            
+            try:
+                response = self.session.post(
+                    f"{self.api_base}/admin/settings/external-links",
+                    json=link_payload,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.admin_token}"
+                    },
+                    timeout=10
+                )
+                
+                if i <= 3:  # Links 2 and 3 should succeed
+                    if response.status_code == 200:
+                        self.log_result(
+                            f"Create External Link {i}", 
+                            True, 
+                            f"External link {i} created successfully",
+                            {"link_number": i, "title": f"Link {i}"}
+                        )
+                    else:
+                        self.log_result(f"Create External Link {i}", False, f"HTTP {response.status_code}")
+                else:  # Link 4 should fail (max 3 limit)
+                    if response.status_code == 400:
+                        error_data = response.json()
+                        error_detail = error_data.get("detail", "")
+                        
+                        details = {
+                            "link_number": i,
+                            "error_detail": error_detail,
+                            "expected_error": "Maximum 3 external links allowed"
+                        }
+                        
+                        # Check if max limit error is correct
+                        limit_enforced = "maximum 3" in error_detail.lower() or "max" in error_detail.lower()
+                        
+                        if limit_enforced:
+                            self.log_result(
+                                "External Links Max Limit Test", 
+                                True, 
+                                f"Max 3 external links limit properly enforced: {error_detail}",
+                                details
+                            )
+                        else:
+                            self.log_result(
+                                "External Links Max Limit Test", 
+                                False, 
+                                f"Unexpected error message: {error_detail}",
+                                details
+                            )
+                    else:
+                        self.log_result("External Links Max Limit Test", False, f"Expected 400, got HTTP {response.status_code}")
+                        
+            except Exception as e:
+                self.log_result(f"Create External Link {i}", False, f"Request failed: {str(e)}")
+
+    def test_get_public_external_links(self):
+        """Test getting public external links (max 3 returned)"""
+        try:
+            # Remove auth header for public endpoint
+            headers = {"Content-Type": "application/json"}
+            response = self.session.get(
+                f"{self.api_base}/settings/external-links",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                links = response.json()
+                
+                details = {
+                    "links_count": len(links),
+                    "links": links,
+                    "max_expected": 3,
+                    "public_endpoint": True
+                }
+                
+                # Should return max 3 links
+                max_limit_respected = len(links) <= 3
+                
+                if max_limit_respected:
+                    self.log_result(
+                        "Get Public External Links", 
+                        True, 
+                        f"Retrieved {len(links)} external links (max 3 limit respected)",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Get Public External Links", 
+                        False, 
+                        f"Max 3 limit not respected: {len(links)} links returned",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Get Public External Links", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Public External Links", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_floating_announcement(self):
+        """Test floating announcement functionality"""
+        if not self.admin_token:
+            self.log_result("Floating Announcement", False, "Admin authentication required")
+            return False
+        
+        # Test 5.1: Update Floating Announcement
+        announcement_payload = {
+            "enabled": True,
+            "title": "Special Offer!",
+            "message": "Get 20% OFF this week!",
+            "link_url": "https://kayee01.com/shop",
+            "link_text": "Shop Now",
+            "frequency": "once_per_session"
+        }
+        
+        try:
+            response = self.session.put(
+                f"{self.api_base}/admin/settings/floating-announcement",
+                json=announcement_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                update_data = response.json()
+                message = update_data.get("message", "")
+                
+                details = {
+                    "response_message": message,
+                    "announcement_data": announcement_payload,
+                    "expected_message": "Floating announcement updated successfully"
+                }
+                
+                # Check if update was successful
+                update_valid = "updated successfully" in message.lower()
+                
+                if update_valid:
+                    self.log_result(
+                        "Update Floating Announcement", 
+                        True, 
+                        "Floating announcement updated successfully",
+                        details
+                    )
+                    
+                    # Test 5.2: Get Public Announcement
+                    self.test_get_public_announcement()
+                    
+                    # Test 5.3: Get Admin Announcement
+                    return self.test_get_admin_announcement()
+                else:
+                    self.log_result(
+                        "Update Floating Announcement", 
+                        False, 
+                        f"Unexpected response message: {message}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Update Floating Announcement", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Update Floating Announcement", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_get_public_announcement(self):
+        """Test getting public announcement (no auth required)"""
+        try:
+            # Remove auth header for public endpoint
+            headers = {"Content-Type": "application/json"}
+            response = self.session.get(
+                f"{self.api_base}/settings/floating-announcement",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                announcement = response.json()
+                
+                details = {
+                    "announcement": announcement,
+                    "enabled": announcement.get("enabled") if announcement else None,
+                    "title": announcement.get("title") if announcement else None,
+                    "message": announcement.get("message") if announcement else None,
+                    "public_endpoint": True
+                }
+                
+                # Should return announcement if enabled
+                announcement_valid = announcement is not None
+                
+                if announcement_valid:
+                    self.log_result(
+                        "Get Public Announcement", 
+                        True, 
+                        "Retrieved public floating announcement",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Get Public Announcement", 
+                        True, 
+                        "No public announcement (disabled or not set)",
+                        details
+                    )
+                    return True
+            else:
+                self.log_result("Get Public Announcement", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Public Announcement", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_get_admin_announcement(self):
+        """Test getting admin announcement settings"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/floating-announcement",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                announcement = response.json()
+                
+                details = {
+                    "announcement": announcement,
+                    "enabled": announcement.get("enabled") if announcement else None,
+                    "title": announcement.get("title") if announcement else None,
+                    "message": announcement.get("message") if announcement else None,
+                    "frequency": announcement.get("frequency") if announcement else None,
+                    "admin_endpoint": True
+                }
+                
+                # Should return announcement settings
+                announcement_valid = announcement is not None
+                
+                if announcement_valid:
+                    self.log_result(
+                        "Get Admin Announcement", 
+                        True, 
+                        "Retrieved admin floating announcement settings",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Get Admin Announcement", 
+                        True, 
+                        "No admin announcement settings found",
+                        details
+                    )
+                    return True
+            else:
+                self.log_result("Get Admin Announcement", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Admin Announcement", False, f"Request failed: {str(e)}")
+            return False
+
     def test_stripe_payment_link_creation(self):
         """Test Stripe payment link creation for order ORD-3E0AF5B2"""
         test_order_payload = {
