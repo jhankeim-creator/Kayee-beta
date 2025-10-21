@@ -1,6 +1,6 @@
 # 📚 API ENDPOINTS - LuxeBoutique E-Commerce
 
-**Base URL:** `https://fashionstore-18.preview.emergentagent.com/api`
+**Base URL:** `https://kayee-boutique.preview.emergentagent.com/api`
 
 ---
 
@@ -520,7 +520,7 @@ Tous les webhooks vérifient les signatures pour garantir l'authenticité:
 
 ### Créer une commande
 ```bash
-curl -X POST https://fashionstore-18.preview.emergentagent.com/api/orders \
+curl -X POST https://kayee-boutique.preview.emergentagent.com/api/orders \
   -H "Content-Type: application/json" \
   -d '{
     "user_email": "test@example.com",
@@ -535,7 +535,7 @@ curl -X POST https://fashionstore-18.preview.emergentagent.com/api/orders \
 
 ### Créer un paiement Stripe
 ```bash
-curl -X POST https://fashionstore-18.preview.emergentagent.com/api/payments/stripe/create \
+curl -X POST https://kayee-boutique.preview.emergentagent.com/api/payments/stripe/create \
   -H "Content-Type: application/json" \
   -d '{
     "order_id": "ORD-12345",
@@ -547,7 +547,7 @@ curl -X POST https://fashionstore-18.preview.emergentagent.com/api/payments/stri
 
 ### Lister les produits
 ```bash
-curl https://fashionstore-18.preview.emergentagent.com/api/products?skip=0&limit=10
+curl https://kayee-boutique.preview.emergentagent.com/api/products?skip=0&limit=10
 ```
 
 ---
