@@ -81,6 +81,19 @@ const Footer = () => {
                   FAQ
                 </Link>
               </li>
+              {/* External Links from Admin */}
+              {externalLinks.map((link) => (
+                <li key={link.id}>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-[#d4af37]"
+                  >
+                    {link.title}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
