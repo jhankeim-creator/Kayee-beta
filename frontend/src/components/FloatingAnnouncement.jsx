@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import { useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
 import axios from 'axios';
 import { CartContext } from '../App';
@@ -7,12 +8,21 @@ const FloatingAnnouncement = () => {
   const [announcement, setAnnouncement] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const { API } = useContext(CartContext);
+  const location = useLocation();
 
   useEffect(() => {
     loadAnnouncement();
   }, []);
 
   const loadAnnouncement = async () => {
+    // Don't show popup on admin pages, login pages, or checkout
+    const excludedPaths = ['/admin', '/forgot-password', '/reset-password'];
+    const isExcludedPage = excludedPaths.some(path => location.pathname.startsWith(path));
+    
+    if (isExcludedPage) {
+      return;
+    }
+    
     try {
       const res = await axios.get(`${API}/settings/floating-announcement`);
       if (res.data && res.data.enabled) {
