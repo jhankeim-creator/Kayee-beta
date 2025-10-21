@@ -370,6 +370,63 @@ async def login(credentials: UserLogin):
 async def get_me(current_user: User = Depends(get_current_user)):
     return current_user
 
+@api_router.post("/auth/forgot-password")
+async def forgot_password(email: EmailStr):
+    """Send password reset email"""
+    user = await db.users.find_one({"email": email}, {"_id": 0})
+    if not user:
+        # Return success even if user not found (security best practice)
+        return {"message": "If the email exists, a reset link has been sent"}
+    
+    # Generate reset token
+    reset_token = str(uuid.uuid4())
+    reset_expires = datetime.now(timezone.utc) + timedelta(hours=1)
+    
+    # Store reset token in database
+    await db.users.update_one(
+        {"email": email},
+        {"$set": {
+            "reset_token": reset_token,
+            "reset_expires": reset_expires.isoformat()
+        }}
+    )
+    
+    # Send reset email
+    try:
+        await email_service.send_password_reset_email(email, reset_token)
+    except Exception as e:
+        logger.error(f"Failed to send reset email: {str(e)}")
+    
+    return {"message": "If the email exists, a reset link has been sent"}
+
+@api_router.post("/auth/reset-password")
+async def reset_password(token: str, new_password: str):
+    """Reset password with token"""
+    user = await db.users.find_one({"reset_token": token}, {"_id": 0})
+    
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+    
+    # Check if token is expired
+    reset_expires = datetime.fromisoformat(user.get('reset_expires'))
+    if reset_expires < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Reset token has expired")
+    
+    # Update password and remove reset token
+    hashed = hash_password(new_password)
+    await db.users.update_one(
+        {"reset_token": token},
+        {"$set": {
+            "password_hash": hashed
+        },
+        "$unset": {
+            "reset_token": "",
+            "reset_expires": ""
+        }}
+    )
+    
+    return {"message": "Password reset successfully"}
+
 # ===== CATEGORY ROUTES =====
 
 @api_router.get("/categories", response_model=List[Category])
