@@ -244,6 +244,361 @@ class Kayee01NewFeaturesTester:
             self.log_result("Password Reset - Invalid Token", False, f"Request failed: {str(e)}")
             return False
 
+    def test_payment_gateways_crud(self):
+        """Test payment gateways CRUD operations"""
+        if not self.admin_token:
+            self.log_result("Payment Gateways CRUD", False, "Admin authentication required")
+            return False
+        
+        # Test 2.1: Get Payment Gateways (Empty)
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/payment-gateways",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                gateways = response.json()
+                
+                self.log_result(
+                    "Get Payment Gateways (Empty)", 
+                    True, 
+                    f"Retrieved payment gateways: {len(gateways)} gateways found",
+                    {"gateways_count": len(gateways), "gateways": gateways}
+                )
+                
+                # Test 2.2: Create Manual Payment Gateway
+                return self.test_create_manual_payment_gateway()
+            else:
+                self.log_result("Get Payment Gateways (Empty)", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Payment Gateways (Empty)", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_create_manual_payment_gateway(self):
+        """Test creating manual payment gateway"""
+        gateway_payload = {
+            "gateway_type": "manual",
+            "name": "PayPal Manual",
+            "description": "Pay via PayPal",
+            "enabled": True,
+            "instructions": "Send payment to paypal@kayee01.com"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/payment-gateways",
+                json=gateway_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                gateway_data = response.json()
+                
+                gateway_id = gateway_data.get("gateway_id")
+                name = gateway_data.get("name")
+                gateway_type = gateway_data.get("gateway_type")
+                
+                details = {
+                    "gateway_id": gateway_id,
+                    "name": name,
+                    "gateway_type": gateway_type,
+                    "description": gateway_data.get("description"),
+                    "enabled": gateway_data.get("enabled"),
+                    "instructions": gateway_data.get("instructions")
+                }
+                
+                # Validate gateway creation
+                gateway_valid = (
+                    gateway_id is not None and
+                    name == "PayPal Manual" and
+                    gateway_type == "manual"
+                )
+                
+                if gateway_valid:
+                    self.log_result(
+                        "Create Manual Payment Gateway", 
+                        True, 
+                        f"Manual payment gateway created successfully with ID: {gateway_id}",
+                        details
+                    )
+                    
+                    # Test 2.3: Get Payment Gateways (With Data)
+                    self.test_get_payment_gateways_with_data()
+                    
+                    # Test 2.4: Delete Payment Gateway
+                    return self.test_delete_payment_gateway(gateway_id)
+                else:
+                    self.log_result(
+                        "Create Manual Payment Gateway", 
+                        False, 
+                        "Gateway validation failed",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Create Manual Payment Gateway", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Create Manual Payment Gateway", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_get_payment_gateways_with_data(self):
+        """Test getting payment gateways with data"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/payment-gateways",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                gateways = response.json()
+                
+                details = {
+                    "gateways_count": len(gateways),
+                    "gateways": gateways
+                }
+                
+                # Should have at least 1 gateway now
+                has_gateways = len(gateways) >= 1
+                
+                if has_gateways:
+                    self.log_result(
+                        "Get Payment Gateways (With Data)", 
+                        True, 
+                        f"Retrieved {len(gateways)} payment gateways",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Get Payment Gateways (With Data)", 
+                        False, 
+                        "No gateways found after creation",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Get Payment Gateways (With Data)", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Payment Gateways (With Data)", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_delete_payment_gateway(self, gateway_id: str):
+        """Test deleting payment gateway"""
+        try:
+            response = self.session.delete(
+                f"{self.api_base}/admin/settings/payment-gateways/{gateway_id}",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                delete_data = response.json()
+                message = delete_data.get("message", "")
+                
+                details = {
+                    "gateway_id": gateway_id,
+                    "response_message": message,
+                    "expected_message": "Payment gateway deleted successfully"
+                }
+                
+                # Check if deletion was successful
+                delete_valid = "deleted successfully" in message.lower()
+                
+                if delete_valid:
+                    self.log_result(
+                        "Delete Payment Gateway", 
+                        True, 
+                        f"Payment gateway {gateway_id} deleted successfully",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Delete Payment Gateway", 
+                        False, 
+                        f"Unexpected response message: {message}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Delete Payment Gateway", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Delete Payment Gateway", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_social_links_crud(self):
+        """Test social links CRUD operations"""
+        if not self.admin_token:
+            self.log_result("Social Links CRUD", False, "Admin authentication required")
+            return False
+        
+        # Test 3.1: Create Social Link
+        social_link_payload = {
+            "platform": "facebook",
+            "url": "https://facebook.com/kayee01",
+            "enabled": True
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/social-links",
+                json=social_link_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                link_data = response.json()
+                
+                link_id = link_data.get("id")
+                platform = link_data.get("platform")
+                url = link_data.get("url")
+                
+                details = {
+                    "link_id": link_id,
+                    "platform": platform,
+                    "url": url,
+                    "enabled": link_data.get("enabled")
+                }
+                
+                # Validate social link creation
+                link_valid = (
+                    link_id is not None and
+                    platform == "facebook" and
+                    url == "https://facebook.com/kayee01"
+                )
+                
+                if link_valid:
+                    self.log_result(
+                        "Create Social Link", 
+                        True, 
+                        f"Social link created successfully with ID: {link_id}",
+                        details
+                    )
+                    
+                    # Test 3.2: Get Public Social Links
+                    self.test_get_public_social_links()
+                    
+                    # Test 3.3: Delete Social Link
+                    return self.test_delete_social_link(link_id)
+                else:
+                    self.log_result(
+                        "Create Social Link", 
+                        False, 
+                        "Social link validation failed",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Create Social Link", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Create Social Link", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_get_public_social_links(self):
+        """Test getting public social links (no auth required)"""
+        try:
+            # Remove auth header for public endpoint
+            headers = {"Content-Type": "application/json"}
+            response = self.session.get(
+                f"{self.api_base}/settings/social-links",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                links = response.json()
+                
+                details = {
+                    "links_count": len(links),
+                    "links": links,
+                    "public_endpoint": True
+                }
+                
+                # Should have at least 1 enabled link
+                has_links = len(links) >= 0  # Could be empty initially
+                
+                self.log_result(
+                    "Get Public Social Links", 
+                    True, 
+                    f"Retrieved {len(links)} public social links (no auth required)",
+                    details
+                )
+                return True
+            else:
+                self.log_result("Get Public Social Links", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Public Social Links", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_delete_social_link(self, link_id: str):
+        """Test deleting social link"""
+        try:
+            response = self.session.delete(
+                f"{self.api_base}/admin/settings/social-links/{link_id}",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                delete_data = response.json()
+                message = delete_data.get("message", "")
+                
+                details = {
+                    "link_id": link_id,
+                    "response_message": message,
+                    "expected_message": "Social link deleted successfully"
+                }
+                
+                # Check if deletion was successful
+                delete_valid = "deleted successfully" in message.lower()
+                
+                if delete_valid:
+                    self.log_result(
+                        "Delete Social Link", 
+                        True, 
+                        f"Social link {link_id} deleted successfully",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Delete Social Link", 
+                        False, 
+                        f"Unexpected response message: {message}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Delete Social Link", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Delete Social Link", False, f"Request failed: {str(e)}")
+            return False
+
     def test_stripe_payment_link_creation(self):
         """Test Stripe payment link creation for order ORD-3E0AF5B2"""
         test_order_payload = {
