@@ -144,6 +144,48 @@ const TrackOrderPage = () => {
                   </div>
                 </div>
 
+                {/* Tracking Information */}
+                {order.tracking_number && (
+                  <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg">
+                    <h3 className="font-bold text-lg mb-3 flex items-center">
+                      <Truck className="h-5 w-5 mr-2 text-blue-600" />
+                      Tracking Information
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600">Tracking Number</p>
+                        <p className="font-mono font-semibold text-lg">{order.tracking_number}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Carrier</p>
+                        <p className="font-semibold uppercase">{order.tracking_carrier}</p>
+                      </div>
+                    </div>
+                    {order.tracking_carrier && (
+                      <div className="mt-4">
+                        <a
+                          href={
+                            order.tracking_carrier.toLowerCase() === 'fedex'
+                              ? `https://www.fedex.com/fedextrack/?trknbr=${order.tracking_number}`
+                              : order.tracking_carrier.toLowerCase() === 'usps'
+                              ? `https://tools.usps.com/go/TrackConfirmAction?tLabels=${order.tracking_number}`
+                              : order.tracking_carrier.toLowerCase() === 'dhl'
+                              ? `https://www.dhl.com/en/express/tracking.html?AWB=${order.tracking_number}`
+                              : order.tracking_carrier.toLowerCase() === 'ups'
+                              ? `https://www.ups.com/track?tracknum=${order.tracking_number}`
+                              : '#'
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                        >
+                          Track on {order.tracking_carrier.toUpperCase()} Website →
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* Order Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <div>
