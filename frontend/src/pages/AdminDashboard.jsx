@@ -12,6 +12,7 @@ import AdminCoupons from '../components/admin/AdminCoupons';
 import AdminCustomers from '../components/admin/AdminCustomers';
 import CategoryManager from '../components/admin/CategoryManager';
 import AdminProductAdd from '../components/admin/AdminProductAdd';
+import AdminSettings from '../components/admin/AdminSettings';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Package, ShoppingCart, Users, DollarSign, Home, LayoutDashboard, Tag, UserCircle, FolderTree, Settings, Plus } from 'lucide-react';
