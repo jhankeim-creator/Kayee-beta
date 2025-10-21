@@ -69,17 +69,19 @@ const FloatingAnnouncement = () => {
     <>
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black transition-opacity duration-300 z-50 ${
+        className={`fixed inset-0 bg-black transition-opacity duration-300 ${
           isVisible ? 'opacity-50' : 'opacity-0 pointer-events-none'
         }`}
+        style={{ zIndex: 9998 }}
         onClick={handleClose}
       />
 
       {/* Modal */}
       <div
-        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-2xl z-50 max-w-md w-full mx-4 transition-all duration-300 ${
+        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-2xl max-w-md w-full mx-4 transition-all duration-300 ${
           isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
         }`}
+        style={{ zIndex: 9999 }}
       >
         {/* Close Button */}
         <button
