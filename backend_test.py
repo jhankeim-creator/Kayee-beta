@@ -2709,17 +2709,90 @@ class Kayee01NewFeaturesTester:
         # Run comprehensive review test
         return self.test_kayee01_comprehensive_review()
 
+    def run_new_features_test(self):
+        """Run comprehensive test of all new features"""
+        print("🚀 Starting Kayee01 NEW FEATURES Testing")
+        print("Testing: Password Reset, Admin Settings, Social Links, External Links, Floating Announcement, Bulk Email")
+        print("=" * 80)
+        
+        all_tests_passed = True
+        
+        # Test 1: Backend Health Check
+        if not self.test_backend_health():
+            all_tests_passed = False
+        
+        # Test 2: Admin Login (Required for admin endpoints)
+        if not self.test_admin_login():
+            all_tests_passed = False
+            print("❌ Admin login failed - skipping admin-only tests")
+            return False
+        
+        # Test 3: Password Reset Flow
+        if not self.test_password_reset_flow():
+            all_tests_passed = False
+        
+        # Test 4: Payment Gateways CRUD
+        if not self.test_payment_gateways_crud():
+            all_tests_passed = False
+        
+        # Test 5: Social Links CRUD
+        if not self.test_social_links_crud():
+            all_tests_passed = False
+        
+        # Test 6: External Links CRUD (Max 3)
+        if not self.test_external_links_crud():
+            all_tests_passed = False
+        
+        # Test 7: Floating Announcement
+        if not self.test_floating_announcement():
+            all_tests_passed = False
+        
+        # Test 8: Bulk Email System
+        if not self.test_bulk_email_system():
+            all_tests_passed = False
+        
+        # Test 9: Welcome Email Registration
+        if not self.test_welcome_email_registration():
+            all_tests_passed = False
+        
+        # Print summary
+        print("\n" + "=" * 80)
+        print("🎯 NEW FEATURES TEST SUMMARY")
+        print("=" * 80)
+        
+        passed_count = sum(1 for result in self.test_results if result["success"])
+        total_count = len(self.test_results)
+        
+        print(f"✅ Tests Passed: {passed_count}/{total_count}")
+        print(f"❌ Tests Failed: {total_count - passed_count}/{total_count}")
+        print(f"📊 Success Rate: {(passed_count/total_count)*100:.1f}%")
+        
+        if all_tests_passed:
+            print("\n🎉 ALL NEW FEATURES TESTS PASSED! 🎉")
+            print("✅ Password Reset Flow: Working")
+            print("✅ Admin Settings - Payment Gateways: Working")
+            print("✅ Admin Settings - Social Links: Working")
+            print("✅ Admin Settings - External Links (Max 3): Working")
+            print("✅ Floating Announcement: Working")
+            print("✅ Bulk Email System: Working")
+            print("✅ Welcome Email Registration: Working")
+        else:
+            print("\n⚠️ SOME NEW FEATURES TESTS FAILED")
+            print("Check individual test results above for details")
+        
+        return all_tests_passed
+
 def main():
     """Main test execution"""
     try:
-        tester = Kayee01Tester()
-        success = tester.run_complete_test()
+        tester = Kayee01NewFeaturesTester()
+        success = tester.run_new_features_test()
         
         # Exit with appropriate code
         sys.exit(0 if success else 1)
         
     except Exception as e:
-        print(f"❌ Kayee01 test execution failed: {str(e)}")
+        print(f"❌ Kayee01 new features test execution failed: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
