@@ -638,6 +638,59 @@ class EmailService:
         """
         
         await self.send_email(to_email, subject, html_content)
+    
+    async def send_bulk_promotional_email(self, to_email: str, subject: str, message: str):
+        """Send bulk promotional/coupon email"""
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="text-align: center; padding: 20px; background: #1a1a1a; color: white;">
+                    <h1 style="margin: 0; font-family: 'Playfair Display', serif;">
+                        <span style="color: #d4af37;">Kayee</span>01
+                    </h1>
+                </div>
+                
+                <div style="padding: 30px 20px;">
+                    <div style="white-space: pre-wrap;">{message}</div>
+                    
+                    <p style="text-align: center; margin: 30px 0;">
+                        <a href="{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/shop" 
+                           style="display: inline-block; padding: 15px 40px; background: #d4af37; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                            Shop Now
+                        </a>
+                    </p>
+                    
+                    <div style="margin: 30px 0; padding: 20px; background: #fff8e1; border-left: 4px solid #d4af37; border-radius: 5px;">
+                        <p style="margin: 0; color: #856404;"><strong>💎 Why Choose Kayee01?</strong></p>
+                        <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #856404;">
+                            <li>High-quality 1:1 replicas</li>
+                            <li>15% OFF with cryptocurrency</li>
+                            <li>Fast & secure shipping worldwide</li>
+                        </ul>
+                    </div>
+                    
+                    <p style="text-align: center; font-size: 14px; color: #666; margin-top: 30px;">
+                        Contact us: 📱 WhatsApp +12393293813 | 📧 kayee01.shop@gmail.com
+                    </p>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: #f5f5f5; color: #666; font-size: 12px;">
+                    <p>© 2025 Kayee01. All rights reserved.</p>
+                    <p style="margin: 5px 0 0 0; font-size: 11px;">
+                        You received this email because you're a valued Kayee01 customer.
+                    </p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        await self.send_email(to_email, subject, html_content)
 
 # Initialize email service
 email_service = EmailService()
