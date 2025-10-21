@@ -1,9 +1,42 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, Mail, MapPin } from 'lucide-react';
+import { MessageCircle, Mail, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
+import axios from 'axios';
 
 const Footer = () => {
   const whatsappNumber = '+12393293813';
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`;
+  const [socialLinks, setSocialLinks] = useState([]);
+  const [externalLinks, setExternalLinks] = useState([]);
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+  const API = `${BACKEND_URL}/api`;
+
+  useEffect(() => {
+    loadLinks();
+  }, []);
+
+  const loadLinks = async () => {
+    try {
+      const [socialRes, externalRes] = await Promise.all([
+        axios.get(`${API}/settings/social-links`),
+        axios.get(`${API}/settings/external-links`)
+      ]);
+      setSocialLinks(socialRes.data);
+      setExternalLinks(externalRes.data);
+    } catch (error) {
+      console.error('Failed to load links:', error);
+    }
+  };
+
+  const getSocialIcon = (platform) => {
+    switch (platform.toLowerCase()) {
+      case 'facebook': return <Facebook className="h-5 w-5" />;
+      case 'instagram': return <Instagram className="h-5 w-5" />;
+      case 'twitter': return <Twitter className="h-5 w-5" />;
+      case 'whatsapp': return <MessageCircle className="h-5 w-5" />;
+      default: return null;
+    }
+  };
 
   return (
     <footer className="bg-[#1a1a1a] text-white">
