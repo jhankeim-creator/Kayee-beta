@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Suite for Kayee01 Site
-Tests Stripe Payment Links, Admin Login, Email Production, and Product Duplication
+Backend API Testing Suite for Kayee01 New Features
+Tests Password Reset, Admin Settings, Social Links, External Links, Floating Announcement, Bulk Email
 """
 
 import requests
@@ -22,7 +22,7 @@ def get_backend_url():
         print(f"❌ Error reading frontend .env: {e}")
         return None
 
-class Kayee01Tester:
+class Kayee01NewFeaturesTester:
     def __init__(self):
         self.backend_url = get_backend_url()
         if not self.backend_url:
