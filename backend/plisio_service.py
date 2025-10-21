@@ -78,6 +78,8 @@ class PlisioService:
         
         # Mode production
         try:
+            frontend_url = os.environ.get('FRONTEND_URL', 'https://kayee-boutique.preview.emergentagent.com')
+            
             params = {
                 "source_currency": source_currency,
                 "source_amount": str(amount),
@@ -86,6 +88,8 @@ class PlisioService:
                 "email": email,
                 "order_name": description,
                 "callback_url": callback_url,
+                "success_callback_url": f"{frontend_url}/order-success/{order_number}?payment=success",
+                "fail_callback_url": f"{frontend_url}/checkout?payment=failed",
                 "api_key": self.api_key
             }
             
