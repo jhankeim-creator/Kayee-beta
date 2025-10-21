@@ -886,6 +886,256 @@ async def validate_coupon(code: str, cart_total: float):
         "discount_value": coupon_obj.discount_value
     }
 
+# ===== ADMIN SETTINGS ROUTES =====
+
+from models import (
+    PaymentGatewaySettings, PaymentGatewayCreate,
+    SocialLink, SocialLinkCreate,
+    ExternalLink, ExternalLinkCreate,
+    FloatingAnnouncement, FloatingAnnouncementUpdate,
+    BulkEmail, BulkEmailCreate
+)
+
+@api_router.get("/admin/settings/payment-gateways")
+async def get_payment_gateways(admin: User = Depends(get_current_admin)):
+    """Get all payment gateway settings"""
+    settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+    if not settings:
+        return []
+    return settings.get("payment_gateways", [])
+
+@api_router.post("/admin/settings/payment-gateways")
+async def create_payment_gateway(gateway_data: PaymentGatewayCreate, admin: User = Depends(get_current_admin)):
+    """Add a new payment gateway"""
+    gateway = PaymentGatewaySettings(**gateway_data.model_dump())
+    
+    # Update or create settings document
+    await db.admin_settings.update_one(
+        {"id": "admin_settings"},
+        {"$push": {"payment_gateways": gateway.model_dump()}},
+        upsert=True
+    )
+    
+    return gateway
+
+@api_router.put("/admin/settings/payment-gateways/{gateway_id}")
+async def update_payment_gateway(gateway_id: str, gateway_data: dict, admin: User = Depends(get_current_admin)):
+    """Update a payment gateway"""
+    result = await db.admin_settings.update_one(
+        {"id": "admin_settings", "payment_gateways.gateway_id": gateway_id},
+        {"$set": {f"payment_gateways.$": gateway_data}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Payment gateway not found")
+    
+    return {"message": "Payment gateway updated successfully"}
+
+@api_router.delete("/admin/settings/payment-gateways/{gateway_id}")
+async def delete_payment_gateway(gateway_id: str, admin: User = Depends(get_current_admin)):
+    """Delete a payment gateway"""
+    result = await db.admin_settings.update_one(
+        {"id": "admin_settings"},
+        {"$pull": {"payment_gateways": {"gateway_id": gateway_id}}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Payment gateway not found")
+    
+    return {"message": "Payment gateway deleted successfully"}
+
+# Social Links Routes
+@api_router.get("/admin/settings/social-links")
+async def get_social_links(admin: User = Depends(get_current_admin)):
+    """Get all social links"""
+    settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+    if not settings:
+        return []
+    return settings.get("social_links", [])
+
+@api_router.get("/settings/social-links")
+async def get_public_social_links():
+    """Get public social links (no auth required)"""
+    settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+    if not settings:
+        return []
+    return [link for link in settings.get("social_links", []) if link.get("enabled", True)]
+
+@api_router.post("/admin/settings/social-links")
+async def create_social_link(link_data: SocialLinkCreate, admin: User = Depends(get_current_admin)):
+    """Add a new social link"""
+    link = SocialLink(**link_data.model_dump())
+    
+    await db.admin_settings.update_one(
+        {"id": "admin_settings"},
+        {"$push": {"social_links": link.model_dump()}},
+        upsert=True
+    )
+    
+    return link
+
+@api_router.put("/admin/settings/social-links/{link_id}")
+async def update_social_link(link_id: str, link_data: dict, admin: User = Depends(get_current_admin)):
+    """Update a social link"""
+    result = await db.admin_settings.update_one(
+        {"id": "admin_settings", "social_links.id": link_id},
+        {"$set": {f"social_links.$": link_data}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Social link not found")
+    
+    return {"message": "Social link updated successfully"}
+
+@api_router.delete("/admin/settings/social-links/{link_id}")
+async def delete_social_link(link_id: str, admin: User = Depends(get_current_admin)):
+    """Delete a social link"""
+    result = await db.admin_settings.update_one(
+        {"id": "admin_settings"},
+        {"$pull": {"social_links": {"id": link_id}}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Social link not found")
+    
+    return {"message": "Social link deleted successfully"}
+
+# External Links Routes
+@api_router.get("/admin/settings/external-links")
+async def get_external_links(admin: User = Depends(get_current_admin)):
+    """Get all external links"""
+    settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+    if not settings:
+        return []
+    return settings.get("external_links", [])
+
+@api_router.get("/settings/external-links")
+async def get_public_external_links():
+    """Get public external links (no auth required)"""
+    settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+    if not settings:
+        return []
+    return [link for link in settings.get("external_links", []) if link.get("enabled", True)][:3]
+
+@api_router.post("/admin/settings/external-links")
+async def create_external_link(link_data: ExternalLinkCreate, admin: User = Depends(get_current_admin)):
+    """Add a new external link (max 3)"""
+    settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+    existing_links = settings.get("external_links", []) if settings else []
+    
+    if len(existing_links) >= 3:
+        raise HTTPException(status_code=400, detail="Maximum 3 external links allowed")
+    
+    link = ExternalLink(**link_data.model_dump())
+    
+    await db.admin_settings.update_one(
+        {"id": "admin_settings"},
+        {"$push": {"external_links": link.model_dump()}},
+        upsert=True
+    )
+    
+    return link
+
+@api_router.put("/admin/settings/external-links/{link_id}")
+async def update_external_link(link_id: str, link_data: dict, admin: User = Depends(get_current_admin)):
+    """Update an external link"""
+    result = await db.admin_settings.update_one(
+        {"id": "admin_settings", "external_links.id": link_id},
+        {"$set": {f"external_links.$": link_data}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="External link not found")
+    
+    return {"message": "External link updated successfully"}
+
+@api_router.delete("/admin/settings/external-links/{link_id}")
+async def delete_external_link(link_id: str, admin: User = Depends(get_current_admin)):
+    """Delete an external link"""
+    result = await db.admin_settings.update_one(
+        {"id": "admin_settings"},
+        {"$pull": {"external_links": {"id": link_id}}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="External link not found")
+    
+    return {"message": "External link deleted successfully"}
+
+# Floating Announcement Routes
+@api_router.get("/settings/floating-announcement")
+async def get_public_floating_announcement():
+    """Get public floating announcement (no auth required)"""
+    announcement = await db.floating_announcements.find_one({"id": "floating_announcement"}, {"_id": 0})
+    if not announcement or not announcement.get("enabled", False):
+        return None
+    return announcement
+
+@api_router.get("/admin/settings/floating-announcement")
+async def get_floating_announcement(admin: User = Depends(get_current_admin)):
+    """Get floating announcement settings"""
+    announcement = await db.floating_announcements.find_one({"id": "floating_announcement"}, {"_id": 0})
+    return announcement
+
+@api_router.put("/admin/settings/floating-announcement")
+async def update_floating_announcement(announcement_data: FloatingAnnouncementUpdate, admin: User = Depends(get_current_admin)):
+    """Update floating announcement"""
+    update_dict = {k: v for k, v in announcement_data.model_dump().items() if v is not None}
+    update_dict["updated_at"] = datetime.now(timezone.utc)
+    
+    await db.floating_announcements.update_one(
+        {"id": "floating_announcement"},
+        {"$set": update_dict},
+        upsert=True
+    )
+    
+    return {"message": "Floating announcement updated successfully"}
+
+# Bulk Email Routes
+@api_router.post("/admin/settings/bulk-email")
+async def send_bulk_email(email_data: BulkEmailCreate, admin: User = Depends(get_current_admin)):
+    """Send bulk email to customers"""
+    # Get all customer emails
+    recipient_filter = email_data.recipient_filter
+    
+    if recipient_filter == "all":
+        customers = await db.users.find({"role": "customer"}, {"_id": 0, "email": 1}).to_list(length=None)
+    else:
+        # Get customers with orders
+        orders = await db.orders.find({}, {"_id": 0, "user_email": 1}).to_list(length=None)
+        unique_emails = list(set([order["user_email"] for order in orders]))
+        customers = [{"email": email} for email in unique_emails]
+    
+    # Send emails
+    sent_count = 0
+    for customer in customers:
+        try:
+            await email_service.send_bulk_promotional_email(
+                customer["email"],
+                email_data.subject,
+                email_data.message
+            )
+            sent_count += 1
+        except Exception as e:
+            logger.error(f"Failed to send bulk email to {customer['email']}: {str(e)}")
+    
+    # Save bulk email record
+    bulk_email = BulkEmail(
+        **email_data.model_dump(),
+        sent_to=sent_count,
+        sent_at=datetime.now(timezone.utc)
+    )
+    
+    await db.bulk_emails.insert_one(prepare_for_mongo(bulk_email.model_dump()))
+    
+    return {"message": f"Bulk email sent successfully to {sent_count} customers", "sent_to": sent_count}
+
+@api_router.get("/admin/settings/bulk-emails")
+async def get_bulk_emails(admin: User = Depends(get_current_admin)):
+    """Get bulk email history"""
+    emails = await db.bulk_emails.find({}, {"_id": 0}).sort("created_at", -1).limit(50).to_list(length=None)
+    return [BulkEmail(**parse_from_mongo(email)) for email in emails]
+
 # Import payment, oauth, admin and complete routes
 from payment_routes import payment_router
 from oauth_routes import oauth_router
