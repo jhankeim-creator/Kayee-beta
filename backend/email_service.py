@@ -524,6 +524,120 @@ class EmailService:
         """
         
         await self.send_email(order_data['user_email'], subject, html_content)
+    
+    async def send_password_reset_email(self, to_email: str, reset_token: str):
+        """Send password reset email"""
+        reset_url = f"{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/reset-password?token={reset_token}"
+        subject = "Password Reset Request - Kayee01"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="text-align: center; padding: 20px; background: #1a1a1a; color: white;">
+                    <h1 style="margin: 0; font-family: 'Playfair Display', serif;">
+                        <span style="color: #d4af37;">Kayee</span>01
+                    </h1>
+                </div>
+                
+                <div style="padding: 30px 20px;">
+                    <h2 style="color: #d4af37;">🔒 Password Reset Request</h2>
+                    <p>Hello,</p>
+                    <p>We received a request to reset your password. Click the button below to reset it:</p>
+                    
+                    <p style="text-align: center; margin: 30px 0;">
+                        <a href="{reset_url}" 
+                           style="display: inline-block; padding: 15px 40px; background: #d4af37; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                            Reset Password
+                        </a>
+                    </p>
+                    
+                    <p style="color: #666; font-size: 14px;">Or copy and paste this link into your browser:</p>
+                    <p style="background: #f5f5f5; padding: 10px; border-radius: 3px; word-break: break-all; font-size: 13px;">
+                        {reset_url}
+                    </p>
+                    
+                    <div style="margin: 30px 0; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
+                        <p style="margin: 0; color: #856404;">
+                            <strong>⚠️ Important:</strong> This link will expire in 1 hour. If you didn't request this reset, please ignore this email.
+                        </p>
+                    </div>
+                    
+                    <p>Best regards,<br>The Kayee01 Team</p>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: #f5f5f5; color: #666; font-size: 12px;">
+                    <p>© 2025 Kayee01. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        await self.send_email(to_email, subject, html_content)
+    
+    async def send_welcome_email(self, to_email: str, user_name: str):
+        """Send welcome email after registration"""
+        subject = "Welcome to Kayee01 - Luxury 1:1 Replica Watches & Accessories"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="text-align: center; padding: 20px; background: #1a1a1a; color: white;">
+                    <h1 style="margin: 0; font-family: 'Playfair Display', serif;">
+                        <span style="color: #d4af37;">Kayee</span>01
+                    </h1>
+                </div>
+                
+                <div style="padding: 30px 20px;">
+                    <h2 style="color: #d4af37;">🎉 Welcome to Kayee01!</h2>
+                    <p>Hello <strong>{user_name}</strong>,</p>
+                    <p>Thank you for joining Kayee01 - your destination for high-quality 1:1 replica luxury watches, clothing, and accessories.</p>
+                    
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                        <h3 style="margin-top: 0; color: #1a1a1a;">What's Next?</h3>
+                        <ul style="padding-left: 20px;">
+                            <li>Browse our exclusive collection of luxury replicas</li>
+                            <li>Enjoy secure checkout with multiple payment options</li>
+                            <li>Get 15% OFF when paying with cryptocurrency</li>
+                            <li>Track your orders in real-time</li>
+                        </ul>
+                    </div>
+                    
+                    <p style="text-align: center; margin: 30px 0;">
+                        <a href="{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/shop" 
+                           style="display: inline-block; padding: 15px 40px; background: #d4af37; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                            Start Shopping
+                        </a>
+                    </p>
+                    
+                    <div style="margin: 30px 0; padding: 20px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 5px;">
+                        <p style="margin: 0; color: #1976d2;"><strong>💡 Need Help?</strong></p>
+                        <p style="margin: 10px 0 0 0; color: #1976d2;">Contact us via WhatsApp: +12393293813</p>
+                        <p style="margin: 5px 0 0 0; color: #1976d2;">Email: kayee01.shop@gmail.com</p>
+                    </div>
+                    
+                    <p>Best regards,<br>The Kayee01 Team</p>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: #f5f5f5; color: #666; font-size: 12px;">
+                    <p>© 2025 Kayee01. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        await self.send_email(to_email, subject, html_content)
 
 # Initialize email service
 email_service = EmailService()
