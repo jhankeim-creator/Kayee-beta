@@ -158,9 +158,9 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin/*" element={<AdminDashboard />} />
           </Routes>
+          <WhatsAppButton />
+          <FloatingAnnouncement />
         </BrowserRouter>
-        <WhatsAppButton />
-        <FloatingAnnouncement />
         <Toaster position="top-right" richColors />
       </div>
     </CartContext.Provider>
