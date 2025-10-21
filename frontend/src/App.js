@@ -160,6 +160,7 @@ function App() {
           </Routes>
         </BrowserRouter>
         <WhatsAppButton />
+        <FloatingAnnouncement />
         <Toaster position="top-right" richColors />
       </div>
     </CartContext.Provider>
