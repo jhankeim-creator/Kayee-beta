@@ -136,8 +136,28 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Kayee01. All rights reserved.</p>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          {/* Social Links */}
+          {socialLinks.length > 0 && (
+            <div className="flex justify-center gap-6 mb-6">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-[#d4af37] transition-colors"
+                  title={link.platform}
+                >
+                  {getSocialIcon(link.platform)}
+                </a>
+              ))}
+            </div>
+          )}
+          
+          <p className="text-center text-sm text-gray-400">
+            &copy; {new Date().getFullYear()} Kayee01. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
