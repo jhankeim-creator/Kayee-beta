@@ -23,6 +23,7 @@ import FAQPage from './pages/FAQPage';
 import TermsOfService from './pages/TermsOfService';
 import RefundPolicy from './pages/RefundPolicy';
 import WhatsAppButton from './components/WhatsAppButton';
+import FloatingAnnouncement from './components/FloatingAnnouncement';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
