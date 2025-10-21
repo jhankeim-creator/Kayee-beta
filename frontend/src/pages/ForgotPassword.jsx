@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -6,23 +6,29 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { toast } from 'sonner';
 import { ArrowLeft, Mail } from 'lucide-react';
+import axios from 'axios';
+import { CartContext } from '../App';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
+  const { API } = useContext(CartContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate email sending (you can implement real email sending later)
-    setTimeout(() => {
+    try {
+      await axios.post(`${API}/auth/forgot-password?email=${email}`);
       setEmailSent(true);
-      setLoading(false);
       toast.success('Password reset instructions sent to your email');
-    }, 1500);
+    } catch (error) {
+      toast.error('Failed to send reset email. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
