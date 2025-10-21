@@ -146,6 +146,104 @@ class Kayee01NewFeaturesTester:
             self.log_result("Admin Login", False, f"Request failed: {str(e)}")
             return None
 
+    def test_password_reset_flow(self):
+        """Test password reset flow - forgot password and reset password"""
+        test_email = "test@example.com"
+        
+        # Test 1.1: Forgot Password - Send Reset Email
+        try:
+            response = self.session.post(
+                f"{self.api_base}/auth/forgot-password?email={test_email}",
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                forgot_data = response.json()
+                message = forgot_data.get("message", "")
+                
+                details = {
+                    "test_email": test_email,
+                    "response_message": message,
+                    "expected_message": "If the email exists, a reset link has been sent"
+                }
+                
+                # Check if message indicates email sent
+                forgot_valid = "reset link has been sent" in message.lower()
+                
+                if forgot_valid:
+                    self.log_result(
+                        "Password Reset - Forgot Password", 
+                        True, 
+                        "Forgot password endpoint working - returns success message",
+                        details
+                    )
+                    
+                    # Test 1.3: Reset Password with Invalid Token
+                    return self.test_reset_password_invalid_token()
+                else:
+                    self.log_result(
+                        "Password Reset - Forgot Password", 
+                        False, 
+                        f"Unexpected response message: {message}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Password Reset - Forgot Password", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Password Reset - Forgot Password", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_reset_password_invalid_token(self):
+        """Test reset password with invalid token"""
+        try:
+            response = self.session.post(
+                f"{self.api_base}/auth/reset-password?token=invalid_token&new_password=NewPass123",
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if response.status_code == 400:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                
+                details = {
+                    "invalid_token": "invalid_token",
+                    "new_password": "NewPass123",
+                    "error_detail": error_detail,
+                    "expected_error": "Invalid or expired reset token"
+                }
+                
+                # Check if error message is correct
+                token_invalid = "invalid" in error_detail.lower() or "expired" in error_detail.lower()
+                
+                if token_invalid:
+                    self.log_result(
+                        "Password Reset - Invalid Token", 
+                        True, 
+                        "Invalid token properly rejected with 400 Bad Request",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Password Reset - Invalid Token", 
+                        False, 
+                        f"Unexpected error message: {error_detail}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Password Reset - Invalid Token", False, f"Expected 400, got HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Password Reset - Invalid Token", False, f"Request failed: {str(e)}")
+            return False
+
     def test_stripe_payment_link_creation(self):
         """Test Stripe payment link creation for order ORD-3E0AF5B2"""
         test_order_payload = {
