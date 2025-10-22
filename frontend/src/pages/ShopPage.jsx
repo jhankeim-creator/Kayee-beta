@@ -15,6 +15,10 @@ const ShopPage = () => {
   const [totalProducts, setTotalProducts] = useState(0);
   const productsPerPage = 20;
   const navigate = useNavigate();
+  
+  // Price filter state
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
+  const [sortBy, setSortBy] = useState('featured'); // featured, price_asc, price_desc, newest
 
   useEffect(() => {
     setPage(1);
