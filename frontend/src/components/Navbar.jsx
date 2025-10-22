@@ -180,6 +180,20 @@ const Navbar = () => {
             >
               Track Order
             </Link>
+            <Link
+              to="/wishlist"
+              className="block py-2 text-gray-700 hover:text-[#d4af37]"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              My Wishlist
+            </Link>
+            <Link
+              to="/my-orders"
+              className="block py-2 text-gray-700 hover:text-[#d4af37]"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              My Orders
+            </Link>
           </div>
         )}
       </div>
