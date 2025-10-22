@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, User, Menu, X, Search, LogOut } from 'lucide-react';
 import { CartContext } from '../App';
 import { Button } from './ui/button';
+import SearchBar from './SearchBar';
 import {
   DropdownMenu,
   DropdownMenuContent,
