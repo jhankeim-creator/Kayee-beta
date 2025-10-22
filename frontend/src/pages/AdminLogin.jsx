@@ -19,21 +19,29 @@ const AdminLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log('🔐 Login attempt started', { email: loginData.email, API });
     setLoading(true);
     try {
+      console.log('📡 Sending login request to:', `${API}/auth/login`);
       const response = await axios.post(`${API}/auth/login`, loginData);
+      console.log('✅ Login response received:', response.data);
       login(response.data.access_token, response.data.user);
       toast.success('Logged in successfully');
+      console.log('👤 User role:', response.data.user.role);
       if (response.data.user.role === 'admin') {
+        console.log('🚀 Navigating to /admin');
         navigate('/admin');
       } else {
+        console.log('🚀 Navigating to /my-orders');
         navigate('/my-orders');
       }
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('❌ Login failed:', error);
+      console.error('Error details:', error.response?.data);
       toast.error('Invalid credentials');
     } finally {
       setLoading(false);
+      console.log('🏁 Login attempt finished');
     }
   };
 
