@@ -905,6 +905,70 @@ async def validate_coupon(code: str, cart_total: float):
         "discount_value": coupon_obj.discount_value
     }
 
+# ===== WISHLIST ROUTES =====
+
+@api_router.get("/wishlist")
+async def get_wishlist(current_user: User = Depends(get_current_user)):
+    """Get user's wishlist"""
+    wishlist = await db.wishlists.find_one({"user_id": current_user.id}, {"_id": 0})
+    if not wishlist:
+        return []
+    
+    # Get product details
+    product_ids = wishlist.get("product_ids", [])
+    if not product_ids:
+        return []
+    
+    products = await db.products.find(
+        {"id": {"$in": product_ids}},
+        {"_id": 0}
+    ).to_list(length=None)
+    
+    return [Product(**parse_from_mongo(p)) for p in products]
+
+@api_router.post("/wishlist/{product_id}")
+async def add_to_wishlist(product_id: str, current_user: User = Depends(get_current_user)):
+    """Add product to wishlist"""
+    # Check if product exists
+    product = await db.products.find_one({"id": product_id})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Add to wishlist
+    await db.wishlists.update_one(
+        {"user_id": current_user.id},
+        {
+            "$addToSet": {"product_ids": product_id},
+            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+        },
+        upsert=True
+    )
+    
+    return {"message": "Added to wishlist"}
+
+@api_router.delete("/wishlist/{product_id}")
+async def remove_from_wishlist(product_id: str, current_user: User = Depends(get_current_user)):
+    """Remove product from wishlist"""
+    result = await db.wishlists.update_one(
+        {"user_id": current_user.id},
+        {"$pull": {"product_ids": product_id}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Product not in wishlist")
+    
+    return {"message": "Removed from wishlist"}
+
+@api_router.get("/products/by-ids")
+async def get_products_by_ids(ids: str):
+    """Get products by comma-separated IDs"""
+    product_ids = [id.strip() for id in ids.split(',') if id.strip()]
+    products = await db.products.find(
+        {"id": {"$in": product_ids}},
+        {"_id": 0}
+    ).to_list(length=None)
+    return [Product(**parse_from_mongo(p)) for p in products]
+
 # ===== ADMIN SETTINGS ROUTES =====
 
 from models import (
