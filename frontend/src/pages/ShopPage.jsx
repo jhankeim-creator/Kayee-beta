@@ -106,12 +106,58 @@ const ShopPage = () => {
       <div className="pt-32 pb-20">
         <div className="container mx-auto px-4">
           <h1
-            className="text-4xl md:text-5xl font-bold text-center mb-12"
+            className="text-4xl md:text-5xl font-bold text-center mb-8"
             style={{ fontFamily: 'Playfair Display' }}
             data-testid="shop-page-title"
           >
             {getTitle()}
           </h1>
+
+          {/* Filters Section */}
+          <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between bg-gray-50 p-4 rounded-lg">
+            {/* Price Filter */}
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+              <span className="font-semibold text-sm">Price Range:</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={priceRange.min}
+                  onChange={(e) => setPriceRange({ ...priceRange, min: Number(e.target.value) || 0 })}
+                  className="w-24 px-3 py-2 border rounded-md"
+                />
+                <span>-</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={priceRange.max}
+                  onChange={(e) => setPriceRange({ ...priceRange, max: Number(e.target.value) || 10000 })}
+                  className="w-24 px-3 py-2 border rounded-md"
+                />
+              </div>
+              <button
+                onClick={() => setPriceRange({ min: 0, max: 10000 })}
+                className="text-sm text-[#d4af37] hover:underline"
+              >
+                Reset
+              </button>
+            </div>
+
+            {/* Sort By */}
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-sm">Sort by:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border rounded-md bg-white"
+              >
+                <option value="featured">Featured</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="newest">Newest First</option>
+              </select>
+            </div>
+          </div>
 
           {loading ? (
             <div className="text-center py-20">
