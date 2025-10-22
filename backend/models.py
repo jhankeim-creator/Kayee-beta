@@ -413,6 +413,16 @@ class BulkEmailCreate(BaseModel):
     recipient_filter: str = "all"  # all, customers_with_orders, etc.
 
 
+class GoogleAnalyticsSettings(BaseModel):
+    """Google Analytics configuration with privacy"""
+    model_config = ConfigDict(extra="ignore")
+    enabled: bool = False
+    tracking_id: str = ""  # GA4 Measurement ID (G-XXXXXXXXXX)
+    anonymize_ip: bool = True
+    disable_advertising: bool = True
+    cookie_consent_required: bool = True
+    
+
 class AdminSettings(BaseModel):
     """Complete admin settings"""
     model_config = ConfigDict(extra="ignore")
@@ -421,5 +431,6 @@ class AdminSettings(BaseModel):
     social_links: List[SocialLink] = []
     external_links: List[ExternalLink] = []
     floating_announcement: Optional[FloatingAnnouncement] = None
+    google_analytics: Optional[GoogleAnalyticsSettings] = None
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
