@@ -25,6 +25,7 @@ import TermsOfService from './pages/TermsOfService';
 import RefundPolicy from './pages/RefundPolicy';
 import WhatsAppButton from './components/WhatsAppButton';
 import FloatingAnnouncement from './components/FloatingAnnouncement';
+import GoogleAnalytics from './components/GoogleAnalytics';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
