@@ -113,49 +113,54 @@ const ShopPage = () => {
             {getTitle()}
           </h1>
 
-          {/* Filters Section */}
-          <div className="flex flex-col md:flex-row gap-4 mb-8 items-center justify-between bg-gray-50 p-4 rounded-lg">
+          {/* Filters Section - Mobile Responsive */}
+          <div className="bg-gray-50 p-4 rounded-lg mb-8 space-y-4">
             {/* Price Filter */}
-            <div className="flex flex-col md:flex-row gap-4 items-center">
+            <div className="flex flex-col space-y-2">
               <span className="font-semibold text-sm">Price Range:</span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <input
                   type="number"
-                  placeholder="Min"
+                  placeholder="Min $"
                   value={priceRange.min}
                   onChange={(e) => setPriceRange({ ...priceRange, min: Number(e.target.value) || 0 })}
-                  className="w-24 px-3 py-2 border rounded-md"
+                  className="flex-1 min-w-[100px] px-3 py-2 border rounded-md text-sm"
                 />
-                <span>-</span>
+                <span className="text-gray-500">-</span>
                 <input
                   type="number"
-                  placeholder="Max"
+                  placeholder="Max $"
                   value={priceRange.max}
                   onChange={(e) => setPriceRange({ ...priceRange, max: Number(e.target.value) || 10000 })}
-                  className="w-24 px-3 py-2 border rounded-md"
+                  className="flex-1 min-w-[100px] px-3 py-2 border rounded-md text-sm"
                 />
+                <button
+                  onClick={() => setPriceRange({ min: 0, max: 10000 })}
+                  className="px-4 py-2 text-sm text-white bg-[#d4af37] hover:bg-[#b8941f] rounded-md whitespace-nowrap"
+                >
+                  Reset
+                </button>
               </div>
-              <button
-                onClick={() => setPriceRange({ min: 0, max: 10000 })}
-                className="text-sm text-[#d4af37] hover:underline"
-              >
-                Reset
-              </button>
             </div>
 
             {/* Sort By */}
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm">Sort by:</span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <span className="font-semibold text-sm whitespace-nowrap">Sort by:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 border rounded-md bg-white"
+                className="flex-1 px-4 py-2 border rounded-md bg-white text-sm"
               >
                 <option value="featured">Featured</option>
                 <option value="price_asc">Price: Low to High</option>
                 <option value="price_desc">Price: High to Low</option>
                 <option value="newest">Newest First</option>
               </select>
+            </div>
+
+            {/* Product Count */}
+            <div className="text-sm text-gray-600">
+              Showing {products.length} of {totalProducts} products
             </div>
           </div>
 
