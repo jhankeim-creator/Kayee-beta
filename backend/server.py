@@ -516,6 +516,25 @@ async def get_products_count(category: Optional[str] = None, featured: Optional[
     count = await db.products.count_documents(query)
     return {"count": count}
 
+@api_router.get("/products/search")
+async def search_products(q: str, limit: int = 10):
+    """Search products by name, description, or tags"""
+    if not q or len(q.strip()) < 2:
+        return []
+    
+    # Create text search query
+    search_query = {
+        "$or": [
+            {"name": {"$regex": q, "$options": "i"}},
+            {"description": {"$regex": q, "$options": "i"}},
+            {"tags": {"$regex": q, "$options": "i"}},
+            {"category": {"$regex": q, "$options": "i"}}
+        ]
+    }
+    
+    products = await db.products.find(search_query, {"_id": 0}).limit(limit).to_list(length=None)
+    return [Product(**parse_from_mongo(p)) for p in products]
+
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
     product = await db.products.find_one({"id": product_id}, {"_id": 0})
