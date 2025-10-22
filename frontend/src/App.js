@@ -163,6 +163,7 @@ function App() {
           </Routes>
           <WhatsAppButton />
           <FloatingAnnouncement />
+          <GoogleAnalytics />
         </BrowserRouter>
         <Toaster position="top-right" richColors />
       </div>
