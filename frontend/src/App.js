@@ -151,6 +151,7 @@ function App() {
             <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
             <Route path="/track-order" element={<TrackOrderPage />} />
             <Route path="/my-orders" element={<MyOrders />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
