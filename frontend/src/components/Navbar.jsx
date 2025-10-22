@@ -106,6 +106,13 @@ const Navbar = () => {
               </Button>
             )}
 
+            {/* Wishlist */}
+            <Link to="/wishlist" className="relative" data-testid="wishlist-button">
+              <Button variant="ghost" size="icon" title="Wishlist">
+                <Heart className="h-5 w-5" />
+              </Button>
+            </Link>
+
             {/* Cart */}
             <Link to="/cart" className="relative" data-testid="cart-button">
               <Button variant="ghost" size="icon">
