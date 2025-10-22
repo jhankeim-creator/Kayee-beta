@@ -138,7 +138,12 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden pb-4 space-y-2">
+          <div className="md:hidden pb-4 space-y-3">
+            {/* Mobile Search Bar */}
+            <div className="px-2 py-2">
+              <SearchBar />
+            </div>
+            
             <Link
               to="/"
               className="block py-2 text-gray-700 hover:text-[#d4af37]"
