@@ -23,7 +23,7 @@ const ShopPage = () => {
   useEffect(() => {
     setPage(1);
     loadProducts(1);
-  }, [category]);
+  }, [category, priceRange, sortBy]);
 
   useEffect(() => {
     if (page > 1) {
