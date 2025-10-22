@@ -43,6 +43,11 @@ const Navbar = () => {
             </div>
           </Link>
 
+          {/* Search Bar (Desktop) */}
+          <div className="hidden md:flex flex-1 max-w-md mx-8">
+            <SearchBar />
+          </div>
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-gray-700 hover:text-[#d4af37] font-medium">
