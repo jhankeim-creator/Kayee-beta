@@ -44,13 +44,43 @@ const ShopPage = () => {
         params.append('category', category);
       }
       
+      // Add price filter
+      if (priceRange.min > 0) {
+        params.append('min_price', priceRange.min.toString());
+      }
+      if (priceRange.max < 10000) {
+        params.append('max_price', priceRange.max.toString());
+      }
+      
+      // Add sort
+      if (sortBy) {
+        params.append('sort', sortBy);
+      }
+      
       const [productsRes, countRes] = await Promise.all([
         axios.get(`${API}/products?${params.toString()}`),
         axios.get(`${API}/products/count${category ? `?category=${category}` : ''}`)
       ]);
       
-      setProducts(productsRes.data);
-      setTotalProducts(countRes.data.count);
+      // Client-side filtering and sorting as backup
+      let filteredProducts = productsRes.data;
+      
+      // Apply price filter client-side
+      filteredProducts = filteredProducts.filter(p => 
+        p.price >= priceRange.min && p.price <= priceRange.max
+      );
+      
+      // Apply sorting client-side
+      if (sortBy === 'price_asc') {
+        filteredProducts.sort((a, b) => a.price - b.price);
+      } else if (sortBy === 'price_desc') {
+        filteredProducts.sort((a, b) => b.price - a.price);
+      } else if (sortBy === 'newest') {
+        filteredProducts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+      
+      setProducts(filteredProducts);
+      setTotalProducts(filteredProducts.length);
     } catch (error) {
       console.error('Failed to load products:', error);
     } finally {
