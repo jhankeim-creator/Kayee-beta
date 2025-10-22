@@ -1219,6 +1219,48 @@ async def get_bulk_emails(admin: User = Depends(get_current_admin)):
     emails = await db.bulk_emails.find({}, {"_id": 0}).sort("created_at", -1).limit(50).to_list(length=None)
     return [BulkEmail(**parse_from_mongo(email)) for email in emails]
 
+# Google Analytics Routes
+@api_router.get("/settings/google-analytics")
+async def get_public_google_analytics():
+    """Get public Google Analytics settings (no auth required)"""
+    settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+    if not settings or not settings.get("google_analytics"):
+        return None
+    
+    ga_settings = settings.get("google_analytics", {})
+    if not ga_settings.get("enabled"):
+        return None
+    
+    # Only return public safe settings
+    return {
+        "tracking_id": ga_settings.get("tracking_id"),
+        "anonymize_ip": ga_settings.get("anonymize_ip", True),
+        "disable_advertising": ga_settings.get("disable_advertising", True),
+        "cookie_consent_required": ga_settings.get("cookie_consent_required", True)
+    }
+
+@api_router.get("/admin/settings/google-analytics")
+async def get_google_analytics_settings(admin: User = Depends(get_current_admin)):
+    """Get Google Analytics settings"""
+    settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+    return settings.get("google_analytics") if settings else None
+
+@api_router.put("/admin/settings/google-analytics")
+async def update_google_analytics(ga_settings: dict, admin: User = Depends(get_current_admin)):
+    """Update Google Analytics settings"""
+    await db.admin_settings.update_one(
+        {"id": "admin_settings"},
+        {
+            "$set": {
+                "google_analytics": ga_settings,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        },
+        upsert=True
+    )
+    
+    return {"message": "Google Analytics settings updated successfully"}
+
 # Import payment, oauth, admin and complete routes
 from payment_routes import payment_router
 from oauth_routes import oauth_router
