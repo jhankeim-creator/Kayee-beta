@@ -192,40 +192,62 @@ const AdminSettings = () => {
   // External Link Functions
   const addExternalLink = async () => {
     if (!newExternalLink.title || !newExternalLink.url) {
-      toast.error('Please enter title and URL');
+      toast.error('Veuillez entrer le titre et l\'URL');
+      return;
+    }
+    
+    // Validate URL format
+    if (!newExternalLink.url.startsWith('http://') && !newExternalLink.url.startsWith('https://')) {
+      toast.error('L\'URL doit commencer par http:// ou https://');
       return;
     }
     
     if (externalLinks.length >= 3) {
-      toast.error('Maximum 3 external links allowed');
+      toast.error('Maximum 3 liens externes autorisés');
       return;
     }
     
     try {
+      setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post(`${API}/admin/settings/external-links`, newExternalLink, { headers });
-      toast.success('External link added');
+      const response = await axios.post(`${API}/admin/settings/external-links`, newExternalLink, { headers });
+      console.log('External link created:', response.data);
+      toast.success('Lien externe ajouté avec succès !');
       setNewExternalLink({ title: '', url: '', enabled: true });
-      loadData();
+      await loadData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to add external link');
+      console.error('Failed to add external link:', error);
+      const errorMsg = error.response?.data?.detail || error.message || 'Échec de l\'ajout du lien externe';
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteExternalLink = async (linkId) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce lien externe ?')) {
+      return;
+    }
+    
     try {
+      setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
       await axios.delete(`${API}/admin/settings/external-links/${linkId}`, { headers });
-      toast.success('External link deleted');
-      loadData();
+      toast.success('Lien externe supprimé avec succès');
+      await loadData();
     } catch (error) {
-      toast.error('Failed to delete external link');
+      console.error('Failed to delete external link:', error);
+      const errorMsg = error.response?.data?.detail || 'Échec de la suppression du lien externe';
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Floating Announcement Functions
   const saveAnnouncement = async () => {
     try {
+      setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
       await axios.put(`${API}/admin/settings/floating-announcement`, announcement, { headers });
       toast.success('Floating announcement updated');
