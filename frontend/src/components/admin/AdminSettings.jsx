@@ -97,11 +97,19 @@ const AdminSettings = () => {
       toast.error('Please enter gateway name');
       return;
     }
+
+    // For manual payments, instructions are required
+    if (newGateway.gateway_type === 'manual' && !newGateway.instructions) {
+      toast.error('Please enter payment instructions for manual payment');
+      return;
+    }
     
     try {
+      setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post(`${API}/admin/settings/payment-gateways`, newGateway, { headers });
-      toast.success('Payment gateway added');
+      const response = await axios.post(`${API}/admin/settings/payment-gateways`, newGateway, { headers });
+      console.log('Payment gateway created:', response.data);
+      toast.success('Payment gateway added successfully!');
       setNewGateway({
         gateway_type: 'manual',
         name: '',
@@ -110,9 +118,13 @@ const AdminSettings = () => {
         enabled: true,
         instructions: ''
       });
-      loadData();
+      await loadData();
     } catch (error) {
-      toast.error('Failed to add payment gateway');
+      console.error('Failed to add payment gateway:', error);
+      const errorMsg = error.response?.data?.detail || error.message || 'Failed to add payment gateway';
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
