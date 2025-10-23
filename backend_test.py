@@ -36,7 +36,15 @@ class ComprehensiveAdminTester:
         
         print(f"🔗 Backend URL: {self.backend_url}")
         print(f"🔗 API Base: {self.api_base}")
-        print("🎯 TESTING TEAM MANAGEMENT & NEW FEATURES: Team Management CRUD, Password Reset, Admin Settings, Social Links, External Links, Floating Announcement, Bulk Email")
+        print("🎯 TEST COMPLET DE TOUTES LES FONCTIONS ADMIN")
+        print("Testing ALL admin functionalities exhaustively:")
+        print("1. Payment Gateways (Passerelles de Paiement)")
+        print("2. Social Links (Liens Sociaux)")
+        print("3. External Links (Liens Externes - Max 3)")
+        print("4. Floating Announcement (Annonce Flottante)")
+        print("5. Bulk Email (Emails en Masse)")
+        print("6. Team Management (Gestion d'Équipe)")
+        print("7. Google Analytics")
         print("=" * 80)
 
     def log_result(self, test_name: str, success: bool, message: str, details: Dict = None):
