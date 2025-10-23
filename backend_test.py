@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Suite for Kayee01 New Features
-Tests Password Reset, Admin Settings, Social Links, External Links, Floating Announcement, Bulk Email
+Backend API Testing Suite for Kayee01 Team Management & New Features
+Tests Team Management CRUD, Password Reset, Admin Settings, Social Links, External Links, Floating Announcement, Bulk Email
 """
 
 import requests
