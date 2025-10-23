@@ -78,7 +78,7 @@ class PlisioService:
         
         # Mode production
         try:
-            frontend_url = os.environ.get('FRONTEND_URL', 'https://kayee-boutique.preview.emergentagent.com')
+            frontend_url = os.environ.get('FRONTEND_URL', 'https://luxestore-dash.preview.emergentagent.com')
             
             params = {
                 "source_currency": source_currency,

@@ -2,13 +2,13 @@
 
 ## 🎉 Your Store is Live!
 
-Visit your store at: **https://kayee-boutique.preview.emergentagent.com**
+Visit your store at: **https://luxestore-dash.preview.emergentagent.com**
 
 ---
 
 ## 🔐 Admin Access
 
-**Admin Dashboard:** https://kayee-boutique.preview.emergentagent.com/admin
+**Admin Dashboard:** https://luxestore-dash.preview.emergentagent.com/admin
 
 **Admin Credentials:**
 - Email: `admin@luxeboutique.com`

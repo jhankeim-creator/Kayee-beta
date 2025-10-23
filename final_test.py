@@ -3,7 +3,7 @@ import requests
 import json
 
 # Test the exact data from the review request
-backend_url = 'https://kayee-boutique.preview.emergentagent.com/api'
+backend_url = 'https://luxestore-dash.preview.emergentagent.com/api'
 
 test_order_data = {
     'user_email': 'test@example.com',
