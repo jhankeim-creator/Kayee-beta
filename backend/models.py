@@ -434,3 +434,46 @@ class AdminSettings(BaseModel):
     google_analytics: Optional[GoogleAnalyticsSettings] = None
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+
+
+# ==================== TEAM MANAGEMENT ====================
+
+class AdminPermissions(BaseModel):
+    """Admin user permissions"""
+    model_config = ConfigDict(extra="ignore")
+    manage_products: bool = True
+    manage_orders: bool = True
+    manage_customers: bool = True
+    manage_coupons: bool = True
+    manage_settings: bool = True
+    manage_team: bool = False  # Only super admin can manage team
+
+
+class AdminUser(BaseModel):
+    """Admin user with permissions"""
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: EmailStr
+    name: str
+    role: str = "admin"
+    is_super_admin: bool = False  # Super admin has all permissions
+    permissions: AdminPermissions = Field(default_factory=AdminPermissions)
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_login: Optional[datetime] = None
+
+
+class AdminUserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    name: str
+    is_super_admin: bool = False
+    permissions: Optional[AdminPermissions] = None
+
+
+class AdminUserUpdate(BaseModel):
+    name: Optional[str] = None
+    is_active: Optional[bool] = None
+    permissions: Optional[AdminPermissions] = None
+    password: Optional[str] = None  # Optional password update
+
