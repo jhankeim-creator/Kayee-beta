@@ -329,9 +329,13 @@ const AdminSettings = () => {
                   />
                 </div>
               )}
-              <Button onClick={addPaymentGateway} className="bg-[#d4af37] hover:bg-[#b8941f]">
+              <Button 
+                onClick={addPaymentGateway} 
+                className="bg-[#d4af37] hover:bg-[#b8941f]"
+                disabled={loading}
+              >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Gateway
+                {loading ? 'Adding...' : 'Add Gateway'}
               </Button>
             </CardContent>
           </Card>
