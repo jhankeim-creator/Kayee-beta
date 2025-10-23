@@ -121,6 +121,95 @@ const HomePage = () => {
         </div>
       </section>
 
+
+      {/* Best Sellers - Horizontal Scroll */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h2
+              className="text-4xl md:text-5xl font-bold"
+              style={{ fontFamily: 'Playfair Display' }}
+            >
+              Produits Les Plus Achetés
+            </h2>
+            <div className="flex gap-2">
+              <Button
+                onClick={scrollLeft}
+                variant="outline"
+                size="icon"
+                className="rounded-full"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <Button
+                onClick={scrollRight}
+                variant="outline"
+                size="icon"
+                className="rounded-full"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+          
+          <div 
+            ref={scrollContainerRef}
+            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {bestSellers.map((product) => (
+              <div
+                key={product.id}
+                className="flex-shrink-0 w-72 group cursor-pointer"
+                onClick={() => navigate(`/product/${product.id}`)}
+              >
+                <div className="relative overflow-hidden rounded-lg mb-4 bg-gray-100" style={{ aspectRatio: '1/1' }}>
+                  {product.images && product.images[0] && (
+                    <img
+                      src={product.images[0]}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  )}
+                  {product.on_sale && (
+                    <span className="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 text-xs font-bold rounded">
+                      SALE
+                    </span>
+                  )}
+                  {product.is_new && (
+                    <span className="absolute top-2 right-2 bg-green-500 text-white px-3 py-1 text-xs font-bold rounded">
+                      NEW
+                    </span>
+                  )}
+                  {product.best_seller && (
+                    <span className="absolute top-2 left-2 bg-[#d4af37] text-white px-3 py-1 text-xs font-bold rounded">
+                      BEST SELLER
+                    </span>
+                  )}
+                </div>
+                <h3 className="font-semibold text-lg mb-2 line-clamp-2">{product.name}</h3>
+                <div className="flex items-center gap-2">
+                  {product.on_sale && product.original_price ? (
+                    <>
+                      <span className="text-red-600 font-bold text-xl">${product.price.toFixed(2)}</span>
+                      <span className="text-gray-400 line-through text-sm">${product.original_price.toFixed(2)}</span>
+                    </>
+                  ) : (
+                    <span className="text-gray-900 font-bold text-xl">${product.price.toFixed(2)}</span>
+                  )}
+                </div>
+                {product.rating && (
+                  <div className="flex items-center gap-1 mt-2">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm text-gray-600">{product.rating} ({product.reviews_count || 0})</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Featured Products - 3 columns grid Ecwid-style */}
       <section className="py-20">
         <div className="container mx-auto px-4">
