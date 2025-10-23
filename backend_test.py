@@ -5065,13 +5065,13 @@ def main():
     """Main test execution"""
     try:
         tester = ComprehensiveAdminTester()
-        success = tester.run_comprehensive_admin_tests()
+        success = tester.run_new_features_tests()
         
         # Exit with appropriate code
         sys.exit(0 if success else 1)
         
     except Exception as e:
-        print(f"❌ Comprehensive admin test execution failed: {str(e)}")
+        print(f"❌ New features test execution failed: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
