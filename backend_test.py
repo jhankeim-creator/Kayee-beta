@@ -2897,7 +2897,7 @@ class Kayee01NewFeaturesTester:
                 # Validate member creation
                 member_valid = (
                     member_id is not None and
-                    email == "teamtest@kayee01.com" and
+                    email == test_email and
                     name == "Team Test User" and
                     is_super_admin == False and
                     permissions.get("manage_products") == True and
