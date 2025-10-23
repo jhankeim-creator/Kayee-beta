@@ -2609,6 +2609,988 @@ class ComprehensiveAdminTester:
             self.log_result("Product Variants", False, f"Request failed: {str(e)}")
             return None
 
+    def test_comprehensive_payment_gateways(self):
+        """Test A, B, C, D: Complete Payment Gateway Management"""
+        if not self.admin_token:
+            self.log_result("Payment Gateways Comprehensive", False, "Admin authentication required")
+            return False
+        
+        print("\n🔧 TESTING PAYMENT GATEWAYS (Passerelles de Paiement)")
+        print("-" * 60)
+        
+        manual_gateway_id = None
+        
+        # Test A: Liste des passerelles
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/payment-gateways",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                gateways = response.json()
+                self.log_result(
+                    "Test A - Liste des passerelles", 
+                    True, 
+                    f"Retrieved {len(gateways)} payment gateways",
+                    {"gateways_count": len(gateways), "structure": "array"}
+                )
+            else:
+                self.log_result("Test A - Liste des passerelles", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Liste des passerelles", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test B: Créer passerelle manuelle
+        manual_gateway_payload = {
+            "gateway_type": "manual",
+            "name": "PayPal Manuel",
+            "description": "Paiement via PayPal",
+            "logo_url": "https://example.com/paypal.png",
+            "enabled": True,
+            "instructions": "Envoyez le paiement à paypal@kayee01.com avec votre numéro de commande"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/payment-gateways",
+                json=manual_gateway_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                gateway_data = response.json()
+                manual_gateway_id = gateway_data.get("gateway_id")
+                
+                self.log_result(
+                    "Test B - Créer passerelle manuelle", 
+                    True, 
+                    f"Manual PayPal gateway created with ID: {manual_gateway_id}",
+                    {
+                        "gateway_id": manual_gateway_id,
+                        "name": gateway_data.get("name"),
+                        "gateway_type": gateway_data.get("gateway_type"),
+                        "instructions": gateway_data.get("instructions")
+                    }
+                )
+            else:
+                self.log_result("Test B - Créer passerelle manuelle", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test B - Créer passerelle manuelle", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test C: Créer passerelle Stripe
+        stripe_gateway_payload = {
+            "gateway_type": "stripe",
+            "name": "Stripe Test",
+            "description": "Stripe payment processing",
+            "enabled": True
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/payment-gateways",
+                json=stripe_gateway_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                stripe_data = response.json()
+                stripe_gateway_id = stripe_data.get("gateway_id")
+                
+                self.log_result(
+                    "Test C - Créer passerelle Stripe", 
+                    True, 
+                    f"Stripe gateway created with ID: {stripe_gateway_id}",
+                    {
+                        "gateway_id": stripe_gateway_id,
+                        "name": stripe_data.get("name"),
+                        "gateway_type": stripe_data.get("gateway_type")
+                    }
+                )
+            else:
+                self.log_result("Test C - Créer passerelle Stripe", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test C - Créer passerelle Stripe", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test D: Supprimer une passerelle
+        if manual_gateway_id:
+            try:
+                response = self.session.delete(
+                    f"{self.api_base}/admin/settings/payment-gateways/{manual_gateway_id}",
+                    headers={"Authorization": f"Bearer {self.admin_token}"},
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    delete_data = response.json()
+                    self.log_result(
+                        "Test D - Supprimer une passerelle", 
+                        True, 
+                        f"Gateway {manual_gateway_id} deleted successfully",
+                        {"gateway_id": manual_gateway_id, "message": delete_data.get("message")}
+                    )
+                    return True
+                else:
+                    self.log_result("Test D - Supprimer une passerelle", False, f"HTTP {response.status_code}")
+                    return False
+            except Exception as e:
+                self.log_result("Test D - Supprimer une passerelle", False, f"Request failed: {str(e)}")
+                return False
+        
+        return True
+
+    def test_comprehensive_social_links(self):
+        """Test A, B, C: Complete Social Links Management"""
+        if not self.admin_token:
+            self.log_result("Social Links Comprehensive", False, "Admin authentication required")
+            return False
+        
+        print("\n📱 TESTING SOCIAL LINKS (Liens Sociaux)")
+        print("-" * 60)
+        
+        # Test A: Liste des liens sociaux (admin)
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/social-links",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                admin_links = response.json()
+                self.log_result(
+                    "Test A - Liste des liens sociaux (admin)", 
+                    True, 
+                    f"Retrieved {len(admin_links)} social links from admin endpoint",
+                    {"links_count": len(admin_links)}
+                )
+            else:
+                self.log_result("Test A - Liste des liens sociaux (admin)", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Liste des liens sociaux (admin)", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test A: Liste des liens sociaux (public, sans auth)
+        try:
+            response = self.session.get(
+                f"{self.api_base}/settings/social-links",
+                headers={"Content-Type": "application/json"},  # No auth header
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                public_links = response.json()
+                self.log_result(
+                    "Test A - Liste des liens sociaux (public)", 
+                    True, 
+                    f"Retrieved {len(public_links)} public social links (no auth required)",
+                    {"links_count": len(public_links), "public_endpoint": True}
+                )
+            else:
+                self.log_result("Test A - Liste des liens sociaux (public)", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Liste des liens sociaux (public)", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test B: Créer plusieurs liens sociaux
+        social_links_data = [
+            {
+                "platform": "facebook",
+                "url": "https://facebook.com/kayee01",
+                "enabled": True
+            },
+            {
+                "platform": "instagram", 
+                "url": "https://instagram.com/kayee01",
+                "enabled": True
+            },
+            {
+                "platform": "whatsapp",
+                "url": "https://wa.me/1234567890",
+                "enabled": True
+            }
+        ]
+        
+        created_link_ids = []
+        
+        for i, link_data in enumerate(social_links_data):
+            try:
+                response = self.session.post(
+                    f"{self.api_base}/admin/settings/social-links",
+                    json=link_data,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.admin_token}"
+                    },
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    created_link = response.json()
+                    link_id = created_link.get("id")
+                    created_link_ids.append(link_id)
+                    
+                    self.log_result(
+                        f"Test B - Créer lien {link_data['platform']}", 
+                        True, 
+                        f"{link_data['platform'].title()} link created with ID: {link_id}",
+                        {
+                            "link_id": link_id,
+                            "platform": created_link.get("platform"),
+                            "url": created_link.get("url"),
+                            "enabled": created_link.get("enabled")
+                        }
+                    )
+                else:
+                    self.log_result(f"Test B - Créer lien {link_data['platform']}", False, f"HTTP {response.status_code}")
+            except Exception as e:
+                self.log_result(f"Test B - Créer lien {link_data['platform']}", False, f"Request failed: {str(e)}")
+        
+        # Test C: Supprimer un lien social
+        if created_link_ids:
+            link_to_delete = created_link_ids[0]  # Delete first created link
+            try:
+                response = self.session.delete(
+                    f"{self.api_base}/admin/settings/social-links/{link_to_delete}",
+                    headers={"Authorization": f"Bearer {self.admin_token}"},
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    delete_data = response.json()
+                    self.log_result(
+                        "Test C - Supprimer un lien social", 
+                        True, 
+                        f"Social link {link_to_delete} deleted successfully",
+                        {"link_id": link_to_delete, "message": delete_data.get("message")}
+                    )
+                else:
+                    self.log_result("Test C - Supprimer un lien social", False, f"HTTP {response.status_code}")
+            except Exception as e:
+                self.log_result("Test C - Supprimer un lien social", False, f"Request failed: {str(e)}")
+        
+        return True
+
+    def test_comprehensive_external_links(self):
+        """Test A, B, C, D: Complete External Links Management with Max 3 Limit"""
+        if not self.admin_token:
+            self.log_result("External Links Comprehensive", False, "Admin authentication required")
+            return False
+        
+        print("\n🔗 TESTING EXTERNAL LINKS (Liens Externes - Max 3)")
+        print("-" * 60)
+        
+        # Test A: Liste des liens externes (admin)
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/external-links",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                admin_links = response.json()
+                self.log_result(
+                    "Test A - Liste des liens externes (admin)", 
+                    True, 
+                    f"Retrieved {len(admin_links)} external links from admin endpoint",
+                    {"links_count": len(admin_links)}
+                )
+            else:
+                self.log_result("Test A - Liste des liens externes (admin)", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Liste des liens externes (admin)", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test A: Liste des liens externes (public)
+        try:
+            response = self.session.get(
+                f"{self.api_base}/settings/external-links",
+                headers={"Content-Type": "application/json"},  # No auth header
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                public_links = response.json()
+                self.log_result(
+                    "Test A - Liste des liens externes (public)", 
+                    True, 
+                    f"Retrieved {len(public_links)} public external links (no auth required)",
+                    {"links_count": len(public_links), "public_endpoint": True}
+                )
+            else:
+                self.log_result("Test A - Liste des liens externes (public)", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Liste des liens externes (public)", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test B: Créer 3 liens externes
+        external_links_data = [
+            {
+                "title": "Guide d'achat",
+                "url": "https://kayee01.com/guide",
+                "enabled": True
+            },
+            {
+                "title": "Politique de retour",
+                "url": "https://kayee01.com/returns",
+                "enabled": True
+            },
+            {
+                "title": "À propos",
+                "url": "https://kayee01.com/about",
+                "enabled": True
+            }
+        ]
+        
+        created_external_ids = []
+        
+        for i, link_data in enumerate(external_links_data):
+            try:
+                response = self.session.post(
+                    f"{self.api_base}/admin/settings/external-links",
+                    json=link_data,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.admin_token}"
+                    },
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    created_link = response.json()
+                    link_id = created_link.get("id")
+                    created_external_ids.append(link_id)
+                    
+                    self.log_result(
+                        f"Test B - Créer lien externe {i+1}", 
+                        True, 
+                        f"External link '{link_data['title']}' created with ID: {link_id}",
+                        {
+                            "link_id": link_id,
+                            "title": created_link.get("title"),
+                            "url": created_link.get("url"),
+                            "enabled": created_link.get("enabled")
+                        }
+                    )
+                else:
+                    self.log_result(f"Test B - Créer lien externe {i+1}", False, f"HTTP {response.status_code}")
+            except Exception as e:
+                self.log_result(f"Test B - Créer lien externe {i+1}", False, f"Request failed: {str(e)}")
+        
+        # Test C: Tester la limite de 3 liens
+        fourth_link_data = {
+            "title": "Quatrième lien (devrait échouer)",
+            "url": "https://kayee01.com/fourth",
+            "enabled": True
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/external-links",
+                json=fourth_link_data,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 400:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                
+                if "maximum 3" in error_detail.lower() or "max" in error_detail.lower():
+                    self.log_result(
+                        "Test C - Tester limite 3 liens", 
+                        True, 
+                        f"Max 3 external links limit properly enforced: {error_detail}",
+                        {"error_detail": error_detail, "expected_error": "Maximum 3 external links allowed"}
+                    )
+                else:
+                    self.log_result(
+                        "Test C - Tester limite 3 liens", 
+                        False, 
+                        f"Unexpected error message: {error_detail}",
+                        {"error_detail": error_detail}
+                    )
+            else:
+                self.log_result("Test C - Tester limite 3 liens", False, f"Expected 400, got HTTP {response.status_code}")
+        except Exception as e:
+            self.log_result("Test C - Tester limite 3 liens", False, f"Request failed: {str(e)}")
+        
+        # Test D: Supprimer un lien externe
+        if created_external_ids:
+            link_to_delete = created_external_ids[0]  # Delete first created link
+            try:
+                response = self.session.delete(
+                    f"{self.api_base}/admin/settings/external-links/{link_to_delete}",
+                    headers={"Authorization": f"Bearer {self.admin_token}"},
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    delete_data = response.json()
+                    self.log_result(
+                        "Test D - Supprimer un lien externe", 
+                        True, 
+                        f"External link {link_to_delete} deleted successfully",
+                        {"link_id": link_to_delete, "message": delete_data.get("message")}
+                    )
+                else:
+                    self.log_result("Test D - Supprimer un lien externe", False, f"HTTP {response.status_code}")
+            except Exception as e:
+                self.log_result("Test D - Supprimer un lien externe", False, f"Request failed: {str(e)}")
+        
+        return True
+
+    def test_comprehensive_floating_announcement(self):
+        """Test A, B, C: Complete Floating Announcement Management"""
+        if not self.admin_token:
+            self.log_result("Floating Announcement Comprehensive", False, "Admin authentication required")
+            return False
+        
+        print("\n📢 TESTING FLOATING ANNOUNCEMENT (Annonce Flottante)")
+        print("-" * 60)
+        
+        # Test A: Obtenir l'annonce actuelle (admin)
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/floating-announcement",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                admin_announcement = response.json()
+                self.log_result(
+                    "Test A - Obtenir annonce (admin)", 
+                    True, 
+                    "Retrieved floating announcement from admin endpoint",
+                    {
+                        "announcement": admin_announcement,
+                        "enabled": admin_announcement.get("enabled") if admin_announcement else None
+                    }
+                )
+            else:
+                self.log_result("Test A - Obtenir annonce (admin)", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Obtenir annonce (admin)", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test A: Obtenir l'annonce actuelle (public)
+        try:
+            response = self.session.get(
+                f"{self.api_base}/settings/floating-announcement",
+                headers={"Content-Type": "application/json"},  # No auth header
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                public_announcement = response.json()
+                self.log_result(
+                    "Test A - Obtenir annonce (public)", 
+                    True, 
+                    "Retrieved floating announcement from public endpoint",
+                    {
+                        "announcement": public_announcement,
+                        "public_endpoint": True
+                    }
+                )
+            else:
+                self.log_result("Test A - Obtenir annonce (public)", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Obtenir annonce (public)", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test B: Mettre à jour l'annonce
+        announcement_payload = {
+            "enabled": True,
+            "title": "Promo Spéciale !",
+            "message": "Réduction de 25% sur toute la collection",
+            "link_url": "https://kayee01.com/shop",
+            "link_text": "Découvrir",
+            "button_color": "#d4af37",
+            "frequency": "daily"
+        }
+        
+        try:
+            response = self.session.put(
+                f"{self.api_base}/admin/settings/floating-announcement",
+                json=announcement_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                update_data = response.json()
+                self.log_result(
+                    "Test B - Mettre à jour l'annonce", 
+                    True, 
+                    "Floating announcement updated successfully",
+                    {
+                        "message": update_data.get("message"),
+                        "announcement_data": announcement_payload
+                    }
+                )
+            else:
+                self.log_result("Test B - Mettre à jour l'annonce", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test B - Mettre à jour l'annonce", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test C: Désactiver l'annonce
+        disable_payload = {
+            "enabled": False
+        }
+        
+        try:
+            response = self.session.put(
+                f"{self.api_base}/admin/settings/floating-announcement",
+                json=disable_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                disable_data = response.json()
+                self.log_result(
+                    "Test C - Désactiver l'annonce", 
+                    True, 
+                    "Floating announcement disabled successfully",
+                    {
+                        "message": disable_data.get("message"),
+                        "enabled": False
+                    }
+                )
+            else:
+                self.log_result("Test C - Désactiver l'annonce", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test C - Désactiver l'annonce", False, f"Request failed: {str(e)}")
+            return False
+        
+        return True
+
+    def test_comprehensive_bulk_email(self):
+        """Test A, B: Complete Bulk Email System"""
+        if not self.admin_token:
+            self.log_result("Bulk Email Comprehensive", False, "Admin authentication required")
+            return False
+        
+        print("\n📧 TESTING BULK EMAIL (Emails en Masse)")
+        print("-" * 60)
+        
+        # Test A: Envoyer un email de test
+        bulk_email_payload = {
+            "subject": "Nouvelle Collection Disponible",
+            "message": "Découvrez notre nouvelle collection de montres de luxe !",
+            "recipient_filter": "all"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/bulk-email",
+                json=bulk_email_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=30  # Longer timeout for email sending
+            )
+            
+            if response.status_code == 200:
+                email_data = response.json()
+                sent_to = email_data.get("sent_to", 0)
+                
+                self.log_result(
+                    "Test A - Envoyer email de test", 
+                    True, 
+                    f"Bulk email sent successfully to {sent_to} customers",
+                    {
+                        "message": email_data.get("message"),
+                        "sent_to": sent_to,
+                        "subject": bulk_email_payload["subject"],
+                        "recipient_filter": bulk_email_payload["recipient_filter"]
+                    }
+                )
+            else:
+                self.log_result("Test A - Envoyer email de test", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Envoyer email de test", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test B: Historique des emails
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/bulk-emails",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                emails_history = response.json()
+                self.log_result(
+                    "Test B - Historique des emails", 
+                    True, 
+                    f"Retrieved {len(emails_history)} bulk emails from history",
+                    {
+                        "emails_count": len(emails_history),
+                        "latest_emails": emails_history[:2] if emails_history else []  # Show first 2
+                    }
+                )
+            else:
+                self.log_result("Test B - Historique des emails", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test B - Historique des emails", False, f"Request failed: {str(e)}")
+            return False
+        
+        return True
+
+    def test_comprehensive_team_management(self):
+        """Test A, B, C, D: Complete Team Management System"""
+        if not self.admin_token:
+            self.log_result("Team Management Comprehensive", False, "Admin authentication required")
+            return False
+        
+        print("\n👥 TESTING TEAM MANAGEMENT (Gestion d'Équipe)")
+        print("-" * 60)
+        
+        # Test A: Liste des membres
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/team/members",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                team_members = response.json()
+                self.log_result(
+                    "Test A - Liste des membres", 
+                    True, 
+                    f"Retrieved {len(team_members)} team members",
+                    {
+                        "members_count": len(team_members),
+                        "members": [{"email": m.get("email"), "name": m.get("name")} for m in team_members[:3]]
+                    }
+                )
+            else:
+                self.log_result("Test A - Liste des membres", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Liste des membres", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test B: Créer nouveau membre
+        import time
+        timestamp = int(time.time())
+        new_member_payload = {
+            "email": f"admin.test{timestamp}@kayee01.com",
+            "password": "Test123!",
+            "name": "Admin Test User",
+            "is_super_admin": False,
+            "permissions": {
+                "manage_products": True,
+                "manage_orders": True,
+                "manage_customers": False,
+                "manage_coupons": False,
+                "manage_settings": False,
+                "manage_team": False
+            }
+        }
+        
+        created_member_id = None
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/team/members",
+                json=new_member_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                member_data = response.json()
+                created_member_id = member_data.get("id")
+                
+                self.log_result(
+                    "Test B - Créer nouveau membre", 
+                    True, 
+                    f"Team member created with ID: {created_member_id}",
+                    {
+                        "member_id": created_member_id,
+                        "email": member_data.get("email"),
+                        "name": member_data.get("name"),
+                        "is_super_admin": member_data.get("is_super_admin"),
+                        "permissions": member_data.get("permissions")
+                    }
+                )
+            else:
+                self.log_result("Test B - Créer nouveau membre", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test B - Créer nouveau membre", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test C: Modifier membre
+        if created_member_id:
+            update_payload = {
+                "name": "Updated Admin Test User",
+                "permissions": {
+                    "manage_products": True,
+                    "manage_orders": True,
+                    "manage_customers": True,  # Changed to True
+                    "manage_coupons": True,   # Changed to True
+                    "manage_settings": False,
+                    "manage_team": False
+                }
+            }
+            
+            try:
+                response = self.session.put(
+                    f"{self.api_base}/admin/team/members/{created_member_id}",
+                    json=update_payload,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.admin_token}"
+                    },
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    update_data = response.json()
+                    self.log_result(
+                        "Test C - Modifier membre", 
+                        True, 
+                        f"Team member {created_member_id} updated successfully",
+                        {
+                            "member_id": created_member_id,
+                            "message": update_data.get("message"),
+                            "updated_name": update_payload["name"],
+                            "updated_permissions": update_payload["permissions"]
+                        }
+                    )
+                else:
+                    self.log_result("Test C - Modifier membre", False, f"HTTP {response.status_code}")
+            except Exception as e:
+                self.log_result("Test C - Modifier membre", False, f"Request failed: {str(e)}")
+        
+        # Test D: Supprimer membre
+        if created_member_id:
+            try:
+                response = self.session.delete(
+                    f"{self.api_base}/admin/team/members/{created_member_id}",
+                    headers={"Authorization": f"Bearer {self.admin_token}"},
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    delete_data = response.json()
+                    self.log_result(
+                        "Test D - Supprimer membre", 
+                        True, 
+                        f"Team member {created_member_id} deleted successfully",
+                        {
+                            "member_id": created_member_id,
+                            "message": delete_data.get("message")
+                        }
+                    )
+                else:
+                    self.log_result("Test D - Supprimer membre", False, f"HTTP {response.status_code}")
+            except Exception as e:
+                self.log_result("Test D - Supprimer membre", False, f"Request failed: {str(e)}")
+        
+        return True
+
+    def test_comprehensive_google_analytics(self):
+        """Test A, B: Complete Google Analytics Management"""
+        if not self.admin_token:
+            self.log_result("Google Analytics Comprehensive", False, "Admin authentication required")
+            return False
+        
+        print("\n📊 TESTING GOOGLE ANALYTICS")
+        print("-" * 60)
+        
+        # Test A: Obtenir config GA (public)
+        try:
+            response = self.session.get(
+                f"{self.api_base}/settings/google-analytics",
+                headers={"Content-Type": "application/json"},  # No auth header
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                ga_config = response.json()
+                self.log_result(
+                    "Test A - Obtenir config GA (public)", 
+                    True, 
+                    "Retrieved Google Analytics config from public endpoint",
+                    {
+                        "ga_config": ga_config,
+                        "public_endpoint": True
+                    }
+                )
+            else:
+                self.log_result("Test A - Obtenir config GA (public)", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test A - Obtenir config GA (public)", False, f"Request failed: {str(e)}")
+            return False
+        
+        # Test B: Mettre à jour config GA
+        ga_payload = {
+            "enabled": True,
+            "tracking_id": "G-TEST123456",
+            "anonymize_ip": True,
+            "disable_advertising": True,
+            "cookie_consent_required": True
+        }
+        
+        try:
+            response = self.session.put(
+                f"{self.api_base}/admin/settings/google-analytics",
+                json=ga_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                update_data = response.json()
+                self.log_result(
+                    "Test B - Mettre à jour config GA", 
+                    True, 
+                    "Google Analytics configuration updated successfully",
+                    {
+                        "message": update_data.get("message"),
+                        "ga_config": ga_payload
+                    }
+                )
+            else:
+                self.log_result("Test B - Mettre à jour config GA", False, f"HTTP {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("Test B - Mettre à jour config GA", False, f"Request failed: {str(e)}")
+            return False
+        
+        return True
+
+    def run_comprehensive_admin_tests(self):
+        """Run ALL comprehensive admin tests as requested in French review"""
+        print("🚀 Starting COMPREHENSIVE ADMIN FUNCTIONS TESTING")
+        print("Testing ALL admin functionalities exhaustively as requested:")
+        print("=" * 80)
+        
+        all_tests_passed = True
+        
+        # Test 1: Backend Health Check
+        if not self.test_backend_health():
+            all_tests_passed = False
+            return False
+        
+        # Test 2: Admin Login (Required for all admin endpoints)
+        if not self.test_admin_login():
+            all_tests_passed = False
+            print("❌ Admin login failed - cannot proceed with admin tests")
+            return False
+        
+        # Test 3: Payment Gateways (Passerelles de Paiement)
+        if not self.test_comprehensive_payment_gateways():
+            all_tests_passed = False
+        
+        # Test 4: Social Links (Liens Sociaux)
+        if not self.test_comprehensive_social_links():
+            all_tests_passed = False
+        
+        # Test 5: External Links (Liens Externes - Max 3)
+        if not self.test_comprehensive_external_links():
+            all_tests_passed = False
+        
+        # Test 6: Floating Announcement (Annonce Flottante)
+        if not self.test_comprehensive_floating_announcement():
+            all_tests_passed = False
+        
+        # Test 7: Bulk Email (Emails en Masse)
+        if not self.test_comprehensive_bulk_email():
+            all_tests_passed = False
+        
+        # Test 8: Team Management (Gestion d'Équipe)
+        if not self.test_comprehensive_team_management():
+            all_tests_passed = False
+        
+        # Test 9: Google Analytics
+        if not self.test_comprehensive_google_analytics():
+            all_tests_passed = False
+        
+        # Print comprehensive summary
+        print("\n" + "=" * 80)
+        print("🎯 COMPREHENSIVE ADMIN FUNCTIONS TEST SUMMARY")
+        print("=" * 80)
+        
+        passed_count = sum(1 for result in self.test_results if result["success"])
+        total_count = len(self.test_results)
+        
+        print(f"✅ Tests Passed: {passed_count}/{total_count}")
+        print(f"❌ Tests Failed: {total_count - passed_count}/{total_count}")
+        print(f"📊 Success Rate: {(passed_count/total_count)*100:.1f}%")
+        
+        if all_tests_passed:
+            print("\n🎉 TOUTES LES FONCTIONS ADMIN TESTÉES AVEC SUCCÈS! 🎉")
+            print("✅ Payment Gateways (Passerelles de Paiement): Working")
+            print("✅ Social Links (Liens Sociaux): Working")
+            print("✅ External Links (Liens Externes - Max 3): Working")
+            print("✅ Floating Announcement (Annonce Flottante): Working")
+            print("✅ Bulk Email (Emails en Masse): Working")
+            print("✅ Team Management (Gestion d'Équipe): Working")
+            print("✅ Google Analytics: Working")
+        else:
+            print("\n⚠️ CERTAINES FONCTIONS ADMIN ONT ÉCHOUÉ")
+            print("Vérifiez les résultats individuels ci-dessus pour plus de détails")
+            
+            # Show failed tests
+            failed_tests = [result for result in self.test_results if not result["success"]]
+            if failed_tests:
+                print("\n🔍 TESTS ÉCHOUÉS:")
+                for result in failed_tests:
+                    print(f"  • {result['test']}: {result['message']}")
+        
+        return all_tests_passed
+
     def test_kayee01_comprehensive_review(self):
         """Test ALL Kayee01 functionalities as specified in the review request"""
         print("🎯 KAYEE01 COMPREHENSIVE REVIEW TESTING")
