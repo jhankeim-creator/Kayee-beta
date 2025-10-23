@@ -1322,12 +1322,14 @@ async def create_team_member(member: AdminUserCreate, current_user: User = Depen
     
     user_dict = admin_user.model_dump()
     user_dict["password"] = hashed_password
+    user_dict = prepare_for_mongo(user_dict)
     
     await db.users.insert_one(user_dict)
     
-    # Return without password
+    # Return without password and with proper serialization
     user_dict.pop("password", None)
-    return user_dict
+    user_dict.pop("_id", None)  # Remove MongoDB _id if present
+    return parse_from_mongo(user_dict)
 
 @api_router.put("/admin/team/members/{member_id}")
 async def update_team_member(
