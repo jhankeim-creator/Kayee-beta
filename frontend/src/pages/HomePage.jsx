@@ -88,7 +88,7 @@ const HomePage = () => {
               className="text-4xl md:text-5xl font-bold"
               style={{ fontFamily: 'Playfair Display' }}
             >
-              Produits Les Plus Achetés
+              Best Sellers
             </h2>
             <div className="flex gap-2">
               <Button
