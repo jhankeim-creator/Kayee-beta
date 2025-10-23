@@ -64,44 +64,43 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="py-20 bg-gray-50">
+      {/* Why Choose Us Section with 3D Emojis */}
+      <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2
             className="text-4xl md:text-5xl font-bold text-center mb-12"
             style={{ fontFamily: 'Playfair Display' }}
           >
-            Shop by Category
+            Pourquoi Nous Choisir
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                to={`/shop/${category.slug}`}
-                className="group relative h-96 overflow-hidden"
-                data-testid={`category-${category.slug}`}
-              >
-                <img
-                  src={category.image}
-                  alt={category.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <h3 className="text-3xl font-bold mb-2" style={{ fontFamily: 'Playfair Display' }}>
-                      {category.name}
-                    </h3>
-                    <p className="text-lg">{category.description}</p>
-                    <Button
-                      variant="outline"
-                      className="mt-4 border-white text-white hover:bg-white hover:text-black"
-                    >
-                      Explore Collection <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </Link>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="text-6xl mb-4 animate-bounce">⌚</div>
+              <h3 className="text-2xl font-bold mb-3" style={{ fontFamily: 'Playfair Display' }}>
+                Qualité Premium
+              </h3>
+              <p className="text-gray-600">
+                Répliques 1:1 de haute qualité avec attention aux détails
+              </p>
+            </div>
+            <div className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="text-6xl mb-4 animate-bounce" style={{ animationDelay: '0.1s' }}>🚚</div>
+              <h3 className="text-2xl font-bold mb-3" style={{ fontFamily: 'Playfair Display' }}>
+                Livraison Rapide
+              </h3>
+              <p className="text-gray-600">
+                Expédition mondiale avec FedEx Express en 3-5 jours
+              </p>
+            </div>
+            <div className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="text-6xl mb-4 animate-bounce" style={{ animationDelay: '0.2s' }}>🔒</div>
+              <h3 className="text-2xl font-bold mb-3" style={{ fontFamily: 'Playfair Display' }}>
+                Paiement Sécurisé
+              </h3>
+              <p className="text-gray-600">
+                Plusieurs options de paiement sécurisées disponibles
+              </p>
+            </div>
           </div>
         </div>
       </section>
