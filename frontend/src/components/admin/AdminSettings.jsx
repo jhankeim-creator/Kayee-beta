@@ -142,29 +142,50 @@ const AdminSettings = () => {
   // Social Link Functions
   const addSocialLink = async () => {
     if (!newSocialLink.url) {
-      toast.error('Please enter URL');
+      toast.error('Veuillez entrer une URL');
+      return;
+    }
+    
+    // Validate URL format
+    if (!newSocialLink.url.startsWith('http://') && !newSocialLink.url.startsWith('https://')) {
+      toast.error('L\'URL doit commencer par http:// ou https://');
       return;
     }
     
     try {
+      setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
-      await axios.post(`${API}/admin/settings/social-links`, newSocialLink, { headers });
-      toast.success('Social link added');
+      const response = await axios.post(`${API}/admin/settings/social-links`, newSocialLink, { headers });
+      console.log('Social link created:', response.data);
+      toast.success('Lien social ajouté avec succès !');
       setNewSocialLink({ platform: 'facebook', url: '', enabled: true });
-      loadData();
+      await loadData();
     } catch (error) {
-      toast.error('Failed to add social link');
+      console.error('Failed to add social link:', error);
+      const errorMsg = error.response?.data?.detail || error.message || 'Échec de l\'ajout du lien social';
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteSocialLink = async (linkId) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce lien social ?')) {
+      return;
+    }
+    
     try {
+      setLoading(true);
       const headers = { Authorization: `Bearer ${token}` };
       await axios.delete(`${API}/admin/settings/social-links/${linkId}`, { headers });
-      toast.success('Social link deleted');
-      loadData();
+      toast.success('Lien social supprimé avec succès');
+      await loadData();
     } catch (error) {
-      toast.error('Failed to delete social link');
+      console.error('Failed to delete social link:', error);
+      const errorMsg = error.response?.data?.detail || 'Échec de la suppression du lien social';
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
