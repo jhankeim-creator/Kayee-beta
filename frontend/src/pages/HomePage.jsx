@@ -316,47 +316,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Why Choose Us Section with 3D Emojis */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2
-            className="text-4xl md:text-5xl font-bold text-center mb-12"
-            style={{ fontFamily: 'Playfair Display' }}
-          >
-            Why Choose Us
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-6xl mb-4 animate-bounce">⌚</div>
-              <h3 className="text-2xl font-bold mb-3" style={{ fontFamily: 'Playfair Display' }}>
-                Premium Quality
-              </h3>
-              <p className="text-gray-600">
-                High-quality 1:1 replicas with attention to every detail
-              </p>
-            </div>
-            <div className="text-center p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-6xl mb-4 animate-bounce" style={{ animationDelay: '0.1s' }}>🚚</div>
-              <h3 className="text-2xl font-bold mb-3" style={{ fontFamily: 'Playfair Display' }}>
-                Fast Shipping
-              </h3>
-              <p className="text-gray-600">
-                Worldwide delivery with FedEx Express in 3-5 days
-              </p>
-            </div>
-            <div className="text-center p-6 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-              <div className="text-6xl mb-4 animate-bounce" style={{ animationDelay: '0.2s' }}>🔒</div>
-              <h3 className="text-2xl font-bold mb-3" style={{ fontFamily: 'Playfair Display' }}>
-                Secure Payment
-              </h3>
-              <p className="text-gray-600">
-                Multiple secure payment options available
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <Footer />
     </div>
   );
