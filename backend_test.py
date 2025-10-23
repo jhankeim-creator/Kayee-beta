@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Backend API Testing Suite for Kayee01 Team Management & New Features
-Tests Team Management CRUD, Password Reset, Admin Settings, Social Links, External Links, Floating Announcement, Bulk Email
+🎯 TEST COMPLET DE TOUTES LES FONCTIONS ADMIN
+Comprehensive Admin Functions Testing Suite for Luxe Store
+Tests ALL admin functionalities: Payment Gateways, Social Links, External Links, Floating Announcement, Bulk Email, Team Management, Google Analytics
 """
 
 import requests
@@ -22,7 +23,7 @@ def get_backend_url():
         print(f"❌ Error reading frontend .env: {e}")
         return None
 
-class Kayee01NewFeaturesTester:
+class ComprehensiveAdminTester:
     def __init__(self):
         self.backend_url = get_backend_url()
         if not self.backend_url:
