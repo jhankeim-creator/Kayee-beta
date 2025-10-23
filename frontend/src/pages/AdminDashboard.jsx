@@ -95,6 +95,10 @@ const AdminDashboard = () => {
                     <FolderTree className="h-4 w-4" />
                     Categories
                   </TabsTrigger>
+                  <TabsTrigger value="team" data-testid="tab-team" className="flex items-center gap-2">
+                    <UsersRound className="h-4 w-4" />
+                    Team
+                  </TabsTrigger>
                   <TabsTrigger value="settings" data-testid="tab-settings" className="flex items-center gap-2">
                     <Settings className="h-4 w-4" />
                     Settings
