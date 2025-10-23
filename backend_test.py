@@ -2846,8 +2846,13 @@ class Kayee01NewFeaturesTester:
 
     def test_create_team_member(self):
         """Test creating new team member with specific permissions"""
+        # Use timestamp to ensure unique email
+        import time
+        timestamp = int(time.time())
+        test_email = f"teamtest{timestamp}@kayee01.com"
+        
         member_payload = {
-            "email": "teamtest@kayee01.com",
+            "email": test_email,
             "password": "Test123!",
             "name": "Team Test User",
             "is_super_admin": False,
