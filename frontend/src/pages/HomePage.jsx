@@ -21,14 +21,28 @@ const HomePage = () => {
 
   const loadData = async () => {
     try {
-      const [productsRes, categoriesRes] = await Promise.all([
+      const [productsRes, categoriesRes, bestSellersRes] = await Promise.all([
         axios.get(`${API}/products?featured=true`),
-        axios.get(`${API}/categories`)
+        axios.get(`${API}/categories`),
+        axios.get(`${API}/products/best-sellers?limit=12`)
       ]);
       setFeaturedProducts(productsRes.data.slice(0, 30));
       setCategories(categoriesRes.data);
+      setBestSellers(bestSellersRes.data);
     } catch (error) {
       console.error('Failed to load data:', error);
+    }
+  };
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -400, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
     }
   };
 
