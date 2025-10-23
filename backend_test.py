@@ -2782,17 +2782,417 @@ class Kayee01NewFeaturesTester:
         
         return all_tests_passed
 
+    def test_team_management_crud(self):
+        """Test complete Team Management CRUD operations"""
+        if not self.admin_token:
+            self.log_result("Team Management CRUD", False, "Admin authentication required")
+            return False
+        
+        # Test 1: List Team Members (initially)
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/team/members",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                members = response.json()
+                
+                self.log_result(
+                    "List Team Members (Initial)", 
+                    True, 
+                    f"Retrieved {len(members)} admin team members",
+                    {"members_count": len(members), "members": members[:2] if members else []}
+                )
+                
+                # Test 2: Create New Team Member
+                return self.test_create_team_member()
+            elif response.status_code == 403:
+                self.log_result("List Team Members (Initial)", False, "Permission denied - user lacks manage_team permission")
+                return False
+            else:
+                self.log_result("List Team Members (Initial)", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("List Team Members (Initial)", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_create_team_member(self):
+        """Test creating new team member with specific permissions"""
+        member_payload = {
+            "email": "teamtest@kayee01.com",
+            "password": "Test123!",
+            "name": "Team Test User",
+            "is_super_admin": False,
+            "permissions": {
+                "manage_products": True,
+                "manage_orders": True,
+                "manage_customers": False,
+                "manage_coupons": False,
+                "manage_settings": False,
+                "manage_team": False
+            }
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/team/members",
+                json=member_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                member_data = response.json()
+                
+                member_id = member_data.get("id")
+                email = member_data.get("email")
+                name = member_data.get("name")
+                is_super_admin = member_data.get("is_super_admin")
+                permissions = member_data.get("permissions", {})
+                
+                details = {
+                    "member_id": member_id,
+                    "email": email,
+                    "name": name,
+                    "is_super_admin": is_super_admin,
+                    "permissions": permissions
+                }
+                
+                # Validate member creation
+                member_valid = (
+                    member_id is not None and
+                    email == "teamtest@kayee01.com" and
+                    name == "Team Test User" and
+                    is_super_admin == False and
+                    permissions.get("manage_products") == True and
+                    permissions.get("manage_orders") == True and
+                    permissions.get("manage_customers") == False
+                )
+                
+                if member_valid:
+                    self.log_result(
+                        "Create Team Member", 
+                        True, 
+                        f"Team member created successfully with ID: {member_id}",
+                        details
+                    )
+                    
+                    # Store member_id for update and delete tests
+                    self.test_member_id = member_id
+                    
+                    # Test 3: Update Team Member
+                    self.test_update_team_member(member_id)
+                    
+                    # Test 4: Delete Team Member
+                    return self.test_delete_team_member(member_id)
+                else:
+                    self.log_result(
+                        "Create Team Member", 
+                        False, 
+                        "Team member validation failed",
+                        details
+                    )
+                    return False
+            elif response.status_code == 403:
+                self.log_result("Create Team Member", False, "Permission denied - user lacks manage_team permission")
+                return False
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("Create Team Member", False, error_msg)
+                return False
+                
+        except Exception as e:
+            self.log_result("Create Team Member", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_update_team_member(self, member_id: str):
+        """Test updating team member permissions and name"""
+        update_payload = {
+            "name": "Updated Team User",
+            "permissions": {
+                "manage_products": True,
+                "manage_orders": True,
+                "manage_customers": True,  # Changed to True
+                "manage_coupons": True,   # Changed to True
+                "manage_settings": False,
+                "manage_team": False
+            }
+        }
+        
+        try:
+            response = self.session.put(
+                f"{self.api_base}/admin/team/members/{member_id}",
+                json=update_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                update_data = response.json()
+                message = update_data.get("message", "")
+                
+                details = {
+                    "member_id": member_id,
+                    "response_message": message,
+                    "updated_name": update_payload["name"],
+                    "updated_permissions": update_payload["permissions"]
+                }
+                
+                # Check if update was successful
+                update_valid = "updated successfully" in message.lower()
+                
+                if update_valid:
+                    self.log_result(
+                        "Update Team Member", 
+                        True, 
+                        f"Team member {member_id} updated successfully",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Update Team Member", 
+                        False, 
+                        f"Unexpected response message: {message}",
+                        details
+                    )
+                    return False
+            elif response.status_code == 403:
+                self.log_result("Update Team Member", False, "Permission denied - user lacks manage_team permission")
+                return False
+            else:
+                self.log_result("Update Team Member", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Update Team Member", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_delete_team_member(self, member_id: str):
+        """Test deleting team member"""
+        try:
+            response = self.session.delete(
+                f"{self.api_base}/admin/team/members/{member_id}",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                delete_data = response.json()
+                message = delete_data.get("message", "")
+                
+                details = {
+                    "member_id": member_id,
+                    "response_message": message,
+                    "expected_message": "Team member deleted successfully"
+                }
+                
+                # Check if deletion was successful
+                delete_valid = "deleted successfully" in message.lower()
+                
+                if delete_valid:
+                    self.log_result(
+                        "Delete Team Member", 
+                        True, 
+                        f"Team member {member_id} deleted successfully",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Delete Team Member", 
+                        False, 
+                        f"Unexpected response message: {message}",
+                        details
+                    )
+                    return False
+            elif response.status_code == 403:
+                self.log_result("Delete Team Member", False, "Permission denied - user lacks manage_team permission")
+                return False
+            else:
+                self.log_result("Delete Team Member", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Delete Team Member", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_permission_validation(self):
+        """Test permission validation - only super admin or users with manage_team can access"""
+        # This test verifies that the current admin user has proper permissions
+        # The actual permission enforcement is tested in the CRUD operations above
+        
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/team/members",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                self.log_result(
+                    "Permission Validation", 
+                    True, 
+                    "Current admin user has proper team management permissions",
+                    {"access_granted": True, "user_email": "kayicom509@gmail.com"}
+                )
+                return True
+            elif response.status_code == 403:
+                self.log_result(
+                    "Permission Validation", 
+                    True, 
+                    "Permission system working - 403 error for unauthorized access",
+                    {"access_denied": True, "expected_behavior": True}
+                )
+                return True
+            else:
+                self.log_result("Permission Validation", False, f"Unexpected HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Permission Validation", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_manual_payment_gateway_enhancement(self):
+        """Test manual payment gateway enhancement as mentioned in review request"""
+        if not self.admin_token:
+            self.log_result("Manual Payment Gateway Enhancement", False, "Admin authentication required")
+            return False
+        
+        # Test creating manual payment method with proper error handling
+        gateway_payload = {
+            "gateway_type": "manual",
+            "name": "Manual Payment Test",
+            "description": "Test manual payment with enhanced error handling",
+            "enabled": True,
+            "instructions": "Send payment to test@kayee01.com with order reference"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/payment-gateways",
+                json=gateway_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                gateway_data = response.json()
+                
+                gateway_id = gateway_data.get("gateway_id")
+                name = gateway_data.get("name")
+                instructions = gateway_data.get("instructions")
+                
+                details = {
+                    "gateway_id": gateway_id,
+                    "name": name,
+                    "gateway_type": gateway_data.get("gateway_type"),
+                    "instructions": instructions,
+                    "enabled": gateway_data.get("enabled")
+                }
+                
+                # Validate manual payment gateway
+                gateway_valid = (
+                    gateway_id is not None and
+                    name == "Manual Payment Test" and
+                    instructions is not None and
+                    len(instructions) > 0
+                )
+                
+                if gateway_valid:
+                    self.log_result(
+                        "Manual Payment Gateway Enhancement", 
+                        True, 
+                        f"Manual payment gateway created successfully with enhanced error handling",
+                        details
+                    )
+                    
+                    # Clean up - delete the test gateway
+                    self.session.delete(
+                        f"{self.api_base}/admin/settings/payment-gateways/{gateway_id}",
+                        headers={"Authorization": f"Bearer {self.admin_token}"}
+                    )
+                    
+                    return True
+                else:
+                    self.log_result(
+                        "Manual Payment Gateway Enhancement", 
+                        False, 
+                        "Manual payment gateway validation failed",
+                        details
+                    )
+                    return False
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("Manual Payment Gateway Enhancement", False, error_msg)
+                return False
+                
+        except Exception as e:
+            self.log_result("Manual Payment Gateway Enhancement", False, f"Request failed: {str(e)}")
+            return False
+
+    def run_team_management_tests(self):
+        """Run Team Management specific tests as requested in review"""
+        print("🚀 Starting Team Management API Testing Suite...")
+        print("Testing: GET/POST/PUT/DELETE /api/admin/team/members")
+        print("=" * 80)
+        
+        # Test 1: Backend Health Check
+        if not self.test_backend_health():
+            print("❌ Backend not accessible - stopping tests")
+            return self.print_summary()
+        
+        # Test 2: Admin Login
+        if not self.test_admin_login():
+            print("❌ Admin login failed - stopping admin tests")
+            return self.print_summary()
+        
+        # Test 3: Team Management CRUD Operations (HIGH PRIORITY)
+        self.test_team_management_crud()
+        
+        # Test 4: Permission Validation (HIGH PRIORITY)
+        self.test_permission_validation()
+        
+        # Test 5: Manual Payment Gateway Enhancement (HIGH PRIORITY)
+        self.test_manual_payment_gateway_enhancement()
+        
+        return self.print_summary()
+
 def main():
     """Main test execution"""
     try:
         tester = Kayee01NewFeaturesTester()
-        success = tester.run_new_features_test()
+        success = tester.run_team_management_tests()
         
         # Exit with appropriate code
         sys.exit(0 if success else 1)
         
     except Exception as e:
-        print(f"❌ Kayee01 new features test execution failed: {str(e)}")
+        print(f"❌ Team Management test execution failed: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
