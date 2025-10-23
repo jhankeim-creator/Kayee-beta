@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implement comprehensive admin features: password reset flow, order tracking display with carrier links, admin settings panel (payment gateway management, social links, external links max 3, floating announcement Shein-style, bulk email system for coupons/newsletters)"
+user_problem_statement: "Implement comprehensive admin features: password reset flow, order tracking display with carrier links, admin settings panel (payment gateway management, social links, external links max 3, floating announcement Shein-style, bulk email system for coupons/newsletters). NEW TASKS: Remove 'Made with Emergent' watermark, fix manual payment bug in admin, add Team Management for admin users with permissions, display 30 products on homepage."
 
 backend:
   - task: "Fix AdminProductAdd useEffect bug"
