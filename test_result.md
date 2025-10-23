@@ -685,3 +685,52 @@ agent_communication:
       message: "🎉 NEW FEATURES COMPREHENSIVE TESTING COMPLETED WITH 100% SUCCESS! All 23 tests passed successfully: ✅ Password Reset Flow: Both forgot-password and reset-password endpoints working with proper security validation ✅ Payment Gateway Management: Complete CRUD operations (GET/POST/DELETE) with manual gateway creation and deletion ✅ Social Links Management: Full CRUD with public endpoint (no auth required) working correctly ✅ External Links Management: Max 3 limit properly enforced, public endpoint returns exactly 3 links ✅ Floating Announcement: Shein-style popup system with enable/disable, title, message, link, frequency controls ✅ Bulk Email System: Newsletter sending to customers with history tracking (sent to 1 customer successfully) ✅ Welcome Email Registration: User registration triggers welcome email, SMTP working with kayicom509@gmail.com ✅ Admin Authentication: All admin endpoints require proper JWT token authentication. ALL NEW ADMIN FEATURES ARE PRODUCTION-READY AND FULLY FUNCTIONAL!"
     - agent: "testing"
       message: "🎯 COMPREHENSIVE FRONTEND TESTING COMPLETED FOR NEW FEATURES! ✅ FLOATING ANNOUNCEMENT (SHEIN-STYLE): Perfect implementation - popup appears on all pages with 'Special Offer!' title, '20% OFF this week!' message, 'Shop Now' CTA button. Frequency control working (every_visit), responsive on mobile (390x80px), close button accessible. Overlay blocks interactions properly. ✅ FOOTER DYNAMIC CONTENT: External links working perfectly - 'Guide d'achat', 'Link 2', 'Link 3' displayed in Quick Links section. Social media icons (18 found) properly integrated. ✅ PASSWORD RESET FLOW: Both /forgot-password and /reset-password pages load correctly with proper form elements and validation. ✅ TRACK ORDER PAGE: Loads correctly with proper form elements and error handling for invalid orders. ⚠️ ADMIN LOGIN ISSUE: Floating announcement popup blocks login button clicks - this is a UI overlay issue that needs fixing. Backend admin authentication works perfectly (confirmed via API: kayicom509@gmail.com / Admin123! returns valid JWT token). All frontend features are working except admin UI access due to popup interference."
+
+  - task: "Remove 'Made with Emergent' Watermark"
+    implemented: true
+    working: "NA"
+    file: "frontend/public/index.html"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Removed entire Emergent badge HTML element from index.html (lines 65-111). Badge was displayed as fixed position element in bottom-right corner with 'Made with Emergent' text. Replaced with simple HTML comment."
+
+  - task: "Fix Manual Payment Bug in Admin"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/admin/AdminSettings.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Enhanced error handling in addPaymentGateway function. Added validation for payment instructions when gateway_type is 'manual'. Improved error messages to display backend error details. Added loading state management with disabled button during submission. Added console logs for debugging."
+
+  - task: "Admin Team Management (Backend + Frontend)"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py, backend/models.py, frontend/src/components/admin/AdminTeam.jsx, frontend/src/pages/AdminDashboard.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "BACKEND: Created complete CRUD API for team management. Added AdminUser, AdminUserCreate, AdminUserUpdate, AdminPermissions models in models.py. Added 4 API routes: GET/POST/PUT/DELETE /api/admin/team/members. Permissions system includes: manage_products, manage_orders, manage_customers, manage_coupons, manage_settings, manage_team. Super admin has all permissions. Only super admin or users with manage_team permission can access team management. Updated existing admin users to be super admins with full permissions. FRONTEND: Created AdminTeam.jsx component with full UI for team management (add, edit, delete members, permission toggles). Added Team tab to AdminDashboard.jsx. French translations for all UI elements."
+
+  - task: "Display 30 Products on Homepage"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/pages/HomePage.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Changed HomePage.jsx to display 30 products instead of 12. Modified loadData function line 26 from .slice(0, 12) to .slice(0, 30)."
+
