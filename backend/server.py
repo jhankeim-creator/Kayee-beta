@@ -976,7 +976,8 @@ from models import (
     SocialLink, SocialLinkCreate,
     ExternalLink, ExternalLinkCreate,
     FloatingAnnouncement, FloatingAnnouncementUpdate,
-    BulkEmail, BulkEmailCreate
+    BulkEmail, BulkEmailCreate,
+    AdminUser, AdminUserCreate, AdminUserUpdate, AdminPermissions
 )
 
 @api_router.get("/admin/settings/payment-gateways")
