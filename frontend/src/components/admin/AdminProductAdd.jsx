@@ -300,18 +300,20 @@ const AdminProductAdd = () => {
             {images.length > 0 && (
               <div>
                 <Label className="mb-2 block">Images ({images.length})</Label>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {images.map((url, index) => (
                     <div key={index} className="relative group">
-                      <img
-                        src={url}
-                        alt={`Product ${index + 1}`}
-                        className="w-full h-32 object-cover rounded"
-                      />
+                      <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
+                        <img
+                          src={url}
+                          alt={`Product ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-700"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -325,18 +327,20 @@ const AdminProductAdd = () => {
             {videos.length > 0 && (
               <div>
                 <Label className="mb-2 block">Videos ({videos.length})</Label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {videos.map((url, index) => (
                     <div key={index} className="relative group">
-                      <video
-                        src={url}
-                        className="w-full h-40 object-cover rounded"
-                        controls
-                      />
+                      <div className="aspect-video overflow-hidden rounded-lg bg-gray-100">
+                        <video
+                          src={url}
+                          className="w-full h-full object-cover"
+                          controls
+                        />
+                      </div>
                       <button
                         type="button"
                         onClick={() => removeVideo(index)}
-                        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-700"
                       >
                         <X className="h-4 w-4" />
                       </button>
