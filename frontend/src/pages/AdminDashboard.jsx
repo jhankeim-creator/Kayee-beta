@@ -133,6 +133,10 @@ const AdminDashboard = () => {
                   <CategoryManager />
                 </TabsContent>
                 
+                <TabsContent value="team">
+                  <AdminTeam />
+                </TabsContent>
+                
                 <TabsContent value="settings">
                   <AdminSettings />
                 </TabsContent>
