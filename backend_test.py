@@ -4206,14 +4206,14 @@ class ComprehensiveAdminTester:
 def main():
     """Main test execution"""
     try:
-        tester = Kayee01NewFeaturesTester()
-        success = tester.run_team_management_tests()
+        tester = ComprehensiveAdminTester()
+        success = tester.run_comprehensive_admin_tests()
         
         # Exit with appropriate code
         sys.exit(0 if success else 1)
         
     except Exception as e:
-        print(f"❌ Team Management test execution failed: {str(e)}")
+        print(f"❌ Comprehensive admin test execution failed: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
