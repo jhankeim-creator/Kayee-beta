@@ -124,6 +124,16 @@ const Footer = () => {
               </li>
             </ul>
           </div>
+
+          {/* Payment Methods */}
+          <div>
+            <h4 className="font-semibold mb-4">We Accept</h4>
+            <div className="space-y-2 text-sm text-gray-400">
+              <p>💳 Credit Cards (Stripe)</p>
+              <p>💰 Payoneer</p>
+              <p>💰 Multiple Crypto (Plisio)</p>
+            </div>
+          </div>
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8">
