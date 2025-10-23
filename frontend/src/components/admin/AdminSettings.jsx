@@ -450,9 +450,13 @@ const AdminSettings = () => {
                   />
                 </div>
               </div>
-              <Button onClick={addSocialLink} className="bg-[#d4af37] hover:bg-[#b8941f]">
+              <Button 
+                onClick={addSocialLink} 
+                className="bg-[#d4af37] hover:bg-[#b8941f]"
+                disabled={loading}
+              >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Social Link
+                {loading ? 'Ajout...' : 'Ajouter Lien Social'}
               </Button>
             </CardContent>
           </Card>
