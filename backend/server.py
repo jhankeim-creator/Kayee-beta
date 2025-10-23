@@ -535,6 +535,34 @@ async def search_products(q: str, limit: int = 10):
     products = await db.products.find(search_query, {"_id": 0}).limit(limit).to_list(length=None)
     return [Product(**parse_from_mongo(p)) for p in products]
 
+
+
+@api_router.get("/products/best-sellers", response_model=List[Product])
+async def get_best_sellers(limit: int = 10):
+    """Get best selling products based on order items"""
+    # Aggregate orders to find most purchased products
+    pipeline = [
+        {"$unwind": "$items"},
+        {"$group": {
+            "_id": "$items.product_id",
+            "total_quantity": {"$sum": "$items.quantity"}
+        }},
+        {"$sort": {"total_quantity": -1}},
+        {"$limit": limit}
+    ]
+    
+    best_sellers = await db.orders.aggregate(pipeline).to_list(length=None)
+    product_ids = [bs["_id"] for bs in best_sellers]
+    
+    # Get products by IDs
+    if not product_ids:
+        # If no orders yet, return featured products
+        products = await db.products.find({"featured": True}, {"_id": 0}).limit(limit).to_list(length=None)
+    else:
+        products = await db.products.find({"id": {"$in": product_ids}}, {"_id": 0}).to_list(length=None)
+    
+    return [Product(**parse_from_mongo(p)) for p in products]
+
 @api_router.get("/products/{product_id}", response_model=Product)
 async def get_product(product_id: str):
     product = await db.products.find_one({"id": product_id}, {"_id": 0})
