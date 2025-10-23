@@ -1262,6 +1262,146 @@ async def update_google_analytics(ga_settings: dict, admin: User = Depends(get_c
     
     return {"message": "Google Analytics settings updated successfully"}
 
+
+# ==================== TEAM MANAGEMENT ROUTES ====================
+
+@api_router.get("/admin/team/members")
+async def get_team_members(current_user: User = Depends(get_current_admin)):
+    """Get all admin team members (requires manage_team permission or super admin)"""
+    # Check if user has permission to manage team
+    user_data = await db.users.find_one({"email": current_user.email}, {"_id": 0})
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Only super admin or users with manage_team permission can access
+    is_super = user_data.get("is_super_admin", False)
+    permissions = user_data.get("permissions", {})
+    can_manage_team = permissions.get("manage_team", False) if permissions else False
+    
+    if not is_super and not can_manage_team:
+        raise HTTPException(status_code=403, detail="You don't have permission to manage team")
+    
+    # Get all admin users
+    admin_users = await db.users.find(
+        {"role": "admin"}, 
+        {"_id": 0, "password": 0, "reset_token": 0, "reset_token_expiry": 0}
+    ).to_list(length=100)
+    
+    return admin_users
+
+@api_router.post("/admin/team/members")
+async def create_team_member(member: AdminUserCreate, current_user: User = Depends(get_current_admin)):
+    """Create a new admin team member (requires manage_team permission or super admin)"""
+    # Check if user has permission to manage team
+    user_data = await db.users.find_one({"email": current_user.email}, {"_id": 0})
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    is_super = user_data.get("is_super_admin", False)
+    permissions = user_data.get("permissions", {})
+    can_manage_team = permissions.get("manage_team", False) if permissions else False
+    
+    if not is_super and not can_manage_team:
+        raise HTTPException(status_code=403, detail="You don't have permission to manage team")
+    
+    # Check if email already exists
+    existing = await db.users.find_one({"email": member.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="User with this email already exists")
+    
+    # Hash password
+    hashed_password = pwd_context.hash(member.password)
+    
+    # Create admin user
+    admin_user = AdminUser(
+        email=member.email,
+        name=member.name,
+        is_super_admin=member.is_super_admin,
+        permissions=member.permissions if member.permissions else AdminPermissions()
+    )
+    
+    user_dict = admin_user.model_dump()
+    user_dict["password"] = hashed_password
+    
+    await db.users.insert_one(user_dict)
+    
+    # Return without password
+    user_dict.pop("password", None)
+    return user_dict
+
+@api_router.put("/admin/team/members/{member_id}")
+async def update_team_member(
+    member_id: str, 
+    update_data: AdminUserUpdate, 
+    current_user: User = Depends(get_current_admin)
+):
+    """Update an admin team member (requires manage_team permission or super admin)"""
+    # Check if user has permission to manage team
+    user_data = await db.users.find_one({"email": current_user.email}, {"_id": 0})
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    is_super = user_data.get("is_super_admin", False)
+    permissions = user_data.get("permissions", {})
+    can_manage_team = permissions.get("manage_team", False) if permissions else False
+    
+    if not is_super and not can_manage_team:
+        raise HTTPException(status_code=403, detail="You don't have permission to manage team")
+    
+    # Build update dict
+    update_dict = {}
+    if update_data.name is not None:
+        update_dict["name"] = update_data.name
+    if update_data.is_active is not None:
+        update_dict["is_active"] = update_data.is_active
+    if update_data.permissions is not None:
+        update_dict["permissions"] = update_data.permissions.model_dump()
+    if update_data.password is not None:
+        update_dict["password"] = pwd_context.hash(update_data.password)
+    
+    if not update_dict:
+        raise HTTPException(status_code=400, detail="No valid fields to update")
+    
+    # Update user
+    result = await db.users.update_one(
+        {"id": member_id, "role": "admin"},
+        {"$set": update_dict}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Admin member not found")
+    
+    return {"message": "Team member updated successfully"}
+
+@api_router.delete("/admin/team/members/{member_id}")
+async def delete_team_member(member_id: str, current_user: User = Depends(get_current_admin)):
+    """Delete an admin team member (requires manage_team permission or super admin)"""
+    # Check if user has permission to manage team
+    user_data = await db.users.find_one({"email": current_user.email}, {"_id": 0})
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    is_super = user_data.get("is_super_admin", False)
+    permissions = user_data.get("permissions", {})
+    can_manage_team = permissions.get("manage_team", False) if permissions else False
+    
+    if not is_super and not can_manage_team:
+        raise HTTPException(status_code=403, detail="You don't have permission to manage team")
+    
+    # Cannot delete yourself
+    if user_data.get("id") == member_id:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    # Delete admin user
+    result = await db.users.delete_one({"id": member_id, "role": "admin"})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Admin member not found")
+    
+    return {"message": "Team member deleted successfully"}
+
+
+
 # Import payment, oauth, admin and complete routes
 from payment_routes import payment_router
 from oauth_routes import oauth_router
