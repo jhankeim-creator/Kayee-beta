@@ -520,9 +520,11 @@ const AdminSettings = () => {
               <Button 
                 onClick={addExternalLink} 
                 className="bg-[#d4af37] hover:bg-[#b8941f]"
-                disabled={externalLinks.length >= 3}
+                disabled={externalLinks.length >= 3 || loading}
               >
                 <Plus className="h-4 w-4 mr-2" />
+                {loading ? 'Ajout...' : externalLinks.length >= 3 ? 'Maximum atteint (3)' : 'Ajouter Lien Externe'}
+              </Button>
                 Add External Link
               </Button>
             </CardContent>
