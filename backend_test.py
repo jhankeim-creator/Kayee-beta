@@ -35,7 +35,7 @@ class Kayee01NewFeaturesTester:
         
         print(f"🔗 Backend URL: {self.backend_url}")
         print(f"🔗 API Base: {self.api_base}")
-        print("🎯 TESTING NEW FEATURES: Password Reset, Admin Settings, Social Links, External Links, Floating Announcement, Bulk Email")
+        print("🎯 TESTING TEAM MANAGEMENT & NEW FEATURES: Team Management CRUD, Password Reset, Admin Settings, Social Links, External Links, Floating Announcement, Bulk Email")
         print("=" * 80)
 
     def log_result(self, test_name: str, success: bool, message: str, details: Dict = None):
