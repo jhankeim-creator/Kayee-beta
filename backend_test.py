@@ -81,9 +81,9 @@ class ComprehensiveAdminTester:
             return False
 
     def test_admin_login(self):
-        """Test admin login with kayicom509@gmail.com / Admin123!"""
+        """Test admin login with admin@luxe.com / Admin123!"""
         login_payload = {
-            "email": "kayicom509@gmail.com",
+            "email": "admin@luxe.com",
             "password": "Admin123!"
         }
 
