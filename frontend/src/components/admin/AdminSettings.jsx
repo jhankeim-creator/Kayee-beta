@@ -525,8 +525,6 @@ const AdminSettings = () => {
                 <Plus className="h-4 w-4 mr-2" />
                 {loading ? 'Ajout...' : externalLinks.length >= 3 ? 'Maximum atteint (3)' : 'Ajouter Lien Externe'}
               </Button>
-                Add External Link
-              </Button>
             </CardContent>
           </Card>
 
