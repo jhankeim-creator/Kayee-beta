@@ -23,7 +23,7 @@ const HomePage = () => {
         axios.get(`${API}/products?featured=true`),
         axios.get(`${API}/categories`)
       ]);
-      setFeaturedProducts(productsRes.data.slice(0, 12));
+      setFeaturedProducts(productsRes.data.slice(0, 30));
       setCategories(categoriesRes.data);
     } catch (error) {
       console.error('Failed to load data:', error);
