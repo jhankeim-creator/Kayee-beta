@@ -2782,6 +2782,31 @@ class Kayee01NewFeaturesTester:
         
         return all_tests_passed
 
+    def print_summary(self):
+        """Print test summary and return success status"""
+        print("\n" + "=" * 80)
+        print("🎯 TEAM MANAGEMENT API TEST SUMMARY")
+        print("=" * 80)
+        
+        total_tests = len(self.test_results)
+        passed_tests = sum(1 for result in self.test_results if result["success"])
+        failed_tests = total_tests - passed_tests
+        
+        print(f"Total Tests: {total_tests}")
+        print(f"✅ Passed: {passed_tests}")
+        print(f"❌ Failed: {failed_tests}")
+        print(f"Success Rate: {(passed_tests/total_tests)*100:.1f}%" if total_tests > 0 else "Success Rate: 0%")
+        
+        if failed_tests > 0:
+            print("\n🔍 FAILED TESTS:")
+            for result in self.test_results:
+                if not result["success"]:
+                    print(f"  • {result['test']}: {result['message']}")
+        
+        print(f"\n🎯 TEAM MANAGEMENT TEST STATUS: {'✅ ALL TESTS PASSED' if failed_tests == 0 else '❌ SOME TESTS FAILED'}")
+        
+        return failed_tests == 0
+
     def test_team_management_crud(self):
         """Test complete Team Management CRUD operations"""
         if not self.admin_token:
