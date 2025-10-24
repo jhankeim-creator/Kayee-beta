@@ -207,15 +207,22 @@ class AdminEmailTester:
         """Check backend logs for admin notification confirmation"""
         try:
             # Check supervisor backend logs
-            result = subprocess.run(
+            result_out = subprocess.run(
                 ["tail", "-n", "100", "/var/log/supervisor/backend.out.log"],
                 capture_output=True,
                 text=True,
                 timeout=10
             )
             
-            if result.returncode == 0:
-                log_content = result.stdout
+            result_err = subprocess.run(
+                ["tail", "-n", "100", "/var/log/supervisor/backend.err.log"],
+                capture_output=True,
+                text=True,
+                timeout=10
+            )
+            
+            if result_out.returncode == 0 and result_err.returncode == 0:
+                log_content = result_out.stdout + "\n" + result_err.stdout
                 
                 # Look for admin notification messages
                 admin_notification_sent = "Admin notifications sent" in log_content
