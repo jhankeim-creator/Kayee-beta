@@ -191,7 +191,7 @@ const AdminTeam = () => {
         <Card>
           <CardHeader>
             <CardTitle>
-              {editingMember ? 'Modifier le membre' : 'Ajouter un nouveau membre admin'}
+              {editingMember ? 'Edit Member' : 'Add New Admin Member'}
             </CardTitle>
           </CardHeader>
           <CardContent>
