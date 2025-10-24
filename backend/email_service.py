@@ -5,6 +5,7 @@ from email.mime.multipart import MIMEMultipart
 import logging
 from dotenv import load_dotenv
 from pathlib import Path
+from datetime import datetime, timezone
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
