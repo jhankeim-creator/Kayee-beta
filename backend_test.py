@@ -6859,7 +6859,7 @@ def run_authentication_tests(self):
         
         return self.print_summary()
 
-    def test_admin_email_notifications_for_orders(self):
+def main():
         """🔍 TEST DE NOTIFICATION EMAIL ADMIN POUR NOUVELLES COMMANDES"""
         print("\n🎯 TESTING ADMIN EMAIL NOTIFICATIONS FOR NEW ORDERS")
         print("-" * 60)
