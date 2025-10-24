@@ -126,6 +126,49 @@ function App() {
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  // Wishlist function
+  const addToWishlist = async (productId) => {
+    try {
+      if (!token) {
+        // Add to localStorage for non-logged users
+        const localWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        if (!localWishlist.includes(productId)) {
+          localWishlist.push(productId);
+          localStorage.setItem('wishlist', JSON.stringify(localWishlist));
+          toast.success('Added to wishlist');
+          return true;
+        } else {
+          toast.info('Already in wishlist');
+          return false;
+        }
+      } else {
+        // Add to backend for logged users
+        const headers = { Authorization: `Bearer ${token}` };
+        await axios.post(`${API}/wishlist/${productId}`, {}, { headers });
+        toast.success('Added to wishlist');
+        return true;
+      }
+    } catch (error) {
+      if (error.response?.status === 409) {
+        toast.info('Already in wishlist');
+        return false;
+      }
+      toast.error('Failed to add to wishlist');
+      console.error('Failed to add to wishlist:', error);
+      return false;
+    }
+  };
+
+  const isInWishlist = (productId) => {
+    if (!token) {
+      const localWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      return localWishlist.includes(productId);
+    }
+    // For logged users, this would need to be loaded from backend
+    // We'll handle this in the component level
+    return false;
+  };
+
   return (
     <CartContext.Provider value={{
       cart,
@@ -139,7 +182,9 @@ function App() {
       token,
       login,
       logout,
-      API
+      API,
+      addToWishlist,
+      isInWishlist
     }}>
       <div className="App">
         <BrowserRouter>
