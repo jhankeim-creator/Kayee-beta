@@ -353,7 +353,7 @@ const AdminTeam = () => {
                       <div className="flex flex-wrap gap-2 mt-2">
                         {member.permissions.manage_products && (
                           <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                            Produits
+                            Products
                           </span>
                         )}
                         {member.permissions.manage_orders && (
