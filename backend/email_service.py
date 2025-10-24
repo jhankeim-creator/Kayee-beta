@@ -691,6 +691,120 @@ class EmailService:
         """
         
         await self.send_email(to_email, subject, html_content)
+    
+    async def send_admin_new_order_notification(self, order_data: dict):
+        """Send notification to admin when new order is placed"""
+        admin_emails = ["kayicom509@gmail.com", "Info.kayicom.com@gmx.fr"]
+        subject = f"🔔 Nouvelle Commande - {order_data['order_number']}"
+        
+        # Build items list
+        items_html = ""
+        for item in order_data['items']:
+            items_html += f"""
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                    <strong>{item['name']}</strong><br>
+                    <span style="color: #666; font-size: 12px;">Quantité: {item['quantity']}</span>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+                    ${item['price'] * item['quantity']:.2f}
+                </td>
+            </tr>
+            """
+        
+        # Payment method display
+        payment_method_display = {
+            'manual': '💵 Paiement Manuel (Payoneer)',
+            'stripe': '💳 Stripe',
+            'plisio': '🪙 Crypto (Plisio)',
+            'paypal': '💰 PayPal'
+        }
+        
+        payment_display = payment_method_display.get(order_data.get('payment_method', ''), order_data.get('payment_method', 'N/A'))
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 700px; margin: 0 auto; padding: 20px; border: 2px solid #d4af37; border-radius: 10px;">
+                <div style="text-align: center; padding: 20px; background: #1a1a1a; color: white; border-radius: 8px;">
+                    <h1 style="margin: 0; font-family: 'Playfair Display', serif; font-size: 32px;">
+                        🔔 <span style="color: #d4af37;">NOUVELLE COMMANDE</span>
+                    </h1>
+                    <p style="margin: 10px 0 0 0; font-size: 16px; color: #d4af37;">Kayee01 Admin</p>
+                </div>
+                
+                <div style="padding: 30px 20px; background: #f9f9f9; margin: 20px 0; border-radius: 8px;">
+                    <h2 style="color: #d4af37; margin-top: 0; border-bottom: 2px solid #d4af37; padding-bottom: 10px;">
+                        📋 Détails de la Commande
+                    </h2>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #4caf50;">
+                        <p style="margin: 5px 0;"><strong>Numéro de Commande:</strong> <span style="color: #d4af37; font-size: 18px;">{order_data['order_number']}</span></p>
+                        <p style="margin: 5px 0;"><strong>Date:</strong> {datetime.now(timezone.utc).strftime('%d/%m/%Y %H:%M:%S')} UTC</p>
+                        <p style="margin: 5px 0;"><strong>Statut:</strong> <span style="background: #ffc107; color: #000; padding: 3px 10px; border-radius: 3px; font-weight: bold;">{order_data['status'].upper()}</span></p>
+                        <p style="margin: 5px 0;"><strong>Méthode de Paiement:</strong> {payment_display}</p>
+                    </div>
+                    
+                    <h3 style="color: #1a1a1a; margin-top: 30px;">👤 Informations Client</h3>
+                    <div style="background: white; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                        <p style="margin: 5px 0;"><strong>Nom:</strong> {order_data['user_name']}</p>
+                        <p style="margin: 5px 0;"><strong>Email:</strong> <a href="mailto:{order_data['user_email']}" style="color: #2196f3;">{order_data['user_email']}</a></p>
+                        <p style="margin: 5px 0;"><strong>Téléphone:</strong> {order_data.get('phone', 'N/A')}</p>
+                    </div>
+                    
+                    <h3 style="color: #1a1a1a; margin-top: 30px;">📦 Articles Commandés</h3>
+                    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 5px; overflow: hidden;">
+                        {items_html}
+                        <tr style="background: #f5f5f5; font-weight: bold;">
+                            <td style="padding: 15px; text-align: right; font-size: 18px;">TOTAL:</td>
+                            <td style="padding: 15px; text-align: right; font-size: 20px; color: #d4af37;">
+                                ${order_data['total']:.2f}
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <h3 style="color: #1a1a1a; margin-top: 30px;">🚚 Adresse de Livraison</h3>
+                    <div style="background: white; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                        <p style="margin: 5px 0;">{order_data['shipping_address']['address']}</p>
+                        <p style="margin: 5px 0;">{order_data['shipping_address']['city']}, {order_data['shipping_address']['postal_code']}</p>
+                        <p style="margin: 5px 0;"><strong>{order_data['shipping_address']['country']}</strong></p>
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 5px;">
+                        <p style="margin: 0; color: #1976d2; font-weight: bold;">⚡ Action Requise:</p>
+                        <p style="margin: 10px 0 0 0; color: #1976d2;">
+                            Veuillez traiter cette commande dès que possible. Connectez-vous au panneau d'administration pour plus de détails.
+                        </p>
+                    </div>
+                    
+                    <p style="text-align: center; margin: 30px 0;">
+                        <a href="{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/admin/login" 
+                           style="display: inline-block; padding: 15px 40px; background: #d4af37; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                            Voir dans l'Admin
+                        </a>
+                    </p>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+                    <p style="margin: 0; font-size: 12px; color: #666;">© 2025 Kayee01 - Système de Notification Admin</p>
+                    <p style="margin: 5px 0; font-size: 11px; color: #999;">Cet email a été envoyé automatiquement</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        # Send to both admin emails
+        for admin_email in admin_emails:
+            try:
+                await self.send_email(admin_email, subject, html_content)
+                logger.info(f"✓ Admin notification sent to {admin_email}")
+            except Exception as e:
+                logger.error(f"✗ Failed to send admin notification to {admin_email}: {str(e)}")
 
 # Initialize email service
 email_service = EmailService()
