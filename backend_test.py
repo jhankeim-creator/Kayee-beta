@@ -7756,8 +7756,10 @@ if __name__ == "__main__":
             main_bulk_email_tests()
         elif sys.argv[1] == "admin-email":
             main_admin_email_tests()
+        elif sys.argv[1] == "french-review":
+            main_french_review_tests()
         else:
             main_comprehensive()
     else:
-        # Run admin email tests by default for this focused testing
-        main_admin_email_tests()
+        # Run French review tests by default for this focused testing
+        main_french_review_tests()
