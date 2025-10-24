@@ -94,7 +94,7 @@ class ComprehensiveTester:
     def test_admin_login(self):
         """Test A: Login - POST /api/auth/login"""
         login_payload = {
-            "email": "admin@luxe.com",
+            "email": "kayicom509@gmail.com",
             "password": "Admin123!"
         }
 
