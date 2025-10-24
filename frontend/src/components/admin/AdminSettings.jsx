@@ -293,7 +293,7 @@ const AdminSettings = () => {
             <Settings className="h-6 w-6 md:h-8 md:w-8 mr-2 md:mr-3" />
             Admin Settings
           </h1>
-          <p className="text-sm md:text-base text-gray-600 mt-1">Gérer les passerelles de paiement, liens sociaux et annonces</p>
+          <p className="text-sm md:text-base text-gray-600 mt-1">Manage payment gateways, social links, and announcements</p>
         </div>
       </div>
 
