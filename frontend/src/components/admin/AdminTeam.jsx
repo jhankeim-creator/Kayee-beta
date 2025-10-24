@@ -358,7 +358,7 @@ const AdminTeam = () => {
                         )}
                         {member.permissions.manage_orders && (
                           <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                            Commandes
+                            Orders
                           </span>
                         )}
                         {member.permissions.manage_customers && (
