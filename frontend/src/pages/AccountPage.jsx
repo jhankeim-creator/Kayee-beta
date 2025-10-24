@@ -245,10 +245,13 @@ const AccountPage = () => {
 
             {/* Profile Tab */}
             <TabsContent value="profile">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Profile Information</CardTitle>
-                  <CardDescription>Update your account details</CardDescription>
+              <Card className="shadow-lg border-0">
+                <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-[#d4af37]" />
+                    Profile Information
+                  </CardTitle>
+                  <CardDescription>Update your account details and preferences</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleProfileUpdate} className="space-y-4">
