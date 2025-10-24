@@ -325,11 +325,7 @@ const CheckoutPage = () => {
                               )}
                             </Label>
                             <p className="text-sm text-gray-600 mt-1">{method.description}</p>
-                            {method.instructions && (
-                              <div className="mt-2 p-2 bg-blue-50 rounded text-xs text-blue-800">
-                                <strong>Instructions:</strong> {method.instructions}
-                              </div>
-                            )}
+                            {/* Instructions removed - will be sent by email only */}
                           </div>
                         </div>
                       ))}
