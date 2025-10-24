@@ -520,6 +520,64 @@ class AuthenticationTester:
             self.log_result("PROFILE UPDATE Test A - Mise à jour", False, f"❌ Requête échouée: {str(e)}")
             return None
 
+    def run_authentication_tests(self):
+        """Run all authentication tests as requested in French review"""
+        print("🚀 Démarrage des tests d'authentification...")
+        print()
+        
+        # Test 1: Backend Health Check
+        if not self.test_backend_health():
+            print("❌ Vérification de santé du backend échouée. Arrêt des tests.")
+            return self.print_summary()
+        
+        # Test 2: LOGIN Tests
+        print("=" * 50)
+        print("🔐 1. TEST LOGIN")
+        print("=" * 50)
+        
+        # Test A: Login avec utilisateur existant
+        login_success = self.test_login_existing_user()
+        
+        # Test B: Login avec mauvais credentials
+        self.test_login_bad_credentials()
+        
+        # Test 3: REGISTER Tests
+        print("=" * 50)
+        print("📝 2. TEST REGISTER")
+        print("=" * 50)
+        
+        # Test A: Créer nouveau compte utilisateur
+        self.test_register_new_user()
+        
+        # Test B: Register avec email existant
+        self.test_register_existing_email()
+        
+        # Test 4: FORGOT PASSWORD Tests
+        print("=" * 50)
+        print("🔑 3. TEST FORGOT PASSWORD")
+        print("=" * 50)
+        
+        # Test A: Request password reset
+        self.test_forgot_password()
+        
+        # Test 5: RESET PASSWORD Tests
+        print("=" * 50)
+        print("🔄 4. TEST RESET PASSWORD")
+        print("=" * 50)
+        
+        # Test A: Check reset password endpoint
+        self.test_reset_password()
+        
+        # Test 6: PROFILE UPDATE Tests
+        print("=" * 50)
+        print("👤 5. TEST PROFILE UPDATE")
+        print("=" * 50)
+        
+        # Test A: Update user profile
+        self.test_profile_update()
+        
+        return self.print_summary()
+
     def test_password_reset_flow(self):
         """Test password reset flow - forgot password and reset password"""
         test_email = "test@example.com"
