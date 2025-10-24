@@ -303,7 +303,7 @@ const AdminTeam = () => {
                   {loading ? 'Saving...' : editingMember ? 'Update' : 'Add'}
                 </Button>
                 <Button type="button" variant="outline" onClick={resetForm}>
-                  Annuler
+                  Cancel
                 </Button>
               </div>
             </form>
