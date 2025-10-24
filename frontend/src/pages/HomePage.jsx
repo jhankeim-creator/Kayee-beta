@@ -326,15 +326,26 @@ const HomePage = () => {
                 </div>
                 <CardContent className="p-4">
                   <h3 className="font-semibold text-base mb-2 line-clamp-2 min-h-[3rem]">{product.name}</h3>
-                  <div className="flex items-center gap-2 mb-2">
-                    {product.on_sale && product.compare_at_price ? (
-                      <>
-                        <span className="text-xl font-bold text-red-600">${product.price.toFixed(2)}</span>
-                        <span className="text-sm text-gray-500 line-through">${product.compare_at_price.toFixed(2)}</span>
-                      </>
-                    ) : (
-                      <span className="text-xl font-bold text-[#d4af37]">${product.price.toFixed(2)}</span>
-                    )}
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      {product.on_sale && product.compare_at_price ? (
+                        <>
+                          <span className="text-xl font-bold text-red-600">${product.price.toFixed(2)}</span>
+                          <span className="text-sm text-gray-500 line-through">${product.compare_at_price.toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="text-xl font-bold text-[#d4af37]">${product.price.toFixed(2)}</span>
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => handleWishlistClick(e, product.id)}
+                      className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                      aria-label="Add to wishlist"
+                    >
+                      <Heart
+                        className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
+                      />
+                    </button>
                   </div>
                   {product.rating > 0 && (
                     <div className="flex items-center gap-1 text-xs text-gray-600">
