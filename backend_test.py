@@ -7730,6 +7730,25 @@ def main_admin_email_tests():
         print(f"\n❌ Tests de notification email admin échoués: {str(e)}")
         sys.exit(1)
 
+def main_french_review_tests():
+    """Main function for French review tests"""
+    try:
+        tester = ComprehensiveTester()
+        # Run the specific French review tests
+        summary = tester.run_french_review_tests()
+        
+        # Exit with appropriate code
+        if summary["success_rate"] >= 80:
+            print("\n✅ Tests de révision française terminés avec succès!")
+            sys.exit(0)  # Success
+        else:
+            print(f"\n⚠️ Tests de révision française terminés avec {summary['failed_tests']} échecs")
+            sys.exit(1)  # Failure
+            
+    except Exception as e:
+        print(f"\n❌ Tests de révision française échoués: {str(e)}")
+        sys.exit(1)
+
 if __name__ == "__main__":
     # Check if we should run specific tests
     if len(sys.argv) > 1:
