@@ -6251,5 +6251,23 @@ def main_auth():
         print(f"\n❌ Suite de tests d'authentification échouée: {str(e)}")
         sys.exit(1)
 
+def main_comprehensive():
+    """Main function for comprehensive testing"""
+    try:
+        tester = ComprehensiveTester()
+        results = tester.run_comprehensive_tests()
+        
+        # Exit with appropriate code
+        if results["success_rate"] >= 75:
+            print("\n✅ Tests terminés avec succès!")
+            sys.exit(0)
+        else:
+            print(f"\n⚠️ Tests terminés avec {results['failed_tests']} échecs")
+            sys.exit(1)
+            
+    except Exception as e:
+        print(f"\n❌ Suite de tests complète échouée: {str(e)}")
+        sys.exit(1)
+
 if __name__ == "__main__":
-    main_auth()
+    main_comprehensive()
