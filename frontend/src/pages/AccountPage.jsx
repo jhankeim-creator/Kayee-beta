@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import Footer from '../components/Footer';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { User, Package, Heart, MessageCircle, Mail, Phone, MapPin, Calendar, LogOut } from 'lucide-react';
+import { User, Package, Heart, MessageCircle, Mail, Phone, MapPin, Calendar, LogOut, ShoppingBag, Clock, Star, TrendingUp } from 'lucide-react';
 
 const AccountPage = () => {
   const { user, token, API, setUser, setToken, logout } = useContext(CartContext);
@@ -18,6 +18,11 @@ const AccountPage = () => {
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    totalSpent: 0,
+    wishlistCount: 0
+  });
   
   // Profile form
   const [profileData, setProfileData] = useState({
