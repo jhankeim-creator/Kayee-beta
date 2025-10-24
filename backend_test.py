@@ -23,7 +23,7 @@ def get_backend_url():
         print(f"❌ Error reading frontend .env: {e}")
         return None
 
-class ComprehensiveAdminTester:
+class AuthenticationTester:
     def __init__(self):
         self.backend_url = get_backend_url()
         if not self.backend_url:
@@ -33,19 +33,17 @@ class ComprehensiveAdminTester:
         self.session = requests.Session()
         self.test_results = []
         self.admin_token = None
+        self.user_token = None
         
         print(f"🔗 Backend URL: {self.backend_url}")
         print(f"🔗 API Base: {self.api_base}")
-        print("🎯 TEST COMPLET DE TOUTES LES NOUVELLES FONCTIONNALITÉS")
-        print("Testing ALL new features as requested in French review:")
-        print("1. Best Sellers API (NOUVELLE FONCTIONNALITÉ)")
-        print("2. Team Management (TESTÉ PRÉCÉDEMMENT - VÉRIFICATION RAPIDE)")
-        print("3. Payment Gateways (VÉRIFICATION APRÈS CORRECTIONS)")
-        print("4. Social Links (VÉRIFICATION APRÈS CORRECTIONS)")
-        print("5. External Links (VÉRIFICATION LIMITE 3)")
-        print("6. Floating Announcement")
-        print("7. Google Analytics")
-        print("8. Products (VÉRIFICATION)")
+        print("🔍 TEST URGENT - LOGIN/REGISTER & RESET PASSWORD")
+        print("Testing ALL authentication features as requested in French review:")
+        print("1. TEST LOGIN - avec utilisateur existant et mauvais credentials")
+        print("2. TEST REGISTER - créer nouveau compte et email existant")
+        print("3. TEST FORGOT PASSWORD - request password reset")
+        print("4. TEST RESET PASSWORD - check reset password endpoint")
+        print("5. TEST PROFILE UPDATE - update user profile")
         print("Credentials: admin@luxe.com / Admin123!")
         print("=" * 80)
 
