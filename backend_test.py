@@ -23,7 +23,7 @@ def get_backend_url():
         print(f"❌ Error reading frontend .env: {e}")
         return None
 
-class AuthenticationTester:
+class ComprehensiveTester:
     def __init__(self):
         self.backend_url = get_backend_url()
         if not self.backend_url:
@@ -37,13 +37,15 @@ class AuthenticationTester:
         
         print(f"🔗 Backend URL: {self.backend_url}")
         print(f"🔗 API Base: {self.api_base}")
-        print("🔍 TEST URGENT - LOGIN/REGISTER & RESET PASSWORD")
-        print("Testing ALL authentication features as requested in French review:")
-        print("1. TEST LOGIN - avec utilisateur existant et mauvais credentials")
-        print("2. TEST REGISTER - créer nouveau compte et email existant")
-        print("3. TEST FORGOT PASSWORD - request password reset")
-        print("4. TEST RESET PASSWORD - check reset password endpoint")
-        print("5. TEST PROFILE UPDATE - update user profile")
+        print("🔍 TEST COMPLET FINAL - VÉRIFICATION GLOBALE")
+        print("Testing ALL backend functionalities as requested in French review:")
+        print("1. AUTHENTIFICATION & COMPTE - Login and profile endpoints")
+        print("2. PRODUITS - Featured products, best sellers, search")
+        print("3. CATÉGORIES - Get all categories")
+        print("4. PANIER & COMMANDES - Get orders")
+        print("5. WISHLIST - Get wishlist")
+        print("6. ADMIN FEATURES - Payment gateways, team members, social links")
+        print("7. AUTRES ENDPOINTS - Floating announcement, Google Analytics")
         print("Credentials: admin@luxe.com / Admin123!")
         print("=" * 80)
 
