@@ -82,8 +82,8 @@ class ComprehensiveTester:
             self.log_result("Backend Health", False, f"Backend not accessible: {str(e)}")
             return False
 
-    def test_login_existing_user(self):
-        """Test A: Login avec utilisateur existant (admin@luxe.com / Admin123!)"""
+    def test_admin_login(self):
+        """Test A: Login - POST /api/auth/login"""
         login_payload = {
             "email": "admin@luxe.com",
             "password": "Admin123!"
