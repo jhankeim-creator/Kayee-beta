@@ -387,7 +387,7 @@ class FrenchReviewTester:
                 "quantity": 1,
                 "image": "admin-test.jpg"
             }],
-            "user_email": "admin-test@example.com",
+            "user_email": "kayicom509@gmail.com",
             "user_name": "Admin Test User",
             "phone": "+1234567890",
             "shipping_address": {
