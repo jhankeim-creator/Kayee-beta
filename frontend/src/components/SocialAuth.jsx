@@ -121,7 +121,7 @@ const SocialAuth = ({ onSuccess }) => {
       </div>
 
       <p className="text-xs text-center text-gray-500">
-        Mode démo activé - Les connexions sociales sont simulées
+        Demo mode enabled - Social logins are simulated
       </p>
     </div>
   );
