@@ -56,6 +56,14 @@ const AccountPage = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setOrders(response.data);
+      
+      // Calculate stats
+      const total = response.data.reduce((sum, order) => sum + order.total, 0);
+      setStats(prev => ({
+        ...prev,
+        totalOrders: response.data.length,
+        totalSpent: total
+      }));
     } catch (error) {
       console.error('Failed to load orders:', error);
     }
@@ -67,6 +75,10 @@ const AccountPage = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setWishlist(response.data.items || []);
+      setStats(prev => ({
+        ...prev,
+        wishlistCount: response.data.items?.length || 0
+      }));
     } catch (error) {
       console.error('Failed to load wishlist:', error);
     }
