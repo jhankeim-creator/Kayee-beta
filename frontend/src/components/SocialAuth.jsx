@@ -60,7 +60,7 @@ const SocialAuth = ({ onSuccess }) => {
       }, 1000);
     } catch (error) {
       console.error('Facebook login failed:', error);
-      toast.error('Échec de la connexion Facebook');
+      toast.error('Facebook login failed');
     } finally {
       setLoading(false);
     }
