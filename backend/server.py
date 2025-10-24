@@ -1064,6 +1064,16 @@ async def get_payment_gateways(admin: User = Depends(get_current_admin)):
         return []
     return settings.get("payment_gateways", [])
 
+@api_router.get("/settings/payment-gateways")
+async def get_public_payment_gateways():
+    """Get public payment gateways (no auth required)"""
+    settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+    if not settings:
+        return []
+    # Return only enabled gateways
+    gateways = settings.get("payment_gateways", [])
+    return [g for g in gateways if g.get("enabled", True)]
+
 @api_router.post("/admin/settings/payment-gateways")
 async def create_payment_gateway(gateway_data: PaymentGatewayCreate, admin: User = Depends(get_current_admin)):
     """Add a new payment gateway"""
