@@ -147,59 +147,62 @@ const AccountPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="pt-32 pb-20">
+      <div className="pt-24 md:pt-32 pb-20">
         <div className="container mx-auto px-4">
-          {/* Professional Header with Stats */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-              <div className="flex items-center gap-4 mb-4 md:mb-0">
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#d4af37] to-[#b8941f] flex items-center justify-center text-white text-2xl font-bold">
-                  {user.name?.charAt(0).toUpperCase()}
+          {/* Professional Header with Stats - Mobile Optimized */}
+          <div className="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-8 mb-6 md:mb-8">
+            <div className="flex flex-col space-y-4 mb-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 md:h-16 md:w-16 rounded-full bg-gradient-to-br from-[#d4af37] to-[#b8941f] flex items-center justify-center text-white text-xl md:text-2xl font-bold flex-shrink-0">
+                    {user.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <h1 className="text-xl md:text-3xl font-bold truncate" style={{ fontFamily: 'Playfair Display' }}>
+                      {user.name}
+                    </h1>
+                    <p className="text-xs md:text-sm text-gray-600 flex items-center gap-1 truncate">
+                      <Mail className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                      <span className="truncate">{user.email}</span>
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="text-3xl font-bold" style={{ fontFamily: 'Playfair Display' }}>
-                    {user.name}
-                  </h1>
-                  <p className="text-gray-600 flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    {user.email}
-                  </p>
-                </div>
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-1 md:gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-600 flex-shrink-0 text-xs md:text-sm"
+                >
+                  <LogOut className="h-3 w-3 md:h-4 md:w-4" />
+                  <span className="hidden sm:inline">Logout</span>
+                </Button>
               </div>
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-600"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
-                <div className="flex items-center justify-between mb-2">
-                  <ShoppingBag className="h-8 w-8 text-blue-600" />
-                  <span className="text-3xl font-bold text-blue-600">{stats.totalOrders}</span>
+            {/* Stats Cards - Mobile Optimized */}
+            <div className="grid grid-cols-3 gap-2 md:gap-6">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 md:p-6 rounded-lg md:rounded-xl border border-blue-200">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-1 md:mb-2">
+                  <ShoppingBag className="h-5 w-5 md:h-8 md:w-8 text-blue-600 mb-1 md:mb-0" />
+                  <span className="text-xl md:text-3xl font-bold text-blue-600">{stats.totalOrders}</span>
                 </div>
-                <p className="text-sm text-blue-800 font-medium">Total Orders</p>
+                <p className="text-xs md:text-sm text-blue-800 font-medium">Orders</p>
               </div>
 
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
-                <div className="flex items-center justify-between mb-2">
-                  <TrendingUp className="h-8 w-8 text-green-600" />
-                  <span className="text-3xl font-bold text-green-600">${stats.totalSpent.toFixed(2)}</span>
+              <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 md:p-6 rounded-lg md:rounded-xl border border-green-200">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-1 md:mb-2">
+                  <TrendingUp className="h-5 w-5 md:h-8 md:w-8 text-green-600 mb-1 md:mb-0" />
+                  <span className="text-lg md:text-3xl font-bold text-green-600">${stats.totalSpent.toFixed(0)}</span>
                 </div>
-                <p className="text-sm text-green-800 font-medium">Total Spent</p>
+                <p className="text-xs md:text-sm text-green-800 font-medium">Spent</p>
               </div>
 
-              <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-xl border border-pink-200">
-                <div className="flex items-center justify-between mb-2">
-                  <Heart className="h-8 w-8 text-pink-600" />
-                  <span className="text-3xl font-bold text-pink-600">{stats.wishlistCount}</span>
+              <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-3 md:p-6 rounded-lg md:rounded-xl border border-pink-200">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-1 md:mb-2">
+                  <Heart className="h-5 w-5 md:h-8 md:w-8 text-pink-600 mb-1 md:mb-0" />
+                  <span className="text-xl md:text-3xl font-bold text-pink-600">{stats.wishlistCount}</span>
                 </div>
-                <p className="text-sm text-pink-800 font-medium">Wishlist Items</p>
+                <p className="text-xs md:text-sm text-pink-800 font-medium">Wishlist</p>
               </div>
             </div>
           </div>
