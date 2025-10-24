@@ -386,18 +386,18 @@ const AdminSettings = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Payment Gateways ({paymentGateways.length})</CardTitle>
+              <CardTitle className="text-lg md:text-xl">Payment Gateways ({paymentGateways.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {paymentGateways.map((gateway) => (
-                  <div key={gateway.gateway_id} className="flex items-center justify-between p-4 border rounded">
+                  <div key={gateway.gateway_id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 md:p-4 border rounded gap-2">
                     <div className="flex-1">
-                      <p className="font-semibold">{gateway.name}</p>
-                      <p className="text-sm text-gray-600">{gateway.description}</p>
+                      <p className="font-semibold text-sm md:text-base">{gateway.name}</p>
+                      <p className="text-xs md:text-sm text-gray-600">{gateway.description}</p>
                       <p className="text-xs text-gray-500 mt-1">Type: {gateway.gateway_type}</p>
                       {gateway.instructions && (
-                        <p className="text-xs text-gray-600 mt-2 whitespace-pre-wrap">{gateway.instructions}</p>
+                        <p className="text-xs text-gray-600 mt-2 whitespace-pre-wrap break-words">{gateway.instructions}</p>
                       )}
                     </div>
                     <Button
