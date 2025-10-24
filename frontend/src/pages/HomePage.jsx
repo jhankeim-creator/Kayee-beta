@@ -28,7 +28,17 @@ const HomePage = () => {
       ]);
       setFeaturedProducts(productsRes.data.slice(0, 30));
       setCategories(categoriesRes.data);
-      setBestSellers(bestSellersRes.data);
+      
+      // Ensure at least 3 best sellers are shown
+      const sellers = bestSellersRes.data;
+      if (sellers.length < 3 && productsRes.data.length > 0) {
+        // Fill with featured products if not enough best sellers
+        const needed = 3 - sellers.length;
+        const featured = productsRes.data.slice(0, needed);
+        setBestSellers([...sellers, ...featured].slice(0, 12));
+      } else {
+        setBestSellers(sellers);
+      }
     } catch (error) {
       console.error('Failed to load data:', error);
     }
