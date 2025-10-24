@@ -207,42 +207,42 @@ const AccountPage = () => {
             </div>
           </div>
 
-          {/* Modern Tabs */}
-          <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-white p-2 rounded-xl shadow-md h-auto">
+          {/* Mobile-Optimized Tabs */}
+          <Tabs defaultValue="profile" className="space-y-4 md:space-y-6">
+            <TabsList className="grid grid-cols-4 gap-1 md:gap-2 bg-white p-1.5 md:p-2 rounded-lg md:rounded-xl shadow-md w-full overflow-x-auto">
               <TabsTrigger 
                 value="profile" 
-                className="flex flex-col items-center gap-2 py-4 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-lg transition-all"
+                className="flex flex-col items-center justify-center gap-1 md:gap-2 py-2 md:py-4 px-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-md md:rounded-lg transition-all min-w-0"
               >
-                <User className="h-5 w-5" />
-                <span className="text-sm font-medium">Profile</span>
+                <User className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
+                <span className="text-xs md:text-sm font-medium truncate w-full text-center">Profile</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="orders" 
-                className="flex flex-col items-center gap-2 py-4 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-lg transition-all"
+                className="flex flex-col items-center justify-center gap-1 md:gap-2 py-2 md:py-4 px-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-md md:rounded-lg transition-all relative min-w-0"
               >
-                <Package className="h-5 w-5" />
-                <span className="text-sm font-medium">Orders</span>
+                <Package className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
+                <span className="text-xs md:text-sm font-medium truncate w-full text-center">Orders</span>
                 {orders.length > 0 && (
-                  <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{orders.length}</span>
+                  <span className="absolute -top-1 -right-1 md:top-0 md:right-0 bg-red-500 text-white text-[10px] md:text-xs px-1 md:px-1.5 py-0.5 rounded-full leading-none">{orders.length}</span>
                 )}
               </TabsTrigger>
               <TabsTrigger 
                 value="wishlist" 
-                className="flex flex-col items-center gap-2 py-4 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-lg transition-all"
+                className="flex flex-col items-center justify-center gap-1 md:gap-2 py-2 md:py-4 px-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-md md:rounded-lg transition-all relative min-w-0"
               >
-                <Heart className="h-5 w-5" />
-                <span className="text-sm font-medium">Wishlist</span>
+                <Heart className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
+                <span className="text-xs md:text-sm font-medium truncate w-full text-center">Wishlist</span>
                 {wishlist.length > 0 && (
-                  <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{wishlist.length}</span>
+                  <span className="absolute -top-1 -right-1 md:top-0 md:right-0 bg-red-500 text-white text-[10px] md:text-xs px-1 md:px-1.5 py-0.5 rounded-full leading-none">{wishlist.length}</span>
                 )}
               </TabsTrigger>
               <TabsTrigger 
                 value="support" 
-                className="flex flex-col items-center gap-2 py-4 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-lg transition-all"
+                className="flex flex-col items-center justify-center gap-1 md:gap-2 py-2 md:py-4 px-1 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-md md:rounded-lg transition-all min-w-0"
               >
-                <MessageCircle className="h-5 w-5" />
-                <span className="text-sm font-medium">Support</span>
+                <MessageCircle className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
+                <span className="text-xs md:text-sm font-medium truncate w-full text-center">Support</span>
               </TabsTrigger>
             </TabsList>
 
