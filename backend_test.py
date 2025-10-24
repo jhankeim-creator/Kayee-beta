@@ -209,6 +209,317 @@ class AuthenticationTester:
             self.log_result("LOGIN Test B - Mauvais Credentials", False, f"❌ Requête échouée: {str(e)}")
             return False
 
+    def test_register_new_user(self):
+        """Test A: Créer nouveau compte utilisateur"""
+        register_payload = {
+            "email": "testuser@example.com",
+            "password": "Test123!",
+            "name": "Test User",
+            "phone": "+1234567890"
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/auth/register",
+                json=register_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                register_data = response.json()
+                
+                # Check required fields
+                access_token = register_data.get("access_token")
+                token_type = register_data.get("token_type")
+                user = register_data.get("user")
+                
+                details = {
+                    "access_token": access_token[:20] + "..." if access_token else None,
+                    "token_type": token_type,
+                    "user_email": user.get("email") if user else None,
+                    "user_role": user.get("role") if user else None,
+                    "user_name": user.get("name") if user else None
+                }
+
+                # Validate registration response
+                register_valid = (
+                    access_token is not None and 
+                    token_type == "bearer" and
+                    user is not None and
+                    user.get("email") == "testuser@example.com" and
+                    user.get("role") == "customer"
+                )
+
+                if register_valid:
+                    # Store token for future requests
+                    self.user_token = access_token
+                    
+                    self.log_result(
+                        "REGISTER Test A - Nouveau Compte", 
+                        True, 
+                        "✅ Création réussie - token JWT retourné et utilisateur créé",
+                        details
+                    )
+                    return register_data
+                else:
+                    self.log_result(
+                        "REGISTER Test A - Nouveau Compte", 
+                        False, 
+                        "❌ Validation échouée - champs manquants ou rôle incorrect",
+                        details
+                    )
+                    return None
+            else:
+                # User might already exist, which is acceptable for testing
+                if response.status_code == 400:
+                    error_data = response.json()
+                    error_detail = error_data.get("detail", "")
+                    
+                    if "already registered" in error_detail.lower():
+                        self.log_result(
+                            "REGISTER Test A - Nouveau Compte", 
+                            True, 
+                            f"✅ Utilisateur existe déjà (attendu): {error_detail}",
+                            {"error_detail": error_detail}
+                        )
+                        return {"message": "User already exists"}
+                
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("REGISTER Test A - Nouveau Compte", False, f"❌ {error_msg}")
+                return None
+
+        except Exception as e:
+            self.log_result("REGISTER Test A - Nouveau Compte", False, f"❌ Requête échouée: {str(e)}")
+            return None
+
+    def test_register_existing_email(self):
+        """Test B: Register avec email existant"""
+        register_payload = {
+            "email": "testuser@example.com",  # Same email as Test A
+            "password": "Test123!",
+            "name": "Test User Duplicate",
+            "phone": "+1234567890"
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/auth/register",
+                json=register_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            if response.status_code == 400:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                
+                details = {
+                    "test_email": "testuser@example.com",
+                    "status_code": response.status_code,
+                    "error_detail": error_detail,
+                    "expected_error": "Email already registered"
+                }
+
+                # Check if error is correct
+                email_exists = "already registered" in error_detail.lower() or "exists" in error_detail.lower()
+
+                if email_exists:
+                    self.log_result(
+                        "REGISTER Test B - Email Existant", 
+                        True, 
+                        "✅ Erreur appropriée retournée pour email existant",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "REGISTER Test B - Email Existant", 
+                        False, 
+                        f"❌ Message d'erreur inattendu: {error_detail}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("REGISTER Test B - Email Existant", False, f"❌ Attendu 400, reçu HTTP {response.status_code}")
+                return False
+
+        except Exception as e:
+            self.log_result("REGISTER Test B - Email Existant", False, f"❌ Requête échouée: {str(e)}")
+            return False
+
+    def test_forgot_password(self):
+        """Test A: Request password reset"""
+        test_email = "testuser@example.com"
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/auth/forgot-password?email={test_email}",
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                forgot_data = response.json()
+                message = forgot_data.get("message", "")
+                
+                details = {
+                    "test_email": test_email,
+                    "response_message": message,
+                    "expected_message": "If the email exists, a reset link has been sent"
+                }
+                
+                # Check if message indicates email sent
+                forgot_valid = "reset link has been sent" in message.lower()
+                
+                if forgot_valid:
+                    self.log_result(
+                        "FORGOT PASSWORD Test A - Request Reset", 
+                        True, 
+                        "✅ Endpoint fonctionne - message de succès retourné",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "FORGOT PASSWORD Test A - Request Reset", 
+                        False, 
+                        f"❌ Message de réponse inattendu: {message}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("FORGOT PASSWORD Test A - Request Reset", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("FORGOT PASSWORD Test A - Request Reset", False, f"❌ Requête échouée: {str(e)}")
+            return False
+
+    def test_reset_password(self):
+        """Test A: Check reset password endpoint"""
+        try:
+            response = self.session.post(
+                f"{self.api_base}/auth/reset-password?token=test_token&new_password=NewPass123",
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if response.status_code == 400:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                
+                details = {
+                    "test_token": "test_token",
+                    "new_password": "NewPass123",
+                    "error_detail": error_detail,
+                    "expected_error": "Invalid or expired reset token"
+                }
+                
+                # Check if error message is correct
+                token_invalid = "invalid" in error_detail.lower() or "expired" in error_detail.lower()
+                
+                if token_invalid:
+                    self.log_result(
+                        "RESET PASSWORD Test A - Structure Endpoint", 
+                        True, 
+                        "✅ Token invalide correctement rejeté avec 400 Bad Request",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "RESET PASSWORD Test A - Structure Endpoint", 
+                        False, 
+                        f"❌ Message d'erreur inattendu: {error_detail}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("RESET PASSWORD Test A - Structure Endpoint", False, f"❌ Attendu 400, reçu HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("RESET PASSWORD Test A - Structure Endpoint", False, f"❌ Requête échouée: {str(e)}")
+            return False
+
+    def test_profile_update(self):
+        """Test A: Update user profile"""
+        if not self.user_token and not self.admin_token:
+            self.log_result("PROFILE UPDATE Test A", False, "❌ Token utilisateur requis")
+            return False
+        
+        # Use admin token if user token not available
+        token = self.user_token if self.user_token else self.admin_token
+        
+        profile_payload = {
+            "name": "Updated Test User",
+            "phone": "+1987654321"
+        }
+
+        try:
+            response = self.session.put(
+                f"{self.api_base}/users/profile",
+                json=profile_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {token}"
+                },
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                profile_data = response.json()
+                
+                details = {
+                    "updated_name": profile_data.get("name"),
+                    "user_email": profile_data.get("email"),
+                    "user_role": profile_data.get("role"),
+                    "token_used": "user_token" if self.user_token else "admin_token"
+                }
+
+                # Validate profile update
+                update_valid = (
+                    profile_data.get("name") == "Updated Test User"
+                )
+
+                if update_valid:
+                    self.log_result(
+                        "PROFILE UPDATE Test A - Mise à jour", 
+                        True, 
+                        "✅ Profil mis à jour avec succès",
+                        details
+                    )
+                    return profile_data
+                else:
+                    self.log_result(
+                        "PROFILE UPDATE Test A - Mise à jour", 
+                        False, 
+                        "❌ Validation de mise à jour échouée",
+                        details
+                    )
+                    return None
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("PROFILE UPDATE Test A - Mise à jour", False, f"❌ {error_msg}")
+                return None
+
+        except Exception as e:
+            self.log_result("PROFILE UPDATE Test A - Mise à jour", False, f"❌ Requête échouée: {str(e)}")
+            return None
+
     def test_password_reset_flow(self):
         """Test password reset flow - forgot password and reset password"""
         test_email = "test@example.com"
