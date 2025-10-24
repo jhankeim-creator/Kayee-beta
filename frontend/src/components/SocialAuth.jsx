@@ -41,7 +41,7 @@ const SocialAuth = ({ onSuccess }) => {
   const handleFacebookLogin = async () => {
     setLoading(true);
     try {
-      toast.info('Mode démo - Connexion Facebook simulée');
+      toast.info('Demo mode - Facebook login simulated');
       
       // En production, vous utiliseriez Facebook SDK
       // FB.login((response) => {
