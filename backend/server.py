@@ -376,6 +376,47 @@ async def login(credentials: UserLogin):
 async def get_me(current_user: User = Depends(get_current_user)):
     return current_user
 
+
+@api_router.put("/users/profile", response_model=User)
+async def update_profile(
+    profile_data: dict,
+    current_user: User = Depends(get_current_user)
+):
+    """Update user profile"""
+    # Remove fields that shouldn't be updated
+    profile_data.pop('id', None)
+    profile_data.pop('email', None)  # Email shouldn't be changed here
+    profile_data.pop('role', None)
+    profile_data.pop('created_at', None)
+    
+    # Update user
+    result = await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": profile_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Get updated user
+    updated_user = await db.users.find_one({"id": current_user.id}, {"_id": 0})
+    return User(**parse_from_mongo(updated_user))
+
+@api_router.post("/support/contact")
+async def contact_support(support_request: dict):
+    """Send support message"""
+    # In a real application, this would send an email or create a ticket
+    # For now, we'll just log it and return success
+    print(f"Support request from {support_request.get('user_email')}")
+    print(f"Subject: {support_request.get('subject')}")
+    print(f"Message: {support_request.get('message')}")
+    
+    # You can integrate with email service here
+    # await send_support_email(support_request)
+    
+    return {"message": "Support request received. We'll get back to you soon!"}
+
+
 @api_router.post("/auth/forgot-password")
 async def forgot_password(email: EmailStr):
     """Send password reset email"""
