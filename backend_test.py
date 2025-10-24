@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """
-🔍 TEST DE NOTIFICATION EMAIL ADMIN POUR NOUVELLES COMMANDES
-Test Admin Email Notifications for New Orders
-Tests that administrators receive email notifications at TWO addresses when new orders are placed
+🔍 TEST COMPLET DES CORRECTIONS DEMANDÉES
+Complete Test of Requested Corrections
+
+Tests the following specific corrections as requested:
+1. TEST PAIEMENT MANUEL - Instructions UNIQUEMENT par Email
+2. TEST SYSTÈME BULK EMAIL  
+3. TEST NOTIFICATIONS ADMIN (re-verification)
 """
 
 import requests
