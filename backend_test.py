@@ -522,63 +522,87 @@ class ComprehensiveTester:
             self.log_result("PROFILE UPDATE Test A - Mise à jour", False, f"❌ Requête échouée: {str(e)}")
             return None
 
-    def run_authentication_tests(self):
-        """Run all authentication tests as requested in French review"""
-        print("🚀 Démarrage des tests d'authentification...")
+    def print_summary(self):
+        """Print comprehensive test summary"""
+        print("\n" + "=" * 80)
+        print("📊 RÉSUMÉ FINAL DES TESTS")
+        print("=" * 80)
+        
+        total_tests = len(self.test_results)
+        passed_tests = sum(1 for result in self.test_results if result["success"])
+        failed_tests = total_tests - passed_tests
+        success_rate = (passed_tests / total_tests * 100) if total_tests > 0 else 0
+        
+        print(f"📈 Total des tests: {total_tests}")
+        print(f"✅ Tests réussis: {passed_tests}")
+        print(f"❌ Tests échoués: {failed_tests}")
+        print(f"📊 Taux de réussite: {success_rate:.1f}%")
         print()
         
-        # Test 1: Backend Health Check
-        if not self.test_backend_health():
-            print("❌ Vérification de santé du backend échouée. Arrêt des tests.")
-            return self.print_summary()
+        # Group results by category
+        categories = {
+            "AUTHENTIFICATION": [],
+            "PRODUITS": [],
+            "CATÉGORIES": [],
+            "COMMANDES": [],
+            "WISHLIST": [],
+            "ADMIN": [],
+            "AUTRES": []
+        }
         
-        # Test 2: LOGIN Tests
-        print("=" * 50)
-        print("🔐 1. TEST LOGIN")
-        print("=" * 50)
+        for result in self.test_results:
+            test_name = result["test"]
+            if any(x in test_name for x in ["Login", "Profile", "Register", "Password"]):
+                categories["AUTHENTIFICATION"].append(result)
+            elif any(x in test_name for x in ["Products", "Featured", "Best Sellers", "Search"]):
+                categories["PRODUITS"].append(result)
+            elif "Categories" in test_name:
+                categories["CATÉGORIES"].append(result)
+            elif "Orders" in test_name:
+                categories["COMMANDES"].append(result)
+            elif "Wishlist" in test_name:
+                categories["WISHLIST"].append(result)
+            elif any(x in test_name for x in ["Admin", "Payment", "Team"]):
+                categories["ADMIN"].append(result)
+            else:
+                categories["AUTRES"].append(result)
         
-        # Test A: Login avec utilisateur existant
-        login_success = self.test_login_existing_user()
+        # Print results by category
+        for category, results in categories.items():
+            if results:
+                print(f"🔸 {category}:")
+                for result in results:
+                    status = "✅" if result["success"] else "❌"
+                    print(f"  {status} {result['test']}")
+                print()
         
-        # Test B: Login avec mauvais credentials
-        self.test_login_bad_credentials()
+        # Print failed tests details
+        failed_results = [r for r in self.test_results if not r["success"]]
+        if failed_results:
+            print("❌ DÉTAILS DES ÉCHECS:")
+            for result in failed_results:
+                print(f"  • {result['test']}: {result['message']}")
+            print()
         
-        # Test 3: REGISTER Tests
-        print("=" * 50)
-        print("📝 2. TEST REGISTER")
-        print("=" * 50)
+        # Final status
+        if success_rate >= 90:
+            print("🎉 STATUT GLOBAL: EXCELLENT - Tous les endpoints fonctionnent correctement!")
+        elif success_rate >= 75:
+            print("✅ STATUT GLOBAL: BON - La plupart des fonctionnalités marchent")
+        elif success_rate >= 50:
+            print("⚠️ STATUT GLOBAL: MOYEN - Quelques problèmes à résoudre")
+        else:
+            print("❌ STATUT GLOBAL: CRITIQUE - Plusieurs fonctionnalités ne marchent pas")
         
-        # Test A: Créer nouveau compte utilisateur
-        self.test_register_new_user()
+        print("=" * 80)
         
-        # Test B: Register avec email existant
-        self.test_register_existing_email()
-        
-        # Test 4: FORGOT PASSWORD Tests
-        print("=" * 50)
-        print("🔑 3. TEST FORGOT PASSWORD")
-        print("=" * 50)
-        
-        # Test A: Request password reset
-        self.test_forgot_password()
-        
-        # Test 5: RESET PASSWORD Tests
-        print("=" * 50)
-        print("🔄 4. TEST RESET PASSWORD")
-        print("=" * 50)
-        
-        # Test A: Check reset password endpoint
-        self.test_reset_password()
-        
-        # Test 6: PROFILE UPDATE Tests
-        print("=" * 50)
-        print("👤 5. TEST PROFILE UPDATE")
-        print("=" * 50)
-        
-        # Test A: Update user profile
-        self.test_profile_update()
-        
-        return self.print_summary()
+        return {
+            "total_tests": total_tests,
+            "passed_tests": passed_tests,
+            "failed_tests": failed_tests,
+            "success_rate": success_rate,
+            "results": self.test_results
+        }
 
     def test_password_reset_flow(self):
         """Test password reset flow - forgot password and reset password"""
