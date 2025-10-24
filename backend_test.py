@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-🎯 TEST COMPLET DE TOUTES LES NOUVELLES FONCTIONNALITÉS
-Comprehensive New Features Testing Suite for Luxe Store
-Tests ALL new features: Best Sellers API, Team Management, Payment Gateways, Social Links, External Links, Floating Announcement, Google Analytics, Products
+🔍 TEST URGENT - LOGIN/REGISTER & RESET PASSWORD
+Comprehensive Authentication Testing Suite for Luxe Store
+Tests ALL authentication features: Login, Register, Forgot Password, Reset Password, Profile Update
 """
 
 import requests
