@@ -80,6 +80,9 @@ const Navbar = () => {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/account')}>
+                    My Account
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/my-orders')}>
                     My Orders
                   </DropdownMenuItem>
@@ -99,8 +102,9 @@ const Navbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate('/admin/login')}
+                onClick={() => navigate('/login')}
                 data-testid="login-button"
+                title="Login / Register"
               >
                 <User className="h-5 w-5" />
               </Button>
