@@ -716,11 +716,18 @@ async def create_order(order_data: OrderCreate):
     except Exception as e:
         logger.error(f"Failed to create payment for order {order.id}: {str(e)}")
     
-    # Envoyer email de confirmation
+    # Envoyer email de confirmation au client
     try:
         await email_service.send_order_confirmation(order.model_dump())
     except Exception as e:
         logger.error(f"Failed to send order confirmation email: {str(e)}")
+    
+    # Envoyer notification aux administrateurs
+    try:
+        await email_service.send_admin_new_order_notification(order.model_dump())
+        logger.info(f"✓ Admin notifications sent for order {order.order_number}")
+    except Exception as e:
+        logger.error(f"Failed to send admin notification email: {str(e)}")
     
     return order
 
