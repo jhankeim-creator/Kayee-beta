@@ -34,6 +34,38 @@ const ShopPage = () => {
     }
   }, [page]);
 
+  // Load wishlist items
+  useEffect(() => {
+    loadWishlistItems();
+  }, [token]);
+
+  const loadWishlistItems = async () => {
+    try {
+      if (!token) {
+        const localWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        setWishlistItems(localWishlist);
+      } else {
+        const headers = { Authorization: `Bearer ${token}` };
+        const response = await axios.get(`${API}/wishlist`, { headers });
+        setWishlistItems(response.data.map(p => p.id));
+      }
+    } catch (error) {
+      console.error('Failed to load wishlist:', error);
+    }
+  };
+
+  const handleWishlistClick = async (e, productId) => {
+    e.stopPropagation();
+    const success = await addToWishlist(productId);
+    if (success) {
+      setWishlistItems(prev => [...prev, productId]);
+    }
+  };
+
+  const isInWishlist = (productId) => {
+    return wishlistItems.includes(productId);
+  };
+
   const loadProducts = async (currentPage) => {
     setLoading(true);
     try {
