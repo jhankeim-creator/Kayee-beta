@@ -255,7 +255,7 @@ const AdminTeam = () => {
                         />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label>Gérer les commandes</Label>
+                        <Label>Manage Orders</Label>
                         <Switch
                           checked={formData.permissions.manage_orders}
                           onCheckedChange={(checked) => updatePermission('manage_orders', checked)}
