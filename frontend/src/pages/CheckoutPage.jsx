@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import Footer from '../components/Footer';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { CreditCard, Coins, Wallet, DollarSign, Truck } from 'lucide-react';
+import { CreditCard, Coins, Wallet, DollarSign, Truck, Banknote } from 'lucide-react';
 
 const CheckoutPage = () => {
   const { cart, cartTotal, clearCart, API } = useContext(CartContext);
@@ -21,6 +21,7 @@ const CheckoutPage = () => {
   const [couponCode, setCouponCode] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
+  const [paymentGateways, setPaymentGateways] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -37,7 +38,17 @@ const CheckoutPage = () => {
     if (cart.length === 0 && !orderPlaced) {
       navigate('/cart');
     }
+    loadPaymentGateways();
   }, [cart, navigate, orderPlaced]);
+
+  const loadPaymentGateways = async () => {
+    try {
+      const response = await axios.get(`${API}/settings/payment-gateways`);
+      setPaymentGateways(response.data.filter(g => g.enabled));
+    } catch (error) {
+      console.error('Failed to load payment gateways:', error);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
