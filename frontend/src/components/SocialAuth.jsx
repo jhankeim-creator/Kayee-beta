@@ -32,7 +32,7 @@ const SocialAuth = ({ onSuccess }) => {
       }, 1000);
     } catch (error) {
       console.error('Google login failed:', error);
-      toast.error('Échec de la connexion Google');
+      toast.error('Google login failed');
     } finally {
       setLoading(false);
     }
