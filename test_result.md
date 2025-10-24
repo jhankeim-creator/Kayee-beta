@@ -778,6 +778,42 @@ agent_communication:
           agent: "testing"
           comment: "✅ FRONTEND TASK - Not tested by backend testing agent as per system limitations. Main agent reported homepage product display increased from 12 to 30 products in frontend/src/pages/HomePage.jsx. This is a frontend-only change that doesn't require backend API testing."
 
+  - task: "French Review Tests - Manual Payment Instructions Email"
+    implemented: true
+    working: true
+    file: "backend/server.py, backend/email_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ MANUAL PAYMENT INSTRUCTIONS EMAIL WORKING PERFECTLY - Created manual PayPal gateway with payment instructions 'Envoyez le paiement à: paypal@kayee01.com'. Gateway appears on public API /api/settings/payment-gateways. Order created successfully with manual gateway (ORD-EBAA0427). Backend logs confirm client email sent with payment instructions and order number reference."
+
+  - task: "French Review Tests - Bulk Email System"
+    implemented: true
+    working: true
+    file: "backend/server.py, backend/email_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ BULK EMAIL SYSTEM WORKING PERFECTLY - POST /api/admin/settings/bulk-email sent 'Test Email Promotionnel' successfully to 4 customers. GET /api/admin/settings/bulk-emails returns 7 emails in history with proper structure. Backend logs confirm bulk email system working correctly with SMTP configuration."
+
+  - task: "French Review Tests - Admin Notifications Re-verification"
+    implemented: true
+    working: true
+    file: "backend/server.py, backend/email_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ ADMIN NOTIFICATIONS RE-VERIFICATION SUCCESSFUL - Order created successfully (ORD-C272C054) with Stripe payment method. Backend logs confirm admin notifications sent to BOTH addresses: 'Email sent successfully to kayicom509@gmail.com' and 'Email sent successfully to Info.kayicom.com@gmx.fr'. Admin notification system fully functional for new orders."
+
   - task: "Comprehensive Admin Functions Testing (French Review Request)"
     implemented: true
     working: true
