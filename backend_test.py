@@ -223,7 +223,7 @@ class ComprehensiveTester:
     def test_register_new_user(self):
         """Test A: Créer nouveau compte utilisateur"""
         register_payload = {
-            "email": "testuser@example.com",
+            "email": "kayicom509@gmail.com",
             "password": "Test123!",
             "name": "Test User",
             "phone": "+1234567890"
@@ -258,7 +258,7 @@ class ComprehensiveTester:
                     access_token is not None and 
                     token_type == "bearer" and
                     user is not None and
-                    user.get("email") == "testuser@example.com" and
+                    user.get("email") == "kayicom509@gmail.com" and
                     user.get("role") == "customer"
                 )
 
@@ -313,7 +313,7 @@ class ComprehensiveTester:
     def test_register_existing_email(self):
         """Test B: Register avec email existant"""
         register_payload = {
-            "email": "testuser@example.com",  # Same email as Test A
+            "email": "kayicom509@gmail.com",  # Same email as Test A
             "password": "Test123!",
             "name": "Test User Duplicate",
             "phone": "+1234567890"
@@ -332,7 +332,7 @@ class ComprehensiveTester:
                 error_detail = error_data.get("detail", "")
                 
                 details = {
-                    "test_email": "testuser@example.com",
+                    "test_email": "kayicom509@gmail.com",
                     "status_code": response.status_code,
                     "error_detail": error_detail,
                     "expected_error": "Email already registered"
@@ -367,7 +367,7 @@ class ComprehensiveTester:
 
     def test_forgot_password(self):
         """Test A: Request password reset"""
-        test_email = "testuser@example.com"
+        test_email = "kayicom509@gmail.com"
         
         try:
             response = self.session.post(
