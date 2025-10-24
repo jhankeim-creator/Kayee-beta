@@ -181,7 +181,7 @@ const AdminTeam = () => {
             className="bg-[#d4af37] hover:bg-[#b8941f]"
           >
             <UserPlus className="h-4 w-4 mr-2" />
-            Ajouter un membre
+            Add Member
           </Button>
         )}
       </div>
