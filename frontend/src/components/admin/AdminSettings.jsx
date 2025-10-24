@@ -170,7 +170,7 @@ const AdminSettings = () => {
   };
 
   const deleteSocialLink = async (linkId) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce lien social ?')) {
+    if (!window.confirm('Are you sure you want to delete this social link?')) {
       return;
     }
     
