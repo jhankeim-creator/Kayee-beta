@@ -6242,8 +6242,8 @@ def run_authentication_tests(self):
 def main_auth():
     """Main function for authentication testing"""
     try:
-        tester = AuthenticationTester()
-        tester.run_authentication_tests()
+        tester = ComprehensiveTester()
+        tester.run_comprehensive_tests()
     except KeyboardInterrupt:
         print("\n❌ Tests interrompus par l'utilisateur")
         sys.exit(1)
