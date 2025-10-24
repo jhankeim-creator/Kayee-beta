@@ -274,7 +274,7 @@ class AdminEmailTester:
                 self.log_result(
                     f"{test_name} - Log Check", 
                     False, 
-                    f"❌ Impossible de lire les logs backend: {result.stderr}"
+                    f"❌ Impossible de lire les logs backend: {result_out.stderr or result_err.stderr}"
                 )
                 return False
                 
