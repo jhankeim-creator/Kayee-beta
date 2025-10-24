@@ -10,7 +10,7 @@ import { Heart } from 'lucide-react';
 
 const ShopPage = () => {
   const { category } = useParams();
-  const { API, addToCart, token } = useContext(CartContext);
+  const { API, addToCart, token, addToWishlist } = useContext(CartContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
