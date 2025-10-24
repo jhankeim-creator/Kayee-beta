@@ -664,6 +664,9 @@ agent_communication:
         - working: true
           agent: "testing"
           comment: "✅ BULK EMAIL SYSTEM WORKING PERFECTLY - Complete newsletter system tested successfully: 1) POST /api/admin/settings/bulk-email sends 'Test Coupon' email with message 'Use code TEST10 for 10% OFF!' to 1 customer successfully ✅ 2) GET /api/admin/settings/bulk-emails returns email history with 1 entry showing sent_to=1, proper timestamps, and email details ✅. Bulk email system with recipient filtering and history tracking fully functional."
+        - working: true
+          agent: "testing"
+          comment: "🎯 BULK EMAIL PROMOTIONAL SYSTEM TESTING COMPLETED (French Review Request) - Comprehensive testing of promotional email system as requested: ✅ Test 1: POST /api/admin/settings/bulk-email with '🎉 PROMO SPÉCIALE - 30% OFF' sent successfully to 4 customers ✅ Test 2: GET /api/admin/settings/bulk-emails returns complete history with proper structure (subject, message, sent_at, sent_to fields) ✅ Test 3: VIP filter email 'VIP Exclusive Offer' sent successfully to 16 customers ✅ Test 4: Authentication required - POST without token properly rejected with HTTP 403 'Not authenticated' ✅ All success criteria met: POST returns 200/201, clear success messages, history retrieval working, correct data structure, authentication enforced, emails appear in history. Système d'emails promotionnels entièrement fonctionnel!"
 
   - task: "Admin Settings Tab in Dashboard"
     implemented: true
