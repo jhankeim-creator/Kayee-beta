@@ -85,37 +85,37 @@ class EmailService:
         if payment_method.startswith('manual-') and payment_gateway_instructions:
             payment_instructions = f"""
             <div style="margin: 30px 0; padding: 20px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 5px;">
-                <h3 style="color: #1976d2; margin-top: 0;">💰 Instructions de Paiement - {payment_gateway_name}</h3>
+                <h3 style="color: #1976d2; margin-top: 0;">💰 Payment Instructions - {payment_gateway_name}</h3>
                 <div style="white-space: pre-wrap; margin: 15px 0; line-height: 1.6;">{payment_gateway_instructions}</div>
-                <p><strong>Montant à Payer:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
-                <p><strong>Référence de Commande:</strong> <code style="background: #fff; padding: 5px 10px; border-radius: 3px; font-size: 16px;">{order_data['order_number']}</code></p>
+                <p><strong>Amount to Pay:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
+                <p><strong>Order Reference:</strong> <code style="background: #fff; padding: 5px 10px; border-radius: 3px; font-size: 16px;">{order_data['order_number']}</code></p>
                 <p style="background: #fff3cd; padding: 10px; border-radius: 3px; margin-top: 15px;">
-                    <strong>⚠️ Important:</strong> Veuillez inclure votre numéro de commande <strong>{order_data['order_number']}</strong> comme référence lors du paiement.
+                    <strong>⚠️ Important:</strong> Please include your order number <strong>{order_data['order_number']}</strong> as reference when making payment.
                 </p>
             </div>
             """
         elif payment_method == 'manual':
             payment_instructions = f"""
             <div style="margin: 30px 0; padding: 20px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 5px;">
-                <h3 style="color: #1976d2; margin-top: 0;">💰 Instructions de Paiement Manuel</h3>
+                <h3 style="color: #1976d2; margin-top: 0;">💰 Manual Payment Instructions</h3>
                 <p><strong>Payoneer Email:</strong> <span style="color: #2196f3;">kayicom509@gmail.com</span></p>
-                <p><strong>Nom:</strong> Anson</p>
-                <p><strong>Montant à Payer:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
-                <p><strong>Référence de Commande:</strong> <code style="background: #fff; padding: 5px 10px; border-radius: 3px; font-size: 16px;">{order_data['order_number']}</code></p>
+                <p><strong>Name:</strong> Anson</p>
+                <p><strong>Amount to Pay:</strong> <span style="color: #d4af37; font-size: 20px;">${order_data['total']:.2f}</span></p>
+                <p><strong>Order Reference:</strong> <code style="background: #fff; padding: 5px 10px; border-radius: 3px; font-size: 16px;">{order_data['order_number']}</code></p>
                 <p style="background: #fff3cd; padding: 10px; border-radius: 3px; margin-top: 15px;">
-                    <strong>⚠️ Important:</strong> Après le paiement, envoyez une preuve (capture d'écran) via WhatsApp (+12393293813) avec votre numéro de commande <strong>{order_data['order_number']}</strong>.
+                    <strong>⚠️ Important:</strong> After payment, send proof (screenshot) via WhatsApp (+12393293813) with your order number <strong>{order_data['order_number']}</strong>.
                 </p>
             </div>
             """
         elif payment_method == 'stripe' and order_data.get('stripe_payment_url'):
             payment_instructions = f"""
             <div style="margin: 30px 0; padding: 20px; background: #f3e5f5; border-left: 4px solid #9c27b0; border-radius: 5px;">
-                <h3 style="color: #7b1fa2; margin-top: 0;">💳 Complétez votre Paiement Stripe</h3>
-                <p>Cliquez sur le lien ci-dessous pour payer en toute sécurité:</p>
+                <h3 style="color: #7b1fa2; margin-top: 0;">💳 Complete Your Stripe Payment</h3>
+                <p>Click the link below to pay securely:</p>
                 <p style="text-align: center;">
                     <a href="{order_data['stripe_payment_url']}" 
                        style="display: inline-block; padding: 12px 30px; background: #635bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                        Payer avec Stripe
+                        Pay with Stripe
                     </a>
                 </p>
             </div>
@@ -123,12 +123,12 @@ class EmailService:
         elif payment_method == 'plisio' and order_data.get('plisio_invoice_url'):
             payment_instructions = f"""
             <div style="margin: 30px 0; padding: 20px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 5px;">
-                <h3 style="color: #388e3c; margin-top: 0;">💰 Complétez votre Paiement Crypto (Plisio)</h3>
-                <p>Cliquez sur le lien ci-dessous pour payer avec plus de 100 cryptomonnaies:</p>
+                <h3 style="color: #388e3c; margin-top: 0;">💰 Complete Your Crypto Payment (Plisio)</h3>
+                <p>Click the link below to pay with 100+ cryptocurrencies:</p>
                 <p style="text-align: center;">
                     <a href="{order_data['plisio_invoice_url']}" 
                        style="display: inline-block; padding: 12px 30px; background: #4caf50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                        Payer avec Plisio
+                        Pay with Plisio
                     </a>
                 </p>
             </div>
