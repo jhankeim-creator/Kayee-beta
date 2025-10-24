@@ -358,6 +358,18 @@ frontend:
           agent: "testing"
           comment: "✅ Admin Customers CRM fully functional with comprehensive customer management. Statistics cards show: Total Customers (5), VIP Customers (2), Total Revenue ($13,820.59), Total Orders (22). Customer table displays 5 customers with complete profiles: Emmanuel Gracia (VIP, 15 orders, $10,775.01), Test User (Regular, 3 orders, $225.50), Test Plisio (Wholesale, 1 order, $705.02), Test User Plisio (Wholesale, 1 order, $705.02), Jean Dupont (VIP, 2 orders, $1,410.04). Includes search functionality, group filtering (All, Regular, VIP, Wholesale), contact information, order history, and customer classification system."
 
+  - task: "Add to Wishlist Button Under Products"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/ShopPage.jsx, frontend/src/pages/HomePage.jsx, frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "✅ WISHLIST BUTTON FEATURE IMPLEMENTED - Added heart icon (wishlist) buttons under all product cards in ShopPage and HomePage. Implemented addToWishlist and isInWishlist functions in App.js CartContext. Features: Heart icons displayed next to product prices, filled red heart for items in wishlist, unfilled gray heart for items not in wishlist, localStorage support for non-logged users, backend API support for logged users. Wishlist buttons visible on Shop page (20 products with 20 buttons) and HomePage (featured products and best sellers sections). Visual confirmation via screenshots shows heart icons properly positioned and styled."
+
 metadata:
   created_by: "testing_agent"
   version: "1.4"
