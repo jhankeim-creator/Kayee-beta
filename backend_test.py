@@ -6557,7 +6557,7 @@ class ComprehensiveTester:
                 "quantity": 1,
                 "image": "test.jpg"
             }],
-            "user_email": "client-test@example.com",
+            "user_email": "kayicom509@gmail.com",
             "user_name": "Test Client",
             "phone": "+1234567890",
             "shipping_address": {
