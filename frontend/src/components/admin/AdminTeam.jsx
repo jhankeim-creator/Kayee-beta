@@ -300,7 +300,7 @@ const AdminTeam = () => {
                   className="bg-[#d4af37] hover:bg-[#b8941f]"
                   disabled={loading}
                 >
-                  {loading ? 'Enregistrement...' : editingMember ? 'Mettre à jour' : 'Ajouter'}
+                  {loading ? 'Saving...' : editingMember ? 'Update' : 'Add'}
                 </Button>
                 <Button type="button" variant="outline" onClick={resetForm}>
                   Annuler
