@@ -712,7 +712,7 @@ class EmailService:
     async def send_admin_new_order_notification(self, order_data: dict):
         """Send notification to admin when new order is placed"""
         admin_emails = ["kayicom509@gmail.com", "Info.kayicom.com@gmx.fr"]
-        subject = f"🔔 Nouvelle Commande - {order_data['order_number']}"
+        subject = f"🔔 New Order - {order_data['order_number']}"
         
         # Build items list
         items_html = ""
