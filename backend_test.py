@@ -5437,7 +5437,7 @@ def main():
         print(f"❌ New features test execution failed: {str(e)}")
         sys.exit(1)
 
-    def run_authentication_tests(self):
+def run_authentication_tests(self):
         """Run all authentication tests as requested in French review"""
         print("🚀 Démarrage des tests d'authentification...")
         print()
