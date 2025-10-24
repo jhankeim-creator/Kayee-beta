@@ -337,10 +337,13 @@ const AccountPage = () => {
 
             {/* Orders Tab */}
             <TabsContent value="orders">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Order History</CardTitle>
-                  <CardDescription>View all your past orders</CardDescription>
+              <Card className="shadow-lg border-0">
+                <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="h-5 w-5 text-[#d4af37]" />
+                    Order History
+                  </CardTitle>
+                  <CardDescription>Track and manage all your purchases</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {orders.length === 0 ? (
