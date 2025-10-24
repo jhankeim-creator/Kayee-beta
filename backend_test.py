@@ -127,7 +127,7 @@ class ComprehensiveTester:
                     access_token is not None and 
                     token_type == "bearer" and
                     user is not None and
-                    user.get("email") == "admin@luxe.com" and
+                    user.get("email") == "kayicom509@gmail.com" and
                     user.get("role") == "admin"
                 )
 
