@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-🔍 TEST URGENT - LOGIN/REGISTER & RESET PASSWORD
-Comprehensive Authentication Testing Suite for Luxe Store
-Tests ALL authentication features: Login, Register, Forgot Password, Reset Password, Profile Update
+🔍 TEST COMPLET FINAL - VÉRIFICATION GLOBALE
+Comprehensive Backend Testing Suite for Luxe Store
+Tests ALL backend functionalities as requested in French review
 """
 
 import requests
