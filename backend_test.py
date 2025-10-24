@@ -80,8 +80,8 @@ class AuthenticationTester:
             self.log_result("Backend Health", False, f"Backend not accessible: {str(e)}")
             return False
 
-    def test_admin_login(self):
-        """Test admin login with admin@luxe.com / Admin123!"""
+    def test_login_existing_user(self):
+        """Test A: Login avec utilisateur existant (admin@luxe.com / Admin123!)"""
         login_payload = {
             "email": "admin@luxe.com",
             "password": "Admin123!"
@@ -126,17 +126,17 @@ class AuthenticationTester:
                     self.session.headers.update({"Authorization": f"Bearer {access_token}"})
                     
                     self.log_result(
-                        "Admin Login", 
+                        "LOGIN Test A - Utilisateur Existant", 
                         True, 
-                        "Admin login successful - token received and user verified",
+                        "✅ Login réussi - token JWT retourné et utilisateur vérifié",
                         details
                     )
                     return login_data
                 else:
                     self.log_result(
-                        "Admin Login", 
+                        "LOGIN Test A - Utilisateur Existant", 
                         False, 
-                        f"Login validation failed - missing required fields or incorrect role",
+                        "❌ Validation échouée - champs manquants ou rôle incorrect",
                         details
                     )
                     return None
@@ -148,12 +148,66 @@ class AuthenticationTester:
                 except:
                     error_msg += f": {response.text}"
                 
-                self.log_result("Admin Login", False, error_msg)
+                self.log_result("LOGIN Test A - Utilisateur Existant", False, f"❌ {error_msg}")
                 return None
 
         except Exception as e:
-            self.log_result("Admin Login", False, f"Request failed: {str(e)}")
+            self.log_result("LOGIN Test A - Utilisateur Existant", False, f"❌ Requête échouée: {str(e)}")
             return None
+
+    def test_login_bad_credentials(self):
+        """Test B: Login avec mauvais credentials"""
+        login_payload = {
+            "email": "invalid@example.com",
+            "password": "wrongpassword"
+        }
+
+        try:
+            response = self.session.post(
+                f"{self.api_base}/auth/login",
+                json=login_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+
+            if response.status_code == 401:
+                error_data = response.json()
+                error_detail = error_data.get("detail", "")
+                
+                details = {
+                    "test_email": "invalid@example.com",
+                    "test_password": "wrongpassword",
+                    "status_code": response.status_code,
+                    "error_detail": error_detail,
+                    "expected_error": "Invalid credentials"
+                }
+
+                # Check if error is correct
+                credentials_invalid = "invalid" in error_detail.lower() or "credentials" in error_detail.lower()
+
+                if credentials_invalid:
+                    self.log_result(
+                        "LOGIN Test B - Mauvais Credentials", 
+                        True, 
+                        "✅ Erreur 401 correctement retournée pour mauvais credentials",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "LOGIN Test B - Mauvais Credentials", 
+                        False, 
+                        f"❌ Message d'erreur inattendu: {error_detail}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("LOGIN Test B - Mauvais Credentials", False, f"❌ Attendu 401, reçu HTTP {response.status_code}")
+                return False
+
+        except Exception as e:
+            self.log_result("LOGIN Test B - Mauvais Credentials", False, f"❌ Requête échouée: {str(e)}")
+            return False
 
     def test_password_reset_flow(self):
         """Test password reset flow - forgot password and reset password"""
