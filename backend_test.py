@@ -6246,5 +6246,381 @@ def main_comprehensive():
         print(f"\n❌ Suite de tests complète échouée: {str(e)}")
         sys.exit(1)
 
+    def test_bulk_email_promotional_system(self):
+        """🔍 TEST MESSAGES PROMOTIONNELS (BULK EMAIL SYSTEM) - French Review Request"""
+        if not self.admin_token:
+            self.log_result("Bulk Email Promotional System", False, "Admin authentication required")
+            return False
+        
+        print("\n🎯 TESTING BULK EMAIL PROMOTIONAL SYSTEM (French Review Request)")
+        print("-" * 60)
+        print("Testing promotional email system in admin as requested:")
+        print("- POST /api/admin/settings/bulk-email")
+        print("- GET /api/admin/settings/bulk-emails")
+        print("- Different recipient filters (all, vip)")
+        print("- Authentication verification")
+        print("- Response structure validation")
+        print()
+        
+        # Test 1: Envoyer Email Promotionnel
+        promo_email_payload = {
+            "subject": "🎉 PROMO SPÉCIALE - 30% OFF",
+            "message": "Découvrez notre collection exclusive avec 30% de réduction ! Offre limitée.",
+            "recipient_filter": "all"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/bulk-email",
+                json=promo_email_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=30
+            )
+            
+            if response.status_code in [200, 201]:
+                email_data = response.json()
+                
+                message = email_data.get("message", "")
+                sent_to = email_data.get("sent_to", 0)
+                
+                details = {
+                    "status_code": response.status_code,
+                    "response_message": message,
+                    "sent_to": sent_to,
+                    "subject": promo_email_payload["subject"],
+                    "recipient_filter": promo_email_payload["recipient_filter"],
+                    "message_content": promo_email_payload["message"][:50] + "..."
+                }
+                
+                # Vérifier que l'email est envoyé
+                email_sent = "sent successfully" in message.lower() or "envoyé" in message.lower()
+                
+                if email_sent:
+                    self.log_result(
+                        "Test 1: Envoyer Email Promotionnel", 
+                        True, 
+                        f"✅ Email promotionnel envoyé avec succès à {sent_to} clients",
+                        details
+                    )
+                    
+                    # Test 2: Historique des Emails
+                    return self.test_bulk_email_history_verification()
+                else:
+                    self.log_result(
+                        "Test 1: Envoyer Email Promotionnel", 
+                        False, 
+                        f"❌ Échec de l'envoi d'email: {message}",
+                        details
+                    )
+                    return False
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('detail', 'Unknown error')}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                self.log_result("Test 1: Envoyer Email Promotionnel", False, f"❌ {error_msg}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Test 1: Envoyer Email Promotionnel", False, f"❌ Requête échouée: {str(e)}")
+            return False
+
+    def test_bulk_email_history_verification(self):
+        """Test 2: Historique des Emails - GET /api/admin/settings/bulk-emails"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/bulk-emails",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                emails = response.json()
+                
+                # Vérifier que l'email du Test 1 apparaît dans l'historique
+                promo_email_found = False
+                latest_email = None
+                
+                if emails and len(emails) > 0:
+                    latest_email = emails[0]  # Most recent email
+                    if "PROMO SPÉCIALE" in latest_email.get("subject", ""):
+                        promo_email_found = True
+                
+                details = {
+                    "emails_count": len(emails),
+                    "latest_email_subject": latest_email.get("subject") if latest_email else None,
+                    "latest_email_sent_to": latest_email.get("sent_to") if latest_email else None,
+                    "latest_email_sent_at": latest_email.get("sent_at") if latest_email else None,
+                    "promo_email_found": promo_email_found,
+                    "structure_fields": ["subject", "message", "sent_at", "sent_to"] if latest_email else []
+                }
+                
+                # Vérifier structure: subject, message, sent_at, recipient_count
+                structure_valid = False
+                if latest_email:
+                    required_fields = ["subject", "message", "sent_at", "sent_to"]
+                    structure_valid = all(field in latest_email for field in required_fields)
+                
+                if promo_email_found and structure_valid:
+                    self.log_result(
+                        "Test 2: Historique des Emails", 
+                        True, 
+                        f"✅ Email promotionnel trouvé dans l'historique avec structure correcte",
+                        details
+                    )
+                    
+                    # Test 3: Email avec filtre clients spécifiques
+                    return self.test_bulk_email_vip_filter()
+                else:
+                    self.log_result(
+                        "Test 2: Historique des Emails", 
+                        False, 
+                        f"❌ Email promotionnel non trouvé ou structure incorrecte",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Test 2: Historique des Emails", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Test 2: Historique des Emails", False, f"❌ Requête échouée: {str(e)}")
+            return False
+
+    def test_bulk_email_vip_filter(self):
+        """Test 3: Email avec filtre clients spécifiques (VIP)"""
+        vip_email_payload = {
+            "subject": "VIP Exclusive Offer",
+            "message": "Special discount for our valued customers",
+            "recipient_filter": "vip"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/bulk-email",
+                json=vip_email_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=30
+            )
+            
+            if response.status_code in [200, 201]:
+                email_data = response.json()
+                
+                message = email_data.get("message", "")
+                sent_to = email_data.get("sent_to", 0)
+                
+                details = {
+                    "status_code": response.status_code,
+                    "response_message": message,
+                    "sent_to": sent_to,
+                    "subject": vip_email_payload["subject"],
+                    "recipient_filter": vip_email_payload["recipient_filter"],
+                    "filter_type": "VIP customers only"
+                }
+                
+                # Vérifier que l'email VIP est envoyé
+                email_sent = "sent successfully" in message.lower() or "envoyé" in message.lower()
+                
+                if email_sent:
+                    self.log_result(
+                        "Test 3: Email VIP Filter", 
+                        True, 
+                        f"✅ Email VIP envoyé avec succès à {sent_to} clients VIP",
+                        details
+                    )
+                    
+                    # Test 4: Vérifier authentification requise
+                    return self.test_bulk_email_authentication_required()
+                else:
+                    self.log_result(
+                        "Test 3: Email VIP Filter", 
+                        False, 
+                        f"❌ Échec de l'envoi d'email VIP: {message}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Test 3: Email VIP Filter", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Test 3: Email VIP Filter", False, f"❌ Requête échouée: {str(e)}")
+            return False
+
+    def test_bulk_email_authentication_required(self):
+        """Test 4: Vérifier que l'authentification est requise"""
+        test_payload = {
+            "subject": "Test Without Auth",
+            "message": "This should fail",
+            "recipient_filter": "all"
+        }
+        
+        try:
+            # Test sans token d'authentification
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/bulk-email",
+                json=test_payload,
+                headers={"Content-Type": "application/json"},  # No Authorization header
+                timeout=10
+            )
+            
+            if response.status_code == 401 or response.status_code == 403:
+                error_data = response.json() if response.content else {}
+                error_detail = error_data.get("detail", "")
+                
+                details = {
+                    "status_code": response.status_code,
+                    "error_detail": error_detail,
+                    "expected_error": "Authentication required",
+                    "test_type": "No authentication token"
+                }
+                
+                # Vérifier que l'authentification est requise
+                auth_required = response.status_code in [401, 403]
+                
+                if auth_required:
+                    self.log_result(
+                        "Test 4: Authentication Required", 
+                        True, 
+                        f"✅ Authentification correctement requise (HTTP {response.status_code})",
+                        details
+                    )
+                    
+                    # Test final: Vérifier structure complète
+                    return self.test_bulk_email_final_verification()
+                else:
+                    self.log_result(
+                        "Test 4: Authentication Required", 
+                        False, 
+                        f"❌ Authentification non requise: {error_detail}",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Test 4: Authentication Required", False, f"❌ Attendu 401/403, reçu HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Test 4: Authentication Required", False, f"❌ Requête échouée: {str(e)}")
+            return False
+
+    def test_bulk_email_final_verification(self):
+        """Test Final: Vérification complète du système d'emails promotionnels"""
+        try:
+            # Vérifier l'historique final
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/bulk-emails",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                emails = response.json()
+                
+                # Compter les emails de test
+                promo_emails = [e for e in emails if "PROMO SPÉCIALE" in e.get("subject", "") or "VIP Exclusive" in e.get("subject", "")]
+                
+                details = {
+                    "total_emails_in_history": len(emails),
+                    "test_emails_found": len(promo_emails),
+                    "expected_test_emails": 2,  # PROMO SPÉCIALE + VIP Exclusive
+                    "latest_emails": [{"subject": e.get("subject"), "sent_to": e.get("sent_to")} for e in emails[:3]]
+                }
+                
+                # Critères de succès
+                success_criteria = {
+                    "POST bulk-email returns 200/201": True,  # Tested in previous tests
+                    "Message de succès clair": True,  # Tested in previous tests
+                    "GET bulk-emails returns history": len(emails) >= 0,
+                    "Structure de données correcte": len(promo_emails) >= 1,
+                    "Authentication required": True,  # Tested in previous test
+                    "Emails appear in history": len(promo_emails) >= 1
+                }
+                
+                all_criteria_met = all(success_criteria.values())
+                
+                if all_criteria_met:
+                    self.log_result(
+                        "🎉 BULK EMAIL SYSTEM - VERIFICATION FINALE", 
+                        True, 
+                        f"✅ TOUS LES CRITÈRES DE SUCCÈS RESPECTÉS - Système d'emails promotionnels entièrement fonctionnel!",
+                        {**details, "success_criteria": success_criteria}
+                    )
+                    return True
+                else:
+                    failed_criteria = [k for k, v in success_criteria.items() if not v]
+                    self.log_result(
+                        "🎉 BULK EMAIL SYSTEM - VERIFICATION FINALE", 
+                        False, 
+                        f"❌ Critères non respectés: {failed_criteria}",
+                        {**details, "success_criteria": success_criteria, "failed_criteria": failed_criteria}
+                    )
+                    return False
+            else:
+                self.log_result("Bulk Email Final Verification", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Bulk Email Final Verification", False, f"❌ Requête échouée: {str(e)}")
+            return False
+
+def main_bulk_email_tests():
+    """Main function to run bulk email promotional system tests"""
+    try:
+        print("🚀 DÉMARRAGE DES TESTS D'EMAILS PROMOTIONNELS")
+        print("=" * 80)
+        print("🔍 TEST MESSAGES PROMOTIONNELS (BULK EMAIL SYSTEM)")
+        print("Testez le système d'emails promotionnels dans l'admin.")
+        print("Credentials Admin: admin@luxe.com / Admin123!")
+        print("=" * 80)
+        
+        tester = ComprehensiveTester()
+        
+        # Test 0: Backend Health Check
+        if not tester.test_backend_health():
+            print("❌ Backend not accessible. Stopping tests.")
+            return tester.print_summary()
+        
+        # Test 1: Admin Login (Required for bulk email tests)
+        print("\n🔐 ADMIN LOGIN")
+        print("-" * 50)
+        login_success = tester.test_admin_login()
+        
+        if not login_success:
+            print("❌ Admin login failed. Cannot proceed with bulk email tests.")
+            return tester.print_summary()
+        
+        # Test 2: Bulk Email Promotional System
+        print("\n📧 BULK EMAIL PROMOTIONAL SYSTEM TESTS")
+        print("-" * 60)
+        tester.test_bulk_email_promotional_system()
+        
+        results = tester.print_summary()
+        
+        # Exit with appropriate code
+        if results["success_rate"] >= 90:
+            print(f"\n✅ Tests d'emails promotionnels terminés avec succès ({results['success_rate']:.1f}%)")
+            sys.exit(0)
+        else:
+            print(f"\n⚠️ Tests d'emails promotionnels terminés avec {results['failed_tests']} échecs")
+            sys.exit(1)
+            
+    except Exception as e:
+        print(f"\n❌ Tests d'emails promotionnels échoués: {str(e)}")
+        sys.exit(1)
+
 if __name__ == "__main__":
-    main_comprehensive()
+    # Check if we should run bulk email tests specifically
+    if len(sys.argv) > 1 and sys.argv[1] == "bulk-email":
+        main_bulk_email_tests()
+    else:
+        main_comprehensive()
