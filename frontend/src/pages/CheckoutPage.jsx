@@ -125,7 +125,7 @@ const CheckoutPage = () => {
   const allPaymentMethods = [
     ...paymentMethods,
     ...paymentGateways.map(gateway => ({
-      id: gateway.gateway_type === 'manual' ? `manual-${gateway.id}` : gateway.id,
+      id: gateway.gateway_type === 'manual' ? `manual-${gateway.gateway_id || gateway.id}` : (gateway.gateway_id || gateway.id),
       name: gateway.name,
       icon: gateway.gateway_type === 'manual' ? Banknote : DollarSign,
       description: gateway.description || 'Manual payment method',
