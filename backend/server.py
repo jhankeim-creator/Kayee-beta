@@ -657,12 +657,32 @@ async def create_order(order_data: OrderCreate):
         crypto_discount = total_amount * 0.15
         total_amount = total_amount - crypto_discount
     
+    # Get payment gateway instructions if it's a custom manual payment
+    payment_gateway_instructions = ""
+    payment_gateway_name = ""
+    
+    if order_data.payment_method.startswith('manual-'):
+        try:
+            settings = await db.admin_settings.find_one({"id": "admin_settings"}, {"_id": 0})
+            if settings:
+                gateways = settings.get("payment_gateways", [])
+                gateway_id = order_data.payment_method.replace('manual-', '')
+                for gateway in gateways:
+                    if gateway.get('gateway_id') == gateway_id or gateway.get('id') == gateway_id:
+                        payment_gateway_instructions = gateway.get('payment_instructions', '')
+                        payment_gateway_name = gateway.get('name', '')
+                        break
+        except Exception as e:
+            logger.error(f"Failed to get payment gateway instructions: {str(e)}")
+    
     # Create order data dict and update with calculated values
     order_dict = order_data.model_dump()
     order_dict.update({
         "order_number": order_number,
         "crypto_discount": crypto_discount,
-        "total": total_amount
+        "total": total_amount,
+        "payment_gateway_instructions": payment_gateway_instructions,
+        "payment_gateway_name": payment_gateway_name
     })
     
     order = Order(**order_dict)
@@ -716,9 +736,12 @@ async def create_order(order_data: OrderCreate):
     except Exception as e:
         logger.error(f"Failed to create payment for order {order.id}: {str(e)}")
     
-    # Envoyer email de confirmation au client
+    # Envoyer email de confirmation au client avec instructions de paiement
     try:
-        await email_service.send_order_confirmation(order.model_dump())
+        order_dict_for_email = order.model_dump()
+        order_dict_for_email["payment_gateway_instructions"] = payment_gateway_instructions
+        order_dict_for_email["payment_gateway_name"] = payment_gateway_name
+        await email_service.send_order_confirmation(order_dict_for_email)
     except Exception as e:
         logger.error(f"Failed to send order confirmation email: {str(e)}")
     
