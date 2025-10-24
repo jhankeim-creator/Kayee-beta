@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, ShoppingBag, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Star, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
 import { CartContext } from '../App';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -8,16 +8,18 @@ import Footer from '../components/Footer';
 import axios from 'axios';
 
 const HomePage = () => {
-  const { API, addToCart } = useContext(CartContext);
+  const { API, addToCart, token, addToWishlist } = useContext(CartContext);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [bestSellers, setBestSellers] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [wishlistItems, setWishlistItems] = useState([]);
   const navigate = useNavigate();
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
     loadData();
-  }, []);
+    loadWishlistItems();
+  }, [token]);
 
   const loadData = async () => {
     try {
