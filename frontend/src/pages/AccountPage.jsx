@@ -204,24 +204,42 @@ const AccountPage = () => {
             </div>
           </div>
 
-          {/* Tabs */}
+          {/* Modern Tabs */}
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              <TabsTrigger value="profile" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Profile
+            <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-white p-2 rounded-xl shadow-md h-auto">
+              <TabsTrigger 
+                value="profile" 
+                className="flex flex-col items-center gap-2 py-4 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-lg transition-all"
+              >
+                <User className="h-5 w-5" />
+                <span className="text-sm font-medium">Profile</span>
               </TabsTrigger>
-              <TabsTrigger value="orders" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Orders ({orders.length})
+              <TabsTrigger 
+                value="orders" 
+                className="flex flex-col items-center gap-2 py-4 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-lg transition-all"
+              >
+                <Package className="h-5 w-5" />
+                <span className="text-sm font-medium">Orders</span>
+                {orders.length > 0 && (
+                  <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{orders.length}</span>
+                )}
               </TabsTrigger>
-              <TabsTrigger value="wishlist" className="flex items-center gap-2">
-                <Heart className="h-4 w-4" />
-                Wishlist ({wishlist.length})
+              <TabsTrigger 
+                value="wishlist" 
+                className="flex flex-col items-center gap-2 py-4 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-lg transition-all"
+              >
+                <Heart className="h-5 w-5" />
+                <span className="text-sm font-medium">Wishlist</span>
+                {wishlist.length > 0 && (
+                  <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{wishlist.length}</span>
+                )}
               </TabsTrigger>
-              <TabsTrigger value="support" className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4" />
-                Support
+              <TabsTrigger 
+                value="support" 
+                className="flex flex-col items-center gap-2 py-4 data-[state=active]:bg-gradient-to-br data-[state=active]:from-[#d4af37] data-[state=active]:to-[#b8941f] data-[state=active]:text-white rounded-lg transition-all"
+              >
+                <MessageCircle className="h-5 w-5" />
+                <span className="text-sm font-medium">Support</span>
               </TabsTrigger>
             </TabsList>
 
