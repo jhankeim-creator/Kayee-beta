@@ -6481,6 +6481,313 @@ class ComprehensiveTester:
         
         return self.print_summary()
 
+    def test_manual_payment_instructions_email(self):
+        """🔍 TEST 1: PAIEMENT MANUEL - Instructions UNIQUEMENT par Email"""
+        if not self.admin_token:
+            self.log_result("Manual Payment Instructions Email", False, "Admin authentication required")
+            return False
+        
+        print("\n🎯 TEST 1: PAIEMENT MANUEL - Instructions UNIQUEMENT par Email")
+        print("-" * 60)
+        
+        # Step 1: Create manual payment gateway
+        gateway_payload = {
+            "gateway_type": "manual",
+            "name": "PayPal Test",
+            "description": "Payment via PayPal",
+            "payment_instructions": "Envoyez le paiement à: paypal@kayee01.com\nMontant: [VOIR EMAIL]\nRéférence: [NUMERO_COMMANDE]",
+            "enabled": True
+        }
+        
+        try:
+            # Create gateway
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/payment-gateways",
+                json=gateway_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                gateway_data = response.json()
+                gateway_id = gateway_data.get("gateway_id")
+                
+                self.log_result(
+                    "Create Manual Payment Gateway", 
+                    True, 
+                    f"Manual gateway created: {gateway_data.get('name')}",
+                    {"gateway_id": gateway_id, "instructions": gateway_data.get("payment_instructions")}
+                )
+                
+                # Step 2: Verify gateway appears on public API
+                public_response = self.session.get(f"{self.api_base}/settings/payment-gateways", timeout=10)
+                if public_response.status_code == 200:
+                    public_gateways = public_response.json()
+                    gateway_found = any(g.get("gateway_id") == gateway_id for g in public_gateways)
+                    
+                    self.log_result(
+                        "Verify Gateway on Public API", 
+                        gateway_found, 
+                        f"Gateway {'found' if gateway_found else 'not found'} on /api/settings/payment-gateways",
+                        {"public_gateways_count": len(public_gateways)}
+                    )
+                    
+                    if gateway_found:
+                        # Step 3: Create order with manual gateway
+                        return self.test_create_order_with_manual_gateway(gateway_id)
+                
+            else:
+                self.log_result("Create Manual Payment Gateway", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Create Manual Payment Gateway", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_create_order_with_manual_gateway(self, gateway_id: str):
+        """Create order with manual payment gateway and verify email instructions"""
+        order_payload = {
+            "items": [{
+                "id": "test-1",
+                "name": "Test Product",
+                "price": 50,
+                "quantity": 1,
+                "image": "test.jpg"
+            }],
+            "user_email": "client-test@example.com",
+            "user_name": "Test Client",
+            "phone": "+1234567890",
+            "shipping_address": {
+                "address": "123 Test St",
+                "city": "Test City",
+                "postal_code": "12345",
+                "country": "USA"
+            },
+            "payment_method": f"manual-{gateway_id}",
+            "total": 50,
+            "status": "pending"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/orders",
+                json=order_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                order_data = response.json()
+                order_number = order_data.get("order_number")
+                
+                self.log_result(
+                    "Create Order with Manual Gateway", 
+                    True, 
+                    f"Order created successfully: {order_number}",
+                    {
+                        "order_id": order_data.get("id"),
+                        "order_number": order_number,
+                        "payment_method": order_data.get("payment_method"),
+                        "total": order_data.get("total"),
+                        "user_email": order_data.get("user_email")
+                    }
+                )
+                
+                # Check backend logs for email confirmation
+                print("📧 VÉRIFICATION: L'email client doit contenir:")
+                print("   - Les instructions de paiement")
+                print("   - Le numéro de commande comme référence")
+                print("   - Le message 'Veuillez inclure votre numéro de commande'")
+                print("   ✅ Vérifiez les logs backend pour confirmation d'envoi d'email")
+                
+                return True
+            else:
+                self.log_result("Create Order with Manual Gateway", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Create Order with Manual Gateway", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_bulk_email_system_comprehensive(self):
+        """🔍 TEST 2: SYSTÈME BULK EMAIL"""
+        if not self.admin_token:
+            self.log_result("Bulk Email System Comprehensive", False, "Admin authentication required")
+            return False
+        
+        print("\n🎯 TEST 2: SYSTÈME BULK EMAIL")
+        print("-" * 60)
+        
+        # Test bulk email sending
+        bulk_email_payload = {
+            "subject": "Test Email Promotionnel",
+            "message": "Ceci est un test d'email en masse",
+            "recipient_filter": "all"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/admin/settings/bulk-email",
+                json=bulk_email_payload,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.admin_token}"
+                },
+                timeout=30
+            )
+            
+            if response.status_code in [200, 201]:
+                email_data = response.json()
+                
+                self.log_result(
+                    "Send Bulk Email", 
+                    True, 
+                    f"Bulk email sent successfully: {email_data.get('message')}",
+                    {
+                        "sent_to": email_data.get("sent_to"),
+                        "subject": bulk_email_payload["subject"],
+                        "message": bulk_email_payload["message"]
+                    }
+                )
+                
+                # Test getting bulk email history
+                return self.test_bulk_email_history_check()
+            else:
+                self.log_result("Send Bulk Email", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Send Bulk Email", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_bulk_email_history_check(self):
+        """Check bulk email history"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/bulk-emails",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                emails = response.json()
+                
+                self.log_result(
+                    "Get Bulk Email History", 
+                    True, 
+                    f"Retrieved {len(emails)} bulk emails from history",
+                    {"emails_count": len(emails), "latest_email": emails[0] if emails else None}
+                )
+                
+                print("📧 VÉRIFICATION: Vérifiez les logs backend pour confirmation d'envoi d'email")
+                return True
+            else:
+                self.log_result("Get Bulk Email History", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Bulk Email History", False, f"Request failed: {str(e)}")
+            return False
+
+    def test_admin_notifications_reverification(self):
+        """🔍 TEST 3: NOTIFICATIONS ADMIN (re-vérification)"""
+        print("\n🎯 TEST 3: NOTIFICATIONS ADMIN (re-vérification)")
+        print("-" * 60)
+        
+        # Create a test order to trigger admin notifications
+        order_payload = {
+            "items": [{
+                "id": "admin-test-1",
+                "name": "Admin Notification Test Product",
+                "price": 75,
+                "quantity": 1,
+                "image": "admin-test.jpg"
+            }],
+            "user_email": "admin-test@example.com",
+            "user_name": "Admin Test User",
+            "phone": "+1234567890",
+            "shipping_address": {
+                "address": "456 Admin St",
+                "city": "Admin City",
+                "postal_code": "67890",
+                "country": "USA"
+            },
+            "payment_method": "stripe",
+            "total": 75,
+            "status": "pending"
+        }
+        
+        try:
+            response = self.session.post(
+                f"{self.api_base}/orders",
+                json=order_payload,
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                order_data = response.json()
+                order_number = order_data.get("order_number")
+                
+                self.log_result(
+                    "Create Order for Admin Notifications", 
+                    True, 
+                    f"Order created successfully: {order_number}",
+                    {
+                        "order_id": order_data.get("id"),
+                        "order_number": order_number,
+                        "payment_method": order_data.get("payment_method"),
+                        "total": order_data.get("total")
+                    }
+                )
+                
+                print("📧 VÉRIFICATION: Les 2 emails admin doivent être envoyés à:")
+                print("   - kayicom509@gmail.com")
+                print("   - Info.kayicom.com@gmx.fr")
+                print("   ✅ Vérifiez les logs backend pour confirmation d'envoi aux 2 adresses")
+                
+                return True
+            else:
+                self.log_result("Create Order for Admin Notifications", False, f"HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Create Order for Admin Notifications", False, f"Request failed: {str(e)}")
+            return False
+
+    def run_french_review_tests(self):
+        """Run the specific tests requested in the French review"""
+        print("🚀 DÉMARRAGE DES TESTS DE RÉVISION FRANÇAISE")
+        print("=" * 80)
+        
+        # Test backend health first
+        if not self.test_backend_health():
+            print("❌ Backend not accessible. Stopping tests.")
+            return self.print_summary()
+        
+        # Test admin login first (required for tests)
+        if not self.test_admin_login():
+            print("❌ Admin login failed. Cannot proceed with tests.")
+            return self.print_summary()
+        
+        # Run the three specific tests requested
+        print("\n📋 EXÉCUTION DES TESTS SPÉCIFIQUES DEMANDÉS:")
+        print("-" * 50)
+        
+        # Test 1: Manual Payment Instructions Email
+        self.test_manual_payment_instructions_email()
+        
+        # Test 2: Bulk Email System
+        self.test_bulk_email_system_comprehensive()
+        
+        # Test 3: Admin Notifications Re-verification
+        self.test_admin_notifications_reverification()
+        
+        return self.print_summary()
+
 def main():
     """Main test execution"""
     try:
