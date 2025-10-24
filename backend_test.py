@@ -1613,6 +1613,666 @@ class ComprehensiveTester:
             self.log_result("Welcome Email Logs Check", False, f"Log check failed: {str(e)}")
             return False
 
+    # ===== COMPREHENSIVE FRENCH REVIEW TESTS =====
+
+    def test_get_profile(self):
+        """Test B: Get Profile - GET /api/auth/me"""
+        if not self.admin_token:
+            self.log_result("Get Profile", False, "Admin token required")
+            return False
+        
+        try:
+            response = self.session.get(
+                f"{self.api_base}/auth/me",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                profile_data = response.json()
+                
+                details = {
+                    "user_email": profile_data.get("email"),
+                    "user_name": profile_data.get("name"),
+                    "user_role": profile_data.get("role"),
+                    "user_id": profile_data.get("id")
+                }
+                
+                profile_valid = (
+                    profile_data.get("email") == "admin@luxe.com" and
+                    profile_data.get("role") == "admin"
+                )
+                
+                if profile_valid:
+                    self.log_result(
+                        "Get Profile", 
+                        True, 
+                        "✅ Profile retrieved successfully with admin token",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Get Profile", 
+                        False, 
+                        "❌ Profile validation failed",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Get Profile", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Profile", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_featured_products(self):
+        """Test A: Featured Products - GET /api/products?featured=true"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/products?featured=true",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                products = response.json()
+                
+                details = {
+                    "products_count": len(products),
+                    "expected_minimum": 10,
+                    "first_product": products[0] if products else None
+                }
+                
+                # Check if we have at least 10 products
+                has_enough_products = len(products) >= 10
+                
+                if has_enough_products:
+                    self.log_result(
+                        "Featured Products", 
+                        True, 
+                        f"✅ Retrieved {len(products)} featured products (≥10 required)",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Featured Products", 
+                        False, 
+                        f"❌ Only {len(products)} featured products found (need ≥10)",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Featured Products", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Featured Products", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_best_sellers(self):
+        """Test B: Best Sellers - GET /api/products/best-sellers?limit=12"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/products/best-sellers?limit=12",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                products = response.json()
+                
+                details = {
+                    "products_count": len(products),
+                    "limit_requested": 12,
+                    "products_structure": [{"id": p.get("id"), "name": p.get("name"), "price": p.get("price")} for p in products[:3]] if products else []
+                }
+                
+                # Validate response structure
+                structure_valid = all(
+                    isinstance(p, dict) and 
+                    "id" in p and 
+                    "name" in p and 
+                    "price" in p
+                    for p in products
+                ) if products else True
+                
+                if structure_valid:
+                    self.log_result(
+                        "Best Sellers", 
+                        True, 
+                        f"✅ Retrieved {len(products)} best seller products with correct structure",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Best Sellers", 
+                        False, 
+                        "❌ Product structure validation failed",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Best Sellers", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Best Sellers", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_search_products(self):
+        """Test C: Search Products - GET /api/products/search?q=watch"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/products/search?q=watch",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                products = response.json()
+                
+                details = {
+                    "products_count": len(products),
+                    "search_query": "watch",
+                    "products_found": [{"id": p.get("id"), "name": p.get("name")} for p in products[:5]] if products else []
+                }
+                
+                # Search should return results (could be 0 if no watches in database)
+                search_working = isinstance(products, list)
+                
+                if search_working:
+                    self.log_result(
+                        "Search Products", 
+                        True, 
+                        f"✅ Search functionality working - found {len(products)} products for 'watch'",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Search Products", 
+                        False, 
+                        "❌ Search response format invalid",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Search Products", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Search Products", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_get_categories(self):
+        """Test A: Get All Categories - GET /api/categories"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/categories",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                categories = response.json()
+                
+                details = {
+                    "categories_count": len(categories),
+                    "categories_structure": [{"id": c.get("id"), "name": c.get("name"), "slug": c.get("slug")} for c in categories[:3]] if categories else []
+                }
+                
+                # Validate category structure
+                structure_valid = all(
+                    isinstance(c, dict) and 
+                    "id" in c and 
+                    "name" in c and 
+                    "slug" in c
+                    for c in categories
+                ) if categories else True
+                
+                if structure_valid:
+                    self.log_result(
+                        "Get Categories", 
+                        True, 
+                        f"✅ Retrieved {len(categories)} categories with correct structure",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Get Categories", 
+                        False, 
+                        "❌ Category structure validation failed",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Get Categories", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Categories", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_get_orders(self):
+        """Test A: Get Orders - GET /api/orders/my"""
+        if not self.admin_token:
+            self.log_result("Get Orders", False, "Admin token required")
+            return False
+        
+        try:
+            response = self.session.get(
+                f"{self.api_base}/orders/my",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                orders = response.json()
+                
+                details = {
+                    "orders_count": len(orders),
+                    "orders_structure": [{"id": o.get("id"), "order_number": o.get("order_number"), "total": o.get("total"), "status": o.get("status")} for o in orders[:3]] if orders else []
+                }
+                
+                # Validate order structure
+                structure_valid = all(
+                    isinstance(o, dict) and 
+                    "id" in o and 
+                    "order_number" in o and 
+                    "total" in o and
+                    "status" in o
+                    for o in orders
+                ) if orders else True
+                
+                if structure_valid:
+                    self.log_result(
+                        "Get Orders", 
+                        True, 
+                        f"✅ Retrieved {len(orders)} orders with correct structure",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Get Orders", 
+                        False, 
+                        "❌ Order structure validation failed",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Get Orders", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Orders", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_get_wishlist(self):
+        """Test A: Get Wishlist - GET /api/wishlist"""
+        if not self.admin_token:
+            self.log_result("Get Wishlist", False, "Admin token required")
+            return False
+        
+        try:
+            response = self.session.get(
+                f"{self.api_base}/wishlist",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                wishlist = response.json()
+                
+                details = {
+                    "wishlist_count": len(wishlist),
+                    "wishlist_structure": [{"id": w.get("id"), "name": w.get("name"), "price": w.get("price")} for w in wishlist[:3]] if wishlist else []
+                }
+                
+                # Wishlist should be a list (could be empty)
+                wishlist_valid = isinstance(wishlist, list)
+                
+                if wishlist_valid:
+                    self.log_result(
+                        "Get Wishlist", 
+                        True, 
+                        f"✅ Retrieved wishlist with {len(wishlist)} items",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Get Wishlist", 
+                        False, 
+                        "❌ Wishlist response format invalid",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Get Wishlist", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Get Wishlist", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_admin_payment_gateways(self):
+        """Test A: Payment Gateways - GET /api/admin/settings/payment-gateways"""
+        if not self.admin_token:
+            self.log_result("Admin Payment Gateways", False, "Admin token required")
+            return False
+        
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/settings/payment-gateways",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                gateways = response.json()
+                
+                details = {
+                    "gateways_count": len(gateways),
+                    "gateways_structure": [{"gateway_id": g.get("gateway_id"), "name": g.get("name"), "gateway_type": g.get("gateway_type")} for g in gateways[:3]] if gateways else []
+                }
+                
+                # Payment gateways should be a list
+                gateways_valid = isinstance(gateways, list)
+                
+                if gateways_valid:
+                    self.log_result(
+                        "Admin Payment Gateways", 
+                        True, 
+                        f"✅ Retrieved {len(gateways)} payment gateways",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Admin Payment Gateways", 
+                        False, 
+                        "❌ Payment gateways response format invalid",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Admin Payment Gateways", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Admin Payment Gateways", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_admin_team_members(self):
+        """Test B: Team Members - GET /api/admin/team/members"""
+        if not self.admin_token:
+            self.log_result("Admin Team Members", False, "Admin token required")
+            return False
+        
+        try:
+            response = self.session.get(
+                f"{self.api_base}/admin/team/members",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                members = response.json()
+                
+                details = {
+                    "members_count": len(members),
+                    "members_structure": [{"id": m.get("id"), "email": m.get("email"), "name": m.get("name"), "role": m.get("role")} for m in members[:3]] if members else []
+                }
+                
+                # Team members should be a list
+                members_valid = isinstance(members, list)
+                
+                if members_valid:
+                    self.log_result(
+                        "Admin Team Members", 
+                        True, 
+                        f"✅ Retrieved {len(members)} team members",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Admin Team Members", 
+                        False, 
+                        "❌ Team members response format invalid",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Admin Team Members", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Admin Team Members", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_public_social_links(self):
+        """Test C: Social Links - GET /api/settings/social-links"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/settings/social-links",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                links = response.json()
+                
+                details = {
+                    "links_count": len(links),
+                    "links_structure": [{"id": l.get("id"), "platform": l.get("platform"), "url": l.get("url")} for l in links[:3]] if links else [],
+                    "public_endpoint": True
+                }
+                
+                # Social links should be a list (no auth required)
+                links_valid = isinstance(links, list)
+                
+                if links_valid:
+                    self.log_result(
+                        "Public Social Links", 
+                        True, 
+                        f"✅ Retrieved {len(links)} social links (public endpoint, no auth)",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Public Social Links", 
+                        False, 
+                        "❌ Social links response format invalid",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Public Social Links", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Public Social Links", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_floating_announcement(self):
+        """Test A: Floating Announcement - GET /api/settings/floating-announcement"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/settings/floating-announcement",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                announcement = response.json()
+                
+                details = {
+                    "announcement": announcement,
+                    "enabled": announcement.get("enabled") if announcement else None,
+                    "title": announcement.get("title") if announcement else None,
+                    "public_endpoint": True
+                }
+                
+                # Announcement can be null or object (no auth required)
+                announcement_valid = announcement is None or isinstance(announcement, dict)
+                
+                if announcement_valid:
+                    self.log_result(
+                        "Floating Announcement", 
+                        True, 
+                        f"✅ Retrieved floating announcement (public endpoint, no auth)",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Floating Announcement", 
+                        False, 
+                        "❌ Floating announcement response format invalid",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Floating Announcement", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Floating Announcement", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def test_google_analytics(self):
+        """Test B: Google Analytics - GET /api/settings/google-analytics"""
+        try:
+            response = self.session.get(
+                f"{self.api_base}/settings/google-analytics",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                analytics = response.json()
+                
+                details = {
+                    "analytics": analytics,
+                    "tracking_id": analytics.get("tracking_id") if analytics else None,
+                    "public_endpoint": True
+                }
+                
+                # Analytics can be null or object (no auth required)
+                analytics_valid = analytics is None or isinstance(analytics, dict)
+                
+                if analytics_valid:
+                    self.log_result(
+                        "Google Analytics", 
+                        True, 
+                        f"✅ Retrieved Google Analytics settings (public endpoint, no auth)",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "Google Analytics", 
+                        False, 
+                        "❌ Google Analytics response format invalid",
+                        details
+                    )
+                    return False
+            else:
+                self.log_result("Google Analytics", False, f"❌ HTTP {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.log_result("Google Analytics", False, f"❌ Request failed: {str(e)}")
+            return False
+
+    def run_comprehensive_tests(self):
+        """Run all comprehensive tests as requested in French review"""
+        print("🚀 Démarrage du test complet final...")
+        print()
+        
+        # Test 0: Backend Health Check
+        if not self.test_backend_health():
+            print("❌ Vérification de santé du backend échouée. Arrêt des tests.")
+            return self.print_summary()
+        
+        # Test 1: AUTHENTIFICATION & COMPTE
+        print("=" * 60)
+        print("🔐 1. AUTHENTIFICATION & COMPTE")
+        print("=" * 60)
+        
+        # Test A: Login
+        login_success = self.test_admin_login()
+        
+        # Test B: Get Profile (only if login successful)
+        if login_success:
+            self.test_get_profile()
+        
+        # Test 2: PRODUITS
+        print("=" * 60)
+        print("📦 2. PRODUITS")
+        print("=" * 60)
+        
+        # Test A: Featured Products
+        self.test_featured_products()
+        
+        # Test B: Best Sellers
+        self.test_best_sellers()
+        
+        # Test C: Search Products
+        self.test_search_products()
+        
+        # Test 3: CATÉGORIES
+        print("=" * 60)
+        print("🏷️ 3. CATÉGORIES")
+        print("=" * 60)
+        
+        # Test A: Get All Categories
+        self.test_get_categories()
+        
+        # Test 4: PANIER & COMMANDES
+        print("=" * 60)
+        print("🛒 4. PANIER & COMMANDES")
+        print("=" * 60)
+        
+        # Test A: Get Orders
+        self.test_get_orders()
+        
+        # Test 5: WISHLIST
+        print("=" * 60)
+        print("❤️ 5. WISHLIST")
+        print("=" * 60)
+        
+        # Test A: Get Wishlist
+        self.test_get_wishlist()
+        
+        # Test 6: ADMIN FEATURES
+        print("=" * 60)
+        print("👑 6. ADMIN FEATURES")
+        print("=" * 60)
+        
+        # Test A: Payment Gateways
+        self.test_admin_payment_gateways()
+        
+        # Test B: Team Members
+        self.test_admin_team_members()
+        
+        # Test C: Social Links
+        self.test_public_social_links()
+        
+        # Test 7: AUTRES ENDPOINTS
+        print("=" * 60)
+        print("🔧 7. AUTRES ENDPOINTS")
+        print("=" * 60)
+        
+        # Test A: Floating Announcement
+        self.test_floating_announcement()
+        
+        # Test B: Google Analytics
+        self.test_google_analytics()
+        
+        return self.print_summary()
+
     def test_stripe_payment_link_creation(self):
         """Test Stripe payment link creation for order ORD-3E0AF5B2"""
         test_order_payload = {
