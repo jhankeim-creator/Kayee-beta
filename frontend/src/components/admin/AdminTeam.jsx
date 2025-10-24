@@ -100,7 +100,7 @@ const AdminTeam = () => {
   };
 
   const handleDelete = async (memberId) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')) {
+    if (!window.confirm('Are you sure you want to delete this member?')) {
       return;
     }
 
