@@ -5,16 +5,19 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import { toast } from 'sonner';
+import { Heart } from 'lucide-react';
 
 const ShopPage = () => {
   const { category } = useParams();
-  const { API, addToCart } = useContext(CartContext);
+  const { API, addToCart, token } = useContext(CartContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const productsPerPage = 20;
   const navigate = useNavigate();
+  const [wishlistItems, setWishlistItems] = useState([]);
   
   // Price filter state
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
