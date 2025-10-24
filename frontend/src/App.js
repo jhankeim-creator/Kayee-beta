@@ -20,6 +20,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import MyOrders from './pages/MyOrders';
 import Wishlist from './pages/Wishlist';
+import LoginPage from './pages/LoginPage';
+import AccountPage from './pages/AccountPage';
 import FAQPage from './pages/FAQPage';
 import TermsOfService from './pages/TermsOfService';
 import RefundPolicy from './pages/RefundPolicy';
