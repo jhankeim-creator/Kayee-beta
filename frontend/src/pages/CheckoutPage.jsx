@@ -117,9 +117,21 @@ const CheckoutPage = () => {
   };
 
   const paymentMethods = [
-    { id: 'stripe', name: 'Credit Card (Stripe)', icon: CreditCard, description: 'Pay with credit or debit card' },
-    { id: 'plisio', name: 'Cryptocurrency (Plisio)', icon: Wallet, description: '100+ cryptocurrencies accepted', discount: '15% OFF' },
-    { id: 'manual', name: 'Manual Payment', icon: DollarSign, description: 'Bank transfer, Payoneer - Instructions sent by email' }
+    { id: 'stripe', name: 'Credit Card (Stripe)', icon: CreditCard, description: 'Pay with credit or debit card', type: 'stripe' },
+    { id: 'plisio', name: 'Cryptocurrency (Plisio)', icon: Wallet, description: '100+ cryptocurrencies accepted', discount: '15% OFF', type: 'plisio' }
+  ];
+
+  // Add payment gateways from admin to the list
+  const allPaymentMethods = [
+    ...paymentMethods,
+    ...paymentGateways.map(gateway => ({
+      id: gateway.gateway_type === 'manual' ? `manual-${gateway.id}` : gateway.id,
+      name: gateway.name,
+      icon: gateway.gateway_type === 'manual' ? Banknote : DollarSign,
+      description: gateway.description || 'Manual payment method',
+      type: gateway.gateway_type,
+      instructions: gateway.payment_instructions
+    }))
   ];
 
   return (
