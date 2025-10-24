@@ -11,8 +11,8 @@ const SocialAuth = ({ onSuccess }) => {
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      // En mode démo, simuler la connexion
-      toast.info('Mode démo - Connexion Google simulée');
+      // Demo mode - simulate login
+      toast.info('Demo mode - Google login simulated');
       
       // En production, vous utiliseriez Google Sign-In SDK
       // const response = await gapi.auth2.getAuthInstance().signIn();
