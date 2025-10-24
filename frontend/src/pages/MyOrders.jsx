@@ -17,7 +17,7 @@ const MyOrders = () => {
   useEffect(() => {
     if (!user || !token) {
       toast.error('Please login to view your orders');
-      navigate('/admin/login');
+      navigate('/login');
       return;
     }
     loadOrders();
