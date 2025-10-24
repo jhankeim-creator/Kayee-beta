@@ -279,6 +279,21 @@ backend:
           agent: "testing"
           comment: "✅ Order filtering API working correctly. GET /api/admin/orders/filters supports advanced filtering: 1) status=pending returns 22 orders ✅ 2) payment_method=plisio returns 18 orders ✅. Response structure includes orders array, total count, and pagination info. All filter parameters working as expected."
 
+  - task: "Admin Email Notifications for New Orders"
+    implemented: true
+    working: true
+    file: "backend/email_service.py, backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "❌ Admin email notifications failing due to missing datetime import in email_service.py. Error: 'name 'datetime' is not defined' when trying to send admin notifications for new orders."
+        - working: true
+          agent: "testing"
+          comment: "✅ ADMIN EMAIL NOTIFICATIONS WORKING PERFECTLY - Fixed missing datetime import in email_service.py. Comprehensive testing completed: 1) Manual Payment Orders: Admin notifications sent successfully to BOTH addresses (kayicom509@gmail.com AND Info.kayicom.com@gmx.fr) ✅ 2) Stripe Payment Orders: Admin notifications sent successfully to BOTH addresses ✅ 3) Backend logs confirm: 'Email sent successfully to kayicom509@gmail.com', 'Email sent successfully to Info.kayicom.com@gmx.fr', and 'Admin notifications sent for order ORD-XXXXXXXX' ✅. All 5/5 tests passed (100% success rate). Admin email notification system is fully functional for both payment methods."
+
 frontend:
   - task: "HomePage Ecwid-Style Design (3-4 Columns with Badges)"
     implemented: true
