@@ -615,7 +615,7 @@ class ComprehensiveTester:
 
     def test_password_reset_flow(self):
         """Test password reset flow - forgot password and reset password"""
-        test_email = "test@example.com"
+        test_email = "kayicom509@gmail.com"
         
         # Test 1.1: Forgot Password - Send Reset Email
         try:

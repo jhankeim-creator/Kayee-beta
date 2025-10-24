@@ -6,7 +6,7 @@ import json
 backend_url = 'https://kayee01-shopfront.preview.emergentagent.com/api'
 
 test_order_data = {
-    'user_email': 'test@example.com',
+    'user_email': 'kayicom509@gmail.com',
     'user_name': 'Test User',
     'items': [
         {
