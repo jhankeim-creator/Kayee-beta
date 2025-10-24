@@ -15,8 +15,8 @@ const FloatingAnnouncement = () => {
   }, []);
 
   const loadAnnouncement = async () => {
-    // Don't show popup on admin pages, login pages, or checkout
-    const excludedPaths = ['/admin', '/forgot-password', '/reset-password'];
+    // Don't show popup on admin pages, login pages, checkout, or account pages
+    const excludedPaths = ['/admin', '/login', '/forgot-password', '/reset-password', '/checkout', '/account'];
     const isExcludedPage = excludedPaths.some(path => location.pathname.startsWith(path));
     
     if (isExcludedPage) {
