@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-🔍 TEST COMPLET FINAL - VÉRIFICATION GLOBALE
-Comprehensive Backend Testing Suite for Luxe Store
-Tests ALL backend functionalities as requested in French review
+🔍 TEST DE NOTIFICATION EMAIL ADMIN POUR NOUVELLES COMMANDES
+Test Admin Email Notifications for New Orders
+Tests that administrators receive email notifications at TWO addresses when new orders are placed
 """
 
 import requests
