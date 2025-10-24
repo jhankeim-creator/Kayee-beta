@@ -146,25 +146,62 @@ const AccountPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="pt-32 pb-20">
         <div className="container mx-auto px-4">
-          {/* Header */}
-          <div className="flex justify-between items-start mb-8">
-            <div>
-              <h1 className="text-4xl font-bold mb-2" style={{ fontFamily: 'Playfair Display' }}>
-                My Account
-              </h1>
-              <p className="text-gray-600">Welcome back, {user.name}!</p>
+          {/* Professional Header with Stats */}
+          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+              <div className="flex items-center gap-4 mb-4 md:mb-0">
+                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-[#d4af37] to-[#b8941f] flex items-center justify-center text-white text-2xl font-bold">
+                  {user.name?.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold" style={{ fontFamily: 'Playfair Display' }}>
+                    {user.name}
+                  </h1>
+                  <p className="text-gray-600 flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-600"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
             </div>
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
+                <div className="flex items-center justify-between mb-2">
+                  <ShoppingBag className="h-8 w-8 text-blue-600" />
+                  <span className="text-3xl font-bold text-blue-600">{stats.totalOrders}</span>
+                </div>
+                <p className="text-sm text-blue-800 font-medium">Total Orders</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
+                <div className="flex items-center justify-between mb-2">
+                  <TrendingUp className="h-8 w-8 text-green-600" />
+                  <span className="text-3xl font-bold text-green-600">${stats.totalSpent.toFixed(2)}</span>
+                </div>
+                <p className="text-sm text-green-800 font-medium">Total Spent</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-6 rounded-xl border border-pink-200">
+                <div className="flex items-center justify-between mb-2">
+                  <Heart className="h-8 w-8 text-pink-600" />
+                  <span className="text-3xl font-bold text-pink-600">{stats.wishlistCount}</span>
+                </div>
+                <p className="text-sm text-pink-800 font-medium">Wishlist Items</p>
+              </div>
+            </div>
           </div>
 
           {/* Tabs */}
