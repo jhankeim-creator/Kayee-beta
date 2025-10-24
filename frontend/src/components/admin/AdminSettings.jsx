@@ -225,7 +225,7 @@ const AdminSettings = () => {
   };
 
   const deleteExternalLink = async (linkId) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce lien externe ?')) {
+    if (!window.confirm('Are you sure you want to delete this external link?')) {
       return;
     }
     
