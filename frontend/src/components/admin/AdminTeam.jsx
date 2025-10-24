@@ -248,7 +248,7 @@ const AdminTeam = () => {
                   {!formData.is_super_admin && (
                     <>
                       <div className="flex items-center justify-between">
-                        <Label>Gérer les produits</Label>
+                        <Label>Manage Products</Label>
                         <Switch
                           checked={formData.permissions.manage_products}
                           onCheckedChange={(checked) => updatePermission('manage_products', checked)}
