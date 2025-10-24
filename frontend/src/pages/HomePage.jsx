@@ -226,15 +226,26 @@ const HomePage = () => {
                     )}
                   </div>
                   <h3 className="font-semibold text-lg mb-2 line-clamp-2">{product.name}</h3>
-                  <div className="flex items-center gap-2">
-                    {product.on_sale && product.original_price ? (
-                      <>
-                        <span className="text-red-600 font-bold text-xl">${product.price.toFixed(2)}</span>
-                        <span className="text-gray-400 line-through text-sm">${product.original_price.toFixed(2)}</span>
-                      </>
-                    ) : (
-                      <span className="text-gray-900 font-bold text-xl">${product.price.toFixed(2)}</span>
-                    )}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      {product.on_sale && product.original_price ? (
+                        <>
+                          <span className="text-red-600 font-bold text-xl">${product.price.toFixed(2)}</span>
+                          <span className="text-gray-400 line-through text-sm">${product.original_price.toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="text-gray-900 font-bold text-xl">${product.price.toFixed(2)}</span>
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => handleWishlistClick(e, product.id)}
+                      className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                      aria-label="Add to wishlist"
+                    >
+                      <Heart
+                        className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`}
+                      />
+                    </button>
                   </div>
                   {product.rating && (
                     <div className="flex items-center gap-1 mt-2">
