@@ -286,31 +286,32 @@ const AdminSettings = () => {
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold flex items-center">
-            <Settings className="h-8 w-8 mr-3" />
+          <h1 className="text-2xl md:text-3xl font-bold flex items-center">
+            <Settings className="h-6 w-6 md:h-8 md:w-8 mr-2 md:mr-3" />
             Admin Settings
           </h1>
-          <p className="text-gray-600 mt-1">Manage payment gateways, social links, and announcements</p>
+          <p className="text-sm md:text-base text-gray-600 mt-1">Gérer les passerelles de paiement, liens sociaux et annonces</p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b pb-2 overflow-x-auto">
+      {/* Tabs - Mobile Responsive */}
+      <div className="flex gap-1 md:gap-2 border-b pb-2 overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap ${
+            className={`flex items-center px-2 md:px-4 py-2 rounded-t-lg transition-colors whitespace-nowrap text-xs md:text-base ${
               activeTab === tab.id
                 ? 'bg-[#d4af37] text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            <tab.icon className="h-4 w-4 mr-2" />
-            {tab.label}
+            <tab.icon className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+            <span className="hidden sm:inline">{tab.label}</span>
+            <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
           </button>
         ))}
       </div>
