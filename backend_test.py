@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 """
-🔍 TEST COMPLET DES CORRECTIONS DEMANDÉES
-Complete Test of Requested Corrections
+🔍 TEST RAPIDE BACKEND KAYEE01 - DÉPLOIEMENT VPS
+Quick Backend Test for Kayee01 - VPS Deployment
 
-Tests the following specific corrections as requested:
-1. TEST PAIEMENT MANUEL - Instructions UNIQUEMENT par Email
-2. TEST SYSTÈME BULK EMAIL  
-3. TEST NOTIFICATIONS ADMIN (re-verification)
+Tests the following 5 critical endpoints before VPS deployment:
+1. API Health Check - verify backend responds
+2. MongoDB Connection - verify database is accessible  
+3. Products Test - GET /api/products (should return product list)
+4. Admin Login Test - POST /api/admin/login with kayicom509@gmail.com / Admin123!
+5. Payment Gateways Test - GET /api/settings/payment-gateways
+
+Context:
+- Backend URL: http://localhost:8001 (but using REACT_APP_BACKEND_URL)
+- All services are already running
+- There are already 21 products in the database
+- Admin email: kayicom509@gmail.com, password: Admin123!
 """
 
 import requests
