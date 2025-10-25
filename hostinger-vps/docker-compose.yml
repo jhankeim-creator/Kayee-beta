@@ -51,8 +51,8 @@ services:
   # Frontend React
   frontend:
     build:
-      context: ../frontend
-      dockerfile: ../hostinger-vps/Dockerfile.frontend
+      context: ..
+      dockerfile: hostinger-vps/Dockerfile.frontend
       args:
         - REACT_APP_BACKEND_URL=https://${DOMAIN_NAME}
     container_name: kayee01-frontend
