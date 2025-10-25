@@ -5,12 +5,14 @@ services:
     env: python
     region: frankfurt
     plan: free
-    buildCommand: pip install -r backend/requirements.txt
+    buildCommand: bash build-backend.sh
     startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/categories
     envVars:
       - key: MONGO_URL
         sync: false
+      - key: DB_NAME
+        value: kayee01_db
       - key: JWT_SECRET_KEY
         generateValue: true
       - key: STRIPE_SECRET_KEY
@@ -24,19 +26,19 @@ services:
       - key: SMTP_PORT
         value: 587
       - key: SMTP_USER
-        sync: false
+        value: kayee01.shop@gmail.com
       - key: SMTP_PASSWORD
         sync: false
+      - key: ADMIN_EMAIL_1
+        value: kayicom509@gmail.com
+      - key: ADMIN_EMAIL_2
+        value: Info.kayicom.com@gmx.fr
+      - key: PAYONEER_EMAIL
+        value: kayicom509@gmail.com
+      - key: PAYONEER_NAME
+        value: Anson
       - key: FRONTEND_URL
-        fromService:
-          type: web
-          name: kayee01-frontend
-          property: host
-      - key: BACKEND_URL
-        fromService:
-          type: web
-          name: kayee01-backend
-          property: host
+        value: https://kayee01-frontend.onrender.com
 
   # Frontend React Service
   - type: web
@@ -59,13 +61,5 @@ services:
         value: public, max-age=31536000, immutable
     envVars:
       - key: REACT_APP_BACKEND_URL
-        fromService:
-          type: web
-          name: kayee01-backend
-          property: host
+        value: https://kayee01-backend.onrender.com
 
-databases:
-  - name: kayee01-mongodb
-    databaseName: kayee01_db
-    user: kayee01_user
-    plan: free
