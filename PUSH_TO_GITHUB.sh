@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "=========================================="
+echo "🚀 INSTRUCTIONS POUR POUSSER VERS GITHUB"
+echo "=========================================="
+echo ""
+echo "Votre code est prêt dans /app"
+echo ""
+echo "📋 COMMANDES À EXÉCUTER :"
+echo ""
+echo "cd /app"
+echo "git remote add origin https://github.com/kayee_beta/kayee01-ecommerce.git"
+echo "git branch -M main"
+echo "git push -u origin main"
+echo ""
+echo "=========================================="
+echo "✅ Tous les fichiers sont prêts :"
+echo ""
+ls -1 /app/ | grep -E '(render.yaml|build-backend.sh|QUICK_START|DEPLOYMENT_READY|START_HERE)'
+echo ""
+echo "=========================================="
