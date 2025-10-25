@@ -76,18 +76,86 @@ class Kayee01QuickTester:
                 print(f"    {key}: {value}")
         print()
 
-    def test_backend_health(self):
-        """Test if backend is accessible"""
+    def test_1_api_health_check(self):
+        """Test 1: API Health Check - verify backend responds"""
         try:
             response = self.session.get(f"{self.api_base}/categories", timeout=10)
             if response.status_code == 200:
-                self.log_result("Backend Health", True, "Backend is accessible")
+                categories = response.json()
+                self.log_result(
+                    "1. API Health Check", 
+                    True, 
+                    f"✅ Backend is accessible and responding (found {len(categories)} categories)",
+                    {"status_code": response.status_code, "categories_count": len(categories)}
+                )
                 return True
             else:
-                self.log_result("Backend Health", False, f"Backend returned {response.status_code}")
+                self.log_result("1. API Health Check", False, f"❌ Backend returned {response.status_code}")
                 return False
         except Exception as e:
-            self.log_result("Backend Health", False, f"Backend not accessible: {str(e)}")
+            self.log_result("1. API Health Check", False, f"❌ Backend not accessible: {str(e)}")
+            return False
+
+    def test_2_mongodb_connection(self):
+        """Test 2: MongoDB Connection - verify database is accessible"""
+        try:
+            # Test MongoDB connection by trying to get products count
+            response = self.session.get(f"{self.api_base}/products/count", timeout=10)
+            if response.status_code == 200:
+                count_data = response.json()
+                product_count = count_data.get("count", 0)
+                self.log_result(
+                    "2. MongoDB Connection", 
+                    True, 
+                    f"✅ Database is accessible (found {product_count} products in database)",
+                    {"status_code": response.status_code, "product_count": product_count}
+                )
+                return True
+            else:
+                self.log_result("2. MongoDB Connection", False, f"❌ Database query failed with {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("2. MongoDB Connection", False, f"❌ Database connection failed: {str(e)}")
+            return False
+
+    def test_3_products_list(self):
+        """Test 3: Products Test - GET /api/products (should return product list)"""
+        try:
+            response = self.session.get(f"{self.api_base}/products", timeout=15)
+            if response.status_code == 200:
+                products = response.json()
+                product_count = len(products)
+                
+                # Check if we have the expected 21 products
+                expected_count = 21
+                details = {
+                    "status_code": response.status_code,
+                    "products_found": product_count,
+                    "expected_count": expected_count,
+                    "sample_products": [p.get("name", "Unknown") for p in products[:3]] if products else []
+                }
+                
+                if product_count >= expected_count:
+                    self.log_result(
+                        "3. Products List", 
+                        True, 
+                        f"✅ Products API working correctly ({product_count} products found, expected ≥{expected_count})",
+                        details
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "3. Products List", 
+                        True, 
+                        f"⚠️ Products API working but fewer products than expected ({product_count} found, expected {expected_count})",
+                        details
+                    )
+                    return True
+            else:
+                self.log_result("3. Products List", False, f"❌ Products API failed with {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("3. Products List", False, f"❌ Products API request failed: {str(e)}")
             return False
 
     def test_admin_login(self):
