@@ -631,10 +631,33 @@ class Kayee01QuickTester:
             self.log_result("PROFILE UPDATE Test A - Mise à jour", False, f"❌ Requête échouée: {str(e)}")
             return None
 
+    def run_critical_tests(self):
+        """Run the 5 critical tests for VPS deployment"""
+        print("\n🚀 STARTING CRITICAL BACKEND TESTS FOR VPS DEPLOYMENT")
+        print("=" * 80)
+        
+        # Run the 5 critical tests in order
+        test_methods = [
+            self.test_1_api_health_check,
+            self.test_2_mongodb_connection,
+            self.test_3_products_list,
+            self.test_4_admin_login,
+            self.test_5_payment_gateways
+        ]
+        
+        for test_method in test_methods:
+            try:
+                test_method()
+            except Exception as e:
+                test_name = test_method.__name__.replace('test_', '').replace('_', ' ').title()
+                self.log_result(test_name, False, f"❌ Test crashed: {str(e)}")
+        
+        return self.print_summary()
+
     def print_summary(self):
-        """Print comprehensive test summary"""
+        """Print test summary for VPS deployment readiness"""
         print("\n" + "=" * 80)
-        print("📊 RÉSUMÉ FINAL DES TESTS")
+        print("📊 RÉSUMÉ FINAL - PRÉPARATION DÉPLOIEMENT VPS")
         print("=" * 80)
         
         total_tests = len(self.test_results)
@@ -642,66 +665,40 @@ class Kayee01QuickTester:
         failed_tests = total_tests - passed_tests
         success_rate = (passed_tests / total_tests * 100) if total_tests > 0 else 0
         
-        print(f"📈 Total des tests: {total_tests}")
+        print(f"📈 Total des tests critiques: {total_tests}")
         print(f"✅ Tests réussis: {passed_tests}")
         print(f"❌ Tests échoués: {failed_tests}")
         print(f"📊 Taux de réussite: {success_rate:.1f}%")
         print()
         
-        # Group results by category
-        categories = {
-            "AUTHENTIFICATION": [],
-            "PRODUITS": [],
-            "CATÉGORIES": [],
-            "COMMANDES": [],
-            "WISHLIST": [],
-            "ADMIN": [],
-            "AUTRES": []
-        }
-        
+        # Print all test results
+        print("🔍 DÉTAILS DES TESTS:")
         for result in self.test_results:
-            test_name = result["test"]
-            if any(x in test_name for x in ["Login", "Profile", "Register", "Password"]):
-                categories["AUTHENTIFICATION"].append(result)
-            elif any(x in test_name for x in ["Products", "Featured", "Best Sellers", "Search"]):
-                categories["PRODUITS"].append(result)
-            elif "Categories" in test_name:
-                categories["CATÉGORIES"].append(result)
-            elif "Orders" in test_name:
-                categories["COMMANDES"].append(result)
-            elif "Wishlist" in test_name:
-                categories["WISHLIST"].append(result)
-            elif any(x in test_name for x in ["Admin", "Payment", "Team"]):
-                categories["ADMIN"].append(result)
-            else:
-                categories["AUTRES"].append(result)
-        
-        # Print results by category
-        for category, results in categories.items():
-            if results:
-                print(f"🔸 {category}:")
-                for result in results:
-                    status = "✅" if result["success"] else "❌"
-                    print(f"  {status} {result['test']}")
-                print()
+            status = "✅" if result["success"] else "❌"
+            print(f"  {status} {result['test']}")
+        print()
         
         # Print failed tests details
         failed_results = [r for r in self.test_results if not r["success"]]
         if failed_results:
-            print("❌ DÉTAILS DES ÉCHECS:")
+            print("❌ PROBLÈMES DÉTECTÉS:")
             for result in failed_results:
                 print(f"  • {result['test']}: {result['message']}")
             print()
         
-        # Final status
-        if success_rate >= 90:
-            print("🎉 STATUT GLOBAL: EXCELLENT - Tous les endpoints fonctionnent correctement!")
-        elif success_rate >= 75:
-            print("✅ STATUT GLOBAL: BON - La plupart des fonctionnalités marchent")
-        elif success_rate >= 50:
-            print("⚠️ STATUT GLOBAL: MOYEN - Quelques problèmes à résoudre")
+        # VPS Deployment readiness assessment
+        if success_rate == 100:
+            print("🎉 STATUT DÉPLOIEMENT: PRÊT POUR VPS")
+            print("   Tous les endpoints critiques fonctionnent parfaitement!")
+            print("   ✅ Le backend peut être déployé en toute sécurité sur VPS")
+        elif success_rate >= 80:
+            print("✅ STATUT DÉPLOIEMENT: PRÊT AVEC RÉSERVES")
+            print("   La plupart des fonctionnalités critiques marchent")
+            print("   ⚠️ Vérifier les problèmes mineurs avant déploiement VPS")
         else:
-            print("❌ STATUT GLOBAL: CRITIQUE - Plusieurs fonctionnalités ne marchent pas")
+            print("❌ STATUT DÉPLOIEMENT: NON PRÊT")
+            print("   Des problèmes critiques doivent être résolus")
+            print("   🚫 NE PAS déployer sur VPS tant que les problèmes persistent")
         
         print("=" * 80)
         
@@ -710,6 +707,7 @@ class Kayee01QuickTester:
             "passed_tests": passed_tests,
             "failed_tests": failed_tests,
             "success_rate": success_rate,
+            "vps_ready": success_rate >= 80,
             "results": self.test_results
         }
 
