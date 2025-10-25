@@ -7031,7 +7031,7 @@ def main():
                 print("❌ Test paiement Stripe échoué")
             return False
 
-def test_create_order_and_check_admin_notifications(self, order_data: dict, test_name: str):
+    def test_create_order_and_check_admin_notifications(self, order_data: dict, test_name: str):
         """Create order and verify admin notifications are sent"""
         try:
             # Create order
