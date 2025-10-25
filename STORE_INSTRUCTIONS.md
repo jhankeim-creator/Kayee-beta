@@ -2,13 +2,13 @@
 
 ## 🎉 Your Store is Live!
 
-Visit your store at: **https://kayee01-shopfront.preview.emergentagent.com**
+Visit your store at: **https://replica-store-1.preview.emergentagent.com**
 
 ---
 
 ## 🔐 Admin Access
 
-**Admin Dashboard:** https://kayee01-shopfront.preview.emergentagent.com/admin
+**Admin Dashboard:** https://replica-store-1.preview.emergentagent.com/admin
 
 **Admin Credentials:**
 - Email: `admin@luxeboutique.com`
