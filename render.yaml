@@ -1,0 +1,62 @@
+services:
+  - type: web
+    name: kayee01-backend
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: bash build-backend.sh
+    startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/categories
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: kayee01_db
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        value: kayee01.shop@gmail.com
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL_1
+        value: kayicom509@gmail.com
+      - key: ADMIN_EMAIL_2
+        value: Info.kayicom.com@gmx.fr
+      - key: PAYONEER_EMAIL
+        value: kayicom509@gmail.com
+      - key: PAYONEER_NAME
+        value: Anson
+      - key: FRONTEND_URL
+        value: https://kayee01-frontend.onrender.com
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: PLISIO_API_KEY
+        sync: false
+
+  - type: web
+    name: kayee01-frontend
+    env: static
+    region: frankfurt
+    plan: free
+    buildCommand: cd frontend && yarn install && yarn build
+    staticPublishPath: ./frontend/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /static/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        value: https://kayee01-backend.onrender.com
