@@ -144,11 +144,11 @@ echo ""
 
 # Vérification des codes couleurs dans les scripts
 echo "8. Validation des codes couleurs bash:"
-if grep -q "GREEN='033\\[0;32m'" install-vps.sh && \
-   grep -q "GREEN='033\\[0;32m'" check-status.sh; then
+if grep -q "GREEN='.*033\\[0;32m'" install-vps.sh && \
+   grep -q "GREEN='.*033\\[0;32m'" check-status.sh; then
     echo -e "   ${GREEN}✅${NC} Codes couleurs corrects"
 else
-    echo -e "   ${RED}❌${NC} Codes couleurs incorrects (manque l'échappement)"
+    echo -e "   ${RED}❌${NC} Codes couleurs incorrects"
     ((ERRORS++))
 fi
 echo ""
