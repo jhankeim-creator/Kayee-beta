@@ -1,0 +1,27 @@
+# Test files
+*_test.py
+test_*.py
+french_review_test.py
+admin_email_test.py
+backend_test.py
+final_test.py
+
+# Emergent specific
+.emergent/
+test_result.md
+
+# Development
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Laravel (not needed)
+kayee01-laravel/
+laravel-kayee01/
