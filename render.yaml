@@ -1,0 +1,71 @@
+services:
+  # Backend FastAPI Service
+  - type: web
+    name: kayee01-backend
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/categories
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: PLISIO_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: kayee01-frontend
+          property: host
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: kayee01-backend
+          property: host
+
+  # Frontend React Service
+  - type: web
+    name: kayee01-frontend
+    env: static
+    region: frankfurt
+    plan: free
+    buildCommand: cd frontend && yarn install && yarn build
+    staticPublishPath: ./frontend/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /static/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        fromService:
+          type: web
+          name: kayee01-backend
+          property: host
+
+databases:
+  - name: kayee01-mongodb
+    databaseName: kayee01_db
+    user: kayee01_user
+    plan: free
