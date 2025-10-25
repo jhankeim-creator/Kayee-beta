@@ -7622,10 +7622,34 @@ def main_french_review_tests():
         print(f"\n❌ Tests de révision française échoués: {str(e)}")
         sys.exit(1)
 
+def main_vps_deployment_tests():
+    """Main function for VPS deployment readiness tests"""
+    try:
+        print("🚀 KAYEE01 BACKEND - TEST RAPIDE POUR DÉPLOIEMENT VPS")
+        print("Testing 5 critical endpoints before VPS deployment")
+        print("=" * 80)
+        
+        tester = Kayee01QuickTester()
+        summary = tester.run_critical_tests()
+        
+        # Exit with appropriate code
+        if summary["vps_ready"]:
+            print(f"\n✅ SUCCESS: Backend ready for VPS deployment ({summary['success_rate']:.1f}% success rate)")
+            sys.exit(0)
+        else:
+            print(f"\n❌ FAILURE: Backend NOT ready for VPS deployment ({summary['success_rate']:.1f}% success rate)")
+            sys.exit(1)
+            
+    except Exception as e:
+        print(f"\n❌ VPS deployment tests failed: {str(e)}")
+        sys.exit(1)
+
 if __name__ == "__main__":
     # Check if we should run specific tests
     if len(sys.argv) > 1:
-        if sys.argv[1] == "bulk-email":
+        if sys.argv[1] == "vps-deployment":
+            main_vps_deployment_tests()
+        elif sys.argv[1] == "bulk-email":
             main_bulk_email_tests()
         elif sys.argv[1] == "admin-email":
             main_admin_email_tests()
@@ -7634,5 +7658,5 @@ if __name__ == "__main__":
         else:
             main_comprehensive()
     else:
-        # Run French review tests by default for this focused testing
-        main_french_review_tests()
+        # Run VPS deployment tests by default for this focused testing
+        main_vps_deployment_tests()
