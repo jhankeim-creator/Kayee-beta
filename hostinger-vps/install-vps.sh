@@ -86,9 +86,16 @@ if [ -d ".git" ]; then
     echo "Repository déjà cloné, mise à jour..."
     git pull
 else
-    echo "Clonage du repository..."
-    # Remplacer par votre repository GitHub
-    git clone https://github.com/kayee_beta/kayee01-ecommerce.git .
+    echo "⚠️  Configuration du repository GitHub..."
+    echo "IMPORTANT: Vous devez d'abord pousser votre code sur GitHub"
+    echo "Puis remplacez l'URL ci-dessous par votre repository"
+    echo ""
+    read -p "Entrez l'URL de votre repository GitHub: " REPO_URL
+    if [ -z "$REPO_URL" ]; then
+        echo "❌ URL manquante, abandon..."
+        exit 1
+    fi
+    git clone "$REPO_URL" .
 fi
 echo -e "${GREEN}✅ Code téléchargé${NC}"
 echo ""
