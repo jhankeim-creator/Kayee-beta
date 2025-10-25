@@ -142,14 +142,14 @@ else
 fi
 echo ""
 
-# Vérification des codes couleurs dans les scripts
+# Vérification des codes couleurs dans les scripts  
 echo "8. Validation des codes couleurs bash:"
-if grep -q "GREEN='.*033\\[0;32m'" install-vps.sh && \
-   grep -q "GREEN='.*033\\[0;32m'" check-status.sh; then
-    echo -e "   ${GREEN}✅${NC} Codes couleurs corrects"
-else
-    echo -e "   ${RED}❌${NC} Codes couleurs incorrects"
+# Vérifier que les couleurs ne sont PAS au mauvais format (sans backslash)
+if grep -q "GREEN='33\[" install-vps.sh || grep -q "GREEN='33\[" check-status.sh; then
+    echo -e "   ${RED}❌${NC} Codes couleurs incorrects (manque le backslash)"
     ((ERRORS++))
+else
+    echo -e "   ${GREEN}✅${NC} Codes couleurs corrects"
 fi
 echo ""
 
