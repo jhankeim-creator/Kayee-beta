@@ -35,7 +35,7 @@ def get_backend_url():
         print(f"❌ Error reading frontend .env: {e}")
         return None
 
-class ComprehensiveTester:
+class Kayee01QuickTester:
     def __init__(self):
         self.backend_url = get_backend_url()
         if not self.backend_url:
@@ -45,25 +45,16 @@ class ComprehensiveTester:
         self.session = requests.Session()
         self.test_results = []
         self.admin_token = None
-        self.user_token = None
         
         print(f"🔗 Backend URL: {self.backend_url}")
         print(f"🔗 API Base: {self.api_base}")
-        print("🔍 TEST COMPLET DES CORRECTIONS DEMANDÉES")
-        print("Testing specific corrections as requested:")
-        print("1. TEST PAIEMENT MANUEL - Instructions UNIQUEMENT par Email")
-        print("   - Create manual payment gateway in admin")
-        print("   - Verify gateway appears on public API")
-        print("   - Create order with manual gateway")
-        print("   - Verify client email contains payment instructions + order number")
-        print("2. TEST SYSTÈME BULK EMAIL")
-        print("   - POST /api/admin/settings/bulk-email")
-        print("   - Verify API returns success and logs show email sent")
-        print("   - GET /api/admin/settings/bulk-emails for history")
-        print("3. TEST NOTIFICATIONS ADMIN (re-verification)")
-        print("   - Create order and verify 2 admin emails sent:")
-        print("   - kayicom509@gmail.com + Info.kayicom.com@gmx.fr")
-        print("Credentials: kayicom509@gmail.com / Admin123!")
+        print("🔍 TEST RAPIDE BACKEND KAYEE01 - DÉPLOIEMENT VPS")
+        print("Testing 5 critical endpoints before VPS deployment:")
+        print("1. ✅ API Health Check - verify backend responds")
+        print("2. 🗄️ MongoDB Connection - verify database is accessible")
+        print("3. 📦 Products Test - GET /api/products (should return 21 products)")
+        print("4. 👤 Admin Login Test - POST /api/admin/login (kayicom509@gmail.com / Admin123!)")
+        print("5. 💳 Payment Gateways Test - GET /api/settings/payment-gateways")
         print("=" * 80)
 
     def log_result(self, test_name: str, success: bool, message: str, details: Dict = None):
