@@ -158,8 +158,8 @@ class Kayee01QuickTester:
             self.log_result("3. Products List", False, f"❌ Products API request failed: {str(e)}")
             return False
 
-    def test_admin_login(self):
-        """Test A: Login - POST /api/auth/login"""
+    def test_4_admin_login(self):
+        """Test 4: Admin Login Test - POST /api/admin/login with kayicom509@gmail.com / Admin123!"""
         login_payload = {
             "email": "kayicom509@gmail.com",
             "password": "Admin123!"
@@ -182,6 +182,7 @@ class Kayee01QuickTester:
                 user = login_data.get("user")
                 
                 details = {
+                    "status_code": response.status_code,
                     "access_token": access_token[:20] + "..." if access_token else None,
                     "token_type": token_type,
                     "user_email": user.get("email") if user else None,
@@ -204,17 +205,17 @@ class Kayee01QuickTester:
                     self.session.headers.update({"Authorization": f"Bearer {access_token}"})
                     
                     self.log_result(
-                        "LOGIN Test A - Utilisateur Existant", 
+                        "4. Admin Login Test", 
                         True, 
-                        "✅ Login réussi - token JWT retourné et utilisateur vérifié",
+                        "✅ Admin login successful - JWT token returned and admin role verified",
                         details
                     )
                     return login_data
                 else:
                     self.log_result(
-                        "LOGIN Test A - Utilisateur Existant", 
+                        "4. Admin Login Test", 
                         False, 
-                        "❌ Validation échouée - champs manquants ou rôle incorrect",
+                        "❌ Login validation failed - missing fields or incorrect role",
                         details
                     )
                     return None
@@ -226,12 +227,44 @@ class Kayee01QuickTester:
                 except:
                     error_msg += f": {response.text}"
                 
-                self.log_result("LOGIN Test A - Utilisateur Existant", False, f"❌ {error_msg}")
+                self.log_result("4. Admin Login Test", False, f"❌ {error_msg}")
                 return None
 
         except Exception as e:
-            self.log_result("LOGIN Test A - Utilisateur Existant", False, f"❌ Requête échouée: {str(e)}")
+            self.log_result("4. Admin Login Test", False, f"❌ Request failed: {str(e)}")
             return None
+
+    def test_5_payment_gateways(self):
+        """Test 5: Payment Gateways Test - GET /api/settings/payment-gateways"""
+        try:
+            # Test public payment gateways endpoint (no auth required)
+            response = self.session.get(f"{self.api_base}/settings/payment-gateways", timeout=10)
+            
+            if response.status_code == 200:
+                gateways = response.json()
+                gateway_count = len(gateways)
+                
+                details = {
+                    "status_code": response.status_code,
+                    "gateways_count": gateway_count,
+                    "gateways": gateways[:3] if gateways else [],  # Show first 3 for brevity
+                    "endpoint": "/api/settings/payment-gateways",
+                    "auth_required": False
+                }
+                
+                self.log_result(
+                    "5. Payment Gateways Test", 
+                    True, 
+                    f"✅ Payment gateways API working correctly ({gateway_count} gateways configured)",
+                    details
+                )
+                return True
+            else:
+                self.log_result("5. Payment Gateways Test", False, f"❌ Payment gateways API failed with {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_result("5. Payment Gateways Test", False, f"❌ Payment gateways API request failed: {str(e)}")
+            return False
 
     def test_login_bad_credentials(self):
         """Test B: Login avec mauvais credentials"""
