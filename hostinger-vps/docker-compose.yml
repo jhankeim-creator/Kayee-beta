@@ -21,8 +21,8 @@ services:
   # Backend FastAPI
   backend:
     build:
-      context: ../backend
-      dockerfile: ../hostinger-vps/Dockerfile.backend
+      context: ..
+      dockerfile: hostinger-vps/Dockerfile.backend
     container_name: kayee01-backend
     restart: always
     environment:
