@@ -802,7 +802,7 @@ async def update_order_status(
     old_status = old_order.get("status")
     old_payment_status = old_order.get("payment_status")
     
-    update_data = {"status": status}
+    update_data = {"order_status": status}
     if payment_status:
         update_data["payment_status"] = payment_status
     
