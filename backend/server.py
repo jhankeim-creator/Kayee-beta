@@ -945,7 +945,7 @@ async def plisio_webhook(request: Request):
                 {"id": order_number},
                 {"$set": {
                     "payment_status": "confirmed",
-                    "status": "processing"
+                    "order_status": "processing"
                 }}
             )
             
