@@ -162,9 +162,26 @@ while true; do
     error "MongoDB password must be at least 8 characters long"
 done
 
+# Get SMTP password
+echo ""
+read -s -p "Enter your SMTP password (for kayicom509@gmail.com): " SMTP_PASSWORD
+echo ""
+
+# Get Stripe key
+echo ""
+read -p "Enter your Stripe Secret Key (sk_live_...): " STRIPE_KEY
+echo ""
+
+# Get Plisio key
+read -p "Enter your Plisio API Key: " PLISIO_KEY
+echo ""
+
 # Update .env file
 sed -i "s/DOMAIN_NAME=.*/DOMAIN_NAME=$DOMAIN_NAME/" .env
 sed -i "s/MONGO_PASSWORD=.*/MONGO_PASSWORD=$MONGO_PASSWORD/" .env
+sed -i "s/SMTP_PASSWORD=.*/SMTP_PASSWORD=$SMTP_PASSWORD/" .env
+sed -i "s/STRIPE_SECRET_KEY=.*/STRIPE_SECRET_KEY=$STRIPE_KEY/" .env
+sed -i "s/PLISIO_API_KEY=.*/PLISIO_API_KEY=$PLISIO_KEY/" .env
 
 log "Environment configured successfully"
 
