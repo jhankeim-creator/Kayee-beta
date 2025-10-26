@@ -838,7 +838,7 @@ async def update_order_status(
 async def get_admin_stats(admin: User = Depends(get_current_admin)):
     total_products = await db.products.count_documents({})
     total_orders = await db.orders.count_documents({})
-    pending_orders = await db.orders.count_documents({"status": "pending"})
+    pending_orders = await db.orders.count_documents({"order_status": "pending"})
     total_users = await db.users.count_documents({"role": "customer"})
     
     # Calculate total revenue
