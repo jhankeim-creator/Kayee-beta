@@ -3,7 +3,7 @@ import requests
 import json
 
 # Test the exact data from the review request
-backend_url = 'https://replica-store-1.preview.emergentagent.com/api'
+backend_url = 'https://kayee-vps-setup.preview.emergentagent.com/api'
 
 test_order_data = {
     'user_email': 'kayicom509@gmail.com',
