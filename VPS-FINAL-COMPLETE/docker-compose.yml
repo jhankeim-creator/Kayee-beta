@@ -34,8 +34,10 @@ services:
       - SMTP_PORT=587
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
-      - ADMIN_EMAIL_1=kayicom509@gmail.com
-      - ADMIN_EMAIL_2=Info.kayicom.com@gmx.fr
+      - FROM_EMAIL=${FROM_EMAIL}
+      - FROM_NAME=${FROM_NAME}
+      - ADMIN_EMAIL_1=${ADMIN_EMAIL_1}
+      - ADMIN_EMAIL_2=${ADMIN_EMAIL_2}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - PLISIO_API_KEY=${PLISIO_API_KEY}
       - FRONTEND_URL=https://${DOMAIN_NAME}
