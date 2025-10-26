@@ -202,7 +202,7 @@ class Order(BaseModel):
     user_name: str
     items: List[dict]
     total: float
-    status: str = "pending"  # pending, processing, shipped, delivered, cancelled
+    order_status: str = "pending"  # pending, processing, shipped, delivered, cancelled
     payment_method: str  # stripe, binance, plisio, manual
     payment_status: str = "pending"  # pending, confirmed, failed
     shipping_address: dict
