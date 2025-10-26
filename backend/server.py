@@ -865,7 +865,7 @@ async def update_order_tracking(
         {"$set": {
             "tracking_number": tracking_number,
             "tracking_carrier": tracking_carrier,
-            "status": "shipped"
+            "order_status": "shipped"
         }}
     )
     
