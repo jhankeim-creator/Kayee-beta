@@ -182,3 +182,7 @@ VPS-FINAL-COMPLETE/frontend/node_modules/.cache/default-development/7.pack
 VPS-FINAL-COMPLETE/frontend/node_modules/.cache/default-development/5.pack
 VPS-FINAL-COMPLETE/frontend/node_modules/.cache/default-development/0.pack
 VPS-FINAL-COMPLETE/frontend/node_modules/.cache/default-development/2.pack
+-e 
+# Environment files
+*.env
+*.env.*
