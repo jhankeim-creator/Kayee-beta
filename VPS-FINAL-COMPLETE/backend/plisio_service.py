@@ -78,7 +78,7 @@ class PlisioService:
         
         # Mode production
         try:
-            frontend_url = os.environ.get('FRONTEND_URL', 'https://kayee-vps-setup.preview.emergentagent.com')
+            frontend_url = os.environ.get('FRONTEND_URL', 'https://kayee01.com')
             
             params = {
                 "source_currency": source_currency,
