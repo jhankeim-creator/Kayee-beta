@@ -799,7 +799,7 @@ async def update_order_status(
     if not old_order:
         raise HTTPException(status_code=404, detail="Order not found")
     
-    old_status = old_order.get("status")
+    old_status = old_order.get("order_status")
     old_payment_status = old_order.get("payment_status")
     
     update_data = {"order_status": status}
