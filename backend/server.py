@@ -914,7 +914,7 @@ async def stripe_webhook(request: Request):
                     {"id": order_id},
                     {"$set": {
                         "payment_status": "confirmed",
-                        "status": "processing"
+                        "order_status": "processing"
                     }}
                 )
                 
