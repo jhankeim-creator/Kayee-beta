@@ -1121,7 +1121,7 @@ async def update_payment_gateway(gateway_id: str, gateway_data: dict, admin: Use
     """Update a payment gateway"""
     result = await db.admin_settings.update_one(
         {"id": "admin_settings", "payment_gateways.gateway_id": gateway_id},
-        {"$set": {f"payment_gateways.$": gateway_data}}
+        {"$set": {"payment_gateways.$": gateway_data}}
     )
     
     if result.matched_count == 0:
@@ -1177,7 +1177,7 @@ async def update_social_link(link_id: str, link_data: dict, admin: User = Depend
     """Update a social link"""
     result = await db.admin_settings.update_one(
         {"id": "admin_settings", "social_links.id": link_id},
-        {"$set": {f"social_links.$": link_data}}
+        {"$set": {"social_links.$": link_data}}
     )
     
     if result.matched_count == 0:
@@ -1239,7 +1239,7 @@ async def update_external_link(link_id: str, link_data: dict, admin: User = Depe
     """Update an external link"""
     result = await db.admin_settings.update_one(
         {"id": "admin_settings", "external_links.id": link_id},
-        {"$set": {f"external_links.$": link_data}}
+        {"$set": {"external_links.$": link_data}}
     )
     
     if result.matched_count == 0:
